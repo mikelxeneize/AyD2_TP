@@ -81,28 +81,15 @@ public class Nucleo {
 		}
 	}
 
-	public boolean iniciarConexion(String ip, int port){
+	public void iniciarConexion(String ip, int port){
 		boolean conexion = false;
-
-		this.cliente = new Cliente();
-		System.out.println(" conexion establecida en "+ ip + " " +port);
-		return true;
-        /*
 		this.cliente = new Cliente(ip,port);
-		if (cliente.iniciarConexion(cliente.ip,cliente.port)){
-			conexion = true;
-		} else {
-			conexion = false;
-		}
-		return conexion;
-	 	*/
+
+		cliente.iniciarConexion(ip,port);
 	}
 
 	public void enviarMensaje(String mensaje) {
-		System.out.println("mensaje enviado " + mensaje);
-        /*
 		this.cliente.enviarMensaje(mensaje);
-		 */
 	}
 
 	public void mostrarMensaje(String mensaje){

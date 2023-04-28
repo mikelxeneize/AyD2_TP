@@ -33,13 +33,11 @@ public class ControladorMenuPrincipal implements ActionListener{
 				throw new RuntimeException(ex);
 				//aca habria q notificar en pantalla lo de q no es un numero, podriamos validar rangos puertos tmb
 			}
-			if (this.modelo.iniciarConexion(ipDestino, puertoDestino)){
-				this.vista.cerrar();
-				ControladorConversacion controladorConversacion = new ControladorConversacion();
-			}
-			else{
-				//mostar un label de que no se pudo conectar
-			}
+
+			this.modelo.iniciarConexion(ipDestino, puertoDestino); //  aca va a ir un try catch cuando mikel agregue el thrwos a su metodo
+			this.vista.cerrar();
+			ControladorConversacion controladorConversacion = new ControladorConversacion();
+
 		}
 		
 		
