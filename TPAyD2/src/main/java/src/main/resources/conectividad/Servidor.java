@@ -2,21 +2,22 @@ package src.main.resources.conectividad;
 
 import java.net.*;
 
-public class Cliente {
-    private Socket socket;
+public class Servidor {
+    private ServerSocket serverSocket;
     private int puertopersonal;
     private String ippersonal;
 
-	public Cliente (String ippersonal, int puertopersonal){
+    public Servidor (String ippersonal, int puertopersonal){
         this.puertopersonal=puertopersonal;
         this.ippersonal=ippersonal;
     }
 
-    public void iniciarConexion(String ipserver, int puertoserver){ // tiene que devolver una excepcion de no conexion
-        try {
-            socket=new Socket(ipserver,puertoserver);
+    public void iniciarConexion(int puertocliente){ // tiene que devolver una excepcion de no conexion
+        serverSocket = new ServerSocket(puertocliente);
+        while (true){
+            Socket socket
         }
-        catch ();
+
     }
 
     public void enviarMensaje(String mensajeaenviar){
