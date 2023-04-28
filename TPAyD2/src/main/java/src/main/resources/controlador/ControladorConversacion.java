@@ -27,9 +27,9 @@ public class ControladorConversacion implements ActionListener{
 		}
 		else if(e.getActionCommand().equals(IVista.ENVIAR_MENSAJE)) {
 			String mensaje = this.vista.getMensaje();
-			 if (! mensaje.isEmpty()){
+			 if (! mensaje.isEmpty()){ //solo envia el mensaje si no esta vacio
 				this.vista.vaciarMensaje();
-				 Nucleo.getInstance().enviarMensaje();
+					this.modelo.enviarMensaje(mensaje);
 			 }
 		}
 		

@@ -13,7 +13,7 @@ public class Nucleo {
 	private Cliente cliente;
 	private static Nucleo instance;
 	private String ip;
-	private Long port;
+	private int port;
 	private String filePath = "./config.json";
 
 
@@ -26,6 +26,8 @@ public class Nucleo {
 
 	public void cerrarConexion() {
 
+		System.out.println("Conexion cerrada");
+		// this.cliente.cerrarConexion(String ip, int port);
 	}
 
 	public String getIp() {
@@ -36,15 +38,16 @@ public class Nucleo {
 		this.ip = ip;
 	}
 
-	public Long getPort() {
+	public int getPort() {
 		return port;
 	}
 
-	public void setPort(Long port) {
+	public void setPort(int port) {
 		this.port = port;
 	}
 
 	public void cargarConfiguracion() {
+		Long longPort = 0L;
 		JSONParser jsonParser = new JSONParser();
 		JSONObject configuracion = null;
 		try (FileReader reader = new FileReader(this.filePath)) {
@@ -56,10 +59,11 @@ public class Nucleo {
 			e.printStackTrace();
 		}
 		this.ip= (String) configuracion.get("ip");
-		this.port = (Long) configuracion.get("port");
+		longPort = (Long) configuracion.get("port");
+		this.port = longPort.intValue();
 	}
 
-	public void setConfiguracion(long port, String ip) {
+	public void setConfiguracion(String ip, int port) {
 		this.setPort(port);
 		this.setIp(ip);
 	}
@@ -83,7 +87,7 @@ public class Nucleo {
 		this.cliente = new Cliente();
 		System.out.println(" conexion establecida en "+ ip + " " +port);
 		return true;
-		/*
+        /*
 		this.cliente = new Cliente(ip,port);
 		if (cliente.iniciarConexion(cliente.ip,cliente.port)){
 			conexion = true;
@@ -95,8 +99,8 @@ public class Nucleo {
 	}
 
 	public void enviarMensaje(String mensaje) {
-		System.out.println("mensaje enviado" + mensaje);
-		/*
+		System.out.println("mensaje enviado " + mensaje);
+        /*
 		this.cliente.enviarMensaje(mensaje);
 		 */
 	}

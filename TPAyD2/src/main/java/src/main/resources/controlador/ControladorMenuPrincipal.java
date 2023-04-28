@@ -16,7 +16,8 @@ public class ControladorMenuPrincipal implements ActionListener{
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
 	}
-	
+
+	//valida que el puerto sea un numero y se encarga de castearlo
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			this.vista.cerrar();
@@ -24,7 +25,15 @@ public class ControladorMenuPrincipal implements ActionListener{
 
 		}
 		else if(e.getActionCommand().equals(IVista.INICIAR_CONVERSACION)) {
-			if (Nucleo.getInstance().iniciarConexion(this.vista.getIpDestino(), Integer.parseInt(this.vista.getPortDestino()))){
+			String ipDestino = this.vista.getIpDestino();
+			int puertoDestino = 0;
+			try {
+				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
+			} catch (NumberFormatException ex) {
+				throw new RuntimeException(ex);
+				//aca habria q notificar en pantalla lo de q no es un numero, podriamos validar rangos puertos tmb
+			}
+			if (this.modelo.iniciarConexion(ipDestino, puertoDestino)){
 				this.vista.cerrar();
 				ControladorConversacion controladorConversacion = new ControladorConversacion();
 			}

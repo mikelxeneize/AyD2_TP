@@ -18,14 +18,14 @@ public class ControladorConfiguracion implements ActionListener{
 		this.vista = new VentanaConfiguracion();
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
-		this.vista.cargarConfiguracion(Nucleo.getInstance().getIp(),Nucleo.getInstance().getPort().toString());
+		this.vista.cargarConfiguracion(this.modelo.getIp(), Integer.toString(this.modelo.getPort()));
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand().equals(IVista.MENUPRINCIPAL)) {
-			Nucleo.getInstance().setConfiguracion(parseLong(this.vista.getPort()), this.vista.getIp());
-			Nucleo.getInstance().persistirConfiguracion();
+			this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
+			this.modelo.persistirConfiguracion();
 			this.vista.cerrar();
 			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 		}
