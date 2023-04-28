@@ -21,12 +21,16 @@ public class ControladorMenuPrincipal implements ActionListener{
 		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			this.vista.cerrar();
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion();
-			
+
 		}
 		else if(e.getActionCommand().equals(IVista.INICIAR_CONVERSACION)) {
-			this.vista.cerrar();
-			ControladorConversacion controladorConversacion = new ControladorConversacion();
-			
+			if (Nucleo.getInstance().iniciarConexion(this.vista.getIpDestino(), Integer.parseInt(this.vista.getPortDestino()))){
+				this.vista.cerrar();
+				ControladorConversacion controladorConversacion = new ControladorConversacion();
+			}
+			else{
+				//mostar un label de que no se pudo conectar
+			}
 		}
 		
 		

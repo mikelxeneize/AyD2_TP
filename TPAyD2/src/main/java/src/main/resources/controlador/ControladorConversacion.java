@@ -26,9 +26,11 @@ public class ControladorConversacion implements ActionListener{
 			this.modelo.cerrarConexion();
 		}
 		else if(e.getActionCommand().equals(IVista.ENVIAR_MENSAJE)) {
-			
-			//ACA SE CONECTA CON EL MODULO CONECTIVIDAD
-			//Nucleo.getInstance().enviarMensaje();
+			String mensaje = this.vista.getMensaje();
+			 if (! mensaje.isEmpty()){
+				this.vista.vaciarMensaje();
+				 Nucleo.getInstance().enviarMensaje();
+			 }
 		}
 		
 		

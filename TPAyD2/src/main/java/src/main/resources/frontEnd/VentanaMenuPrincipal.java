@@ -103,8 +103,6 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		this.btnNewButton.addActionListener(listener);
 		this.btnConfigurarPuerto.setActionCommand(CONFIGURACION);
 		this.btnNewButton.setActionCommand(INICIAR_CONVERSACION);
-		
-		
 	}
 
 
@@ -123,6 +121,11 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		setVisible(false);
 		
 	}
-	
+	public String getIpDestino(){
+		return this.textField.getText();
+	}
+	public String getPortDestino(){
+		return this.textField_1.getText();
+	}
 }
 

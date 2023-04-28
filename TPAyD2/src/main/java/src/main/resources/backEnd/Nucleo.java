@@ -25,7 +25,7 @@ public class Nucleo {
 	}
 
 	public void cerrarConexion() {
-		
+
 	}
 
 	public String getIp() {
@@ -47,8 +47,7 @@ public class Nucleo {
 	public void cargarConfiguracion() {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject configuracion = null;
-		try (FileReader reader = new FileReader(this.filePath))
-		{
+		try (FileReader reader = new FileReader(this.filePath)) {
 			Object obj = jsonParser.parse(reader);
 			configuracion = (JSONObject) obj;
 		} catch (IOException e) {
@@ -76,5 +75,33 @@ public class Nucleo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean iniciarConexion(String ip, int port){
+		boolean conexion = false;
+
+		this.cliente = new Cliente();
+		System.out.println(" conexion establecida en "+ ip + " " +port);
+		return true;
+		/*
+		this.cliente = new Cliente(ip,port);
+		if (cliente.iniciarConexion(cliente.ip,cliente.port)){
+			conexion = true;
+		} else {
+			conexion = false;
+		}
+		return conexion;
+	 	*/
+	}
+
+	public void enviarMensaje(String mensaje) {
+		System.out.println("mensaje enviado" + mensaje);
+		/*
+		this.cliente.enviarMensaje(mensaje);
+		 */
+	}
+
+	public void mostrarMensaje(String mensaje){
+
 	}
 }
