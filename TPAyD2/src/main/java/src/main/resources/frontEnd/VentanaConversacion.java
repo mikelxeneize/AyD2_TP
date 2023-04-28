@@ -88,6 +88,15 @@ public class VentanaConversacion extends JFrame implements IVista{
 		
 	}
 
+	public String getMensaje(){
+		return this.textField.getText();
+	}
+
+	public void vaciarMensaje(){
+		this.textField.setText("");
+	}
+
+
 	public void cerrar() {
 		setVisible(false);
 		

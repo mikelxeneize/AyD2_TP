@@ -1,5 +1,5 @@
 package ejemplo.TPAyD2;
-
+import src.main.resources.backEnd.Nucleo;
 import src.main.resources.controlador.ControladorMenuPrincipal;
 
 /**
@@ -8,9 +8,8 @@ import src.main.resources.controlador.ControladorMenuPrincipal;
  */
 public class App 
 {
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) throws Exception {
         ControladorMenuPrincipal contr= new ControladorMenuPrincipal();
-        
+        Nucleo.getInstance().cargarConfiguracion();
     }
 }
