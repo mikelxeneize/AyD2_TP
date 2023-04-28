@@ -1,6 +1,5 @@
 package src.main.resources.frontEnd;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -15,8 +14,8 @@ import javax.swing.JButton;
 public class VentanaConfiguracion extends JFrame implements IVista{
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField textField_port;
+	private JTextField textField_ip;
 	private JButton btnNewButton;
 
 	/**
@@ -51,19 +50,19 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		lblPuerto.setBounds(60, 48, 49, 14);
 		contentPane.add(lblPuerto);
 		
-		textField = new JTextField();
-		textField.setBounds(93, 73, 261, 33);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		textField_port = new JTextField();
+		textField_port.setBounds(93, 73, 261, 33);
+		contentPane.add(textField_port);
+		textField_port.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Ip:");
 		lblNewLabel.setBounds(60, 138, 49, 14);
 		contentPane.add(lblNewLabel);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(93, 173, 261, 33);
-		contentPane.add(textField_1);
+		textField_ip = new JTextField();
+		textField_ip.setColumns(10);
+		textField_ip.setBounds(93, 173, 261, 33);
+		contentPane.add(textField_ip);
 		
 		JLabel lblConfiguracion = new JLabel("Configuracion");
 		lblConfiguracion.setFont(new Font("Tahoma", Font.PLAIN, 17));
@@ -84,6 +83,20 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 	public void cerrar() {
 		setVisible(false);
 		
+	}
+
+	public void cargarConfiguracion(String ip, String port) {
+		this.textField_ip.setText(ip);
+		this.textField_port.setText(port);
+	}
+
+	public String getIp(){
+		return this.textField_ip.getText();
+	}
+
+	//el controlador se encarga de realizar los casteos
+	public String getPort(){
+		return this.textField_port.getText();
 	}
 
 }
