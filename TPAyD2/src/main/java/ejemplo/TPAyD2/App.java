@@ -11,5 +11,6 @@ public class App
     public static void main( String[] args ) throws Exception {
         ControladorMenuPrincipal contr= new ControladorMenuPrincipal();
         Nucleo.getInstance().cargarConfiguracion();
+        Nucleo.getInstance().activarEscucha();
     }
 }

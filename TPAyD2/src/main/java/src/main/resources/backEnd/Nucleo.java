@@ -3,14 +3,14 @@ package src.main.resources.backEnd;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import src.main.resources.conectividad.Cliente;
+import src.main.resources.conectividad.Conectividad;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class Nucleo {
-	private Cliente cliente;
+	private Conectividad conexion;
 	private static Nucleo instance;
 	private String ip;
 	private int port;
@@ -22,12 +22,6 @@ public class Nucleo {
 			Nucleo.instance = new Nucleo();
 		}
 		return instance;
-	}
-
-	public void cerrarConexion() {
-
-		System.out.println("Conexion cerrada");
-		// this.cliente.cerrarConexion(String ip, int port);
 	}
 
 	public String getIp() {
@@ -81,18 +75,25 @@ public class Nucleo {
 		}
 	}
 
-	public void iniciarConexion(String ip, int port){
-		boolean conexion = false;
-		this.cliente = new Cliente(ip,port);
 
-		cliente.iniciarConexion(ip,port);
+	public void activarEscucha() throws IOException {
+		this.conexion.escucharConexion(this.port);
+	}
+
+	public void iniciarConexion(String ip, int port) throws RuntimeException{
+		this.conexion.iniciarConexion(ip,port);
+	}
+
+	public void cerrarConexion() throws RuntimeException{
+		this.conexion.cerrarConexion();
 	}
 
 	public void enviarMensaje(String mensaje) {
-		this.cliente.enviarMensaje(mensaje);
+		this.conexion.enviarMensaje(mensaje);
 	}
 
 	public void mostrarMensaje(String mensaje){
-
+		this.conexion
 	}
+
 }

@@ -10,7 +10,7 @@ import src.main.resources.frontEnd.VentanaMenuPrincipal;
 public class ControladorMenuPrincipal implements ActionListener{
 	private VentanaMenuPrincipal vista = null;
 	private Nucleo modelo;
-	
+
 	public ControladorMenuPrincipal() {
 		this.vista = new VentanaMenuPrincipal();
 		this.modelo = Nucleo.getInstance();
@@ -22,24 +22,23 @@ public class ControladorMenuPrincipal implements ActionListener{
 		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			this.vista.cerrar();
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion();
-
-		}
-		else if(e.getActionCommand().equals(IVista.INICIAR_CONVERSACION)) {
+		} else if(e.getActionCommand().equals(IVista.INICIAR_CONVERSACION)) {
 			String ipDestino = this.vista.getIpDestino();
 			int puertoDestino = 0;
 			try {
 				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
 			} catch (NumberFormatException ex) {
-				throw new RuntimeException(ex);
-				//aca habria q notificar en pantalla lo de q no es un numero, podriamos validar rangos puertos tmb
+				//TO-DO aca habria q notificar en pantalla lo de q no es un numero, podriamos validar rangos puertos tmb
 			}
-
-			this.modelo.iniciarConexion(ipDestino, puertoDestino); //  aca va a ir un try catch cuando mikel agregue el thrwos a su metodo
-			this.vista.cerrar();
+			try {
+				this.modelo.iniciarConexion(ipDestino, puertoDestino);
+				} catch (RuntimeException ex){
+				//  TO-DO esto tendria que tener un catch para hacer un label que notifique
+			}
+			this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
 			ControladorConversacion controladorConversacion = new ControladorConversacion();
-
 		}
-		
-		
-	}	
+
+
+	}
 }
