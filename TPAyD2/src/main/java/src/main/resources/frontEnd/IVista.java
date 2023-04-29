@@ -10,10 +10,10 @@ public interface IVista {
 	void cerrar();
 	
 	// ----------------------MENSAJES------------------------//
-	static final String INICIAR_CONVERSACION = "iniciar";
+	static final String INICIAR_CONEXION = "iniciar";
 	static final String ENVIAR_MENSAJE = "enviar_mensaje";
 	static final String MENUPRINCIPAL = "menu_principal";
 	static final String CONFIGURACION = "configuracion";
-	static final String TERMINAR_CONVERSACION = "terminar_conversacion";
+	static final String CERRAR_CONEXION = "terminar_conversacion";
 	
 }

@@ -28,7 +28,7 @@ public class RecibirMensajeHilo extends Thread {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        Nucleo.getInstance().mostrarMensaje(msg);
+        Nucleo.getInstance().recibirMensaje(msg);
     }
 
 

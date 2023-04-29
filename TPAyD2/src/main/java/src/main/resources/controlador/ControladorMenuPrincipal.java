@@ -2,12 +2,14 @@ package src.main.resources.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import src.main.resources.backEnd.Nucleo;
 import src.main.resources.frontEnd.IVista;
 import src.main.resources.frontEnd.VentanaMenuPrincipal;
 
-public class ControladorMenuPrincipal implements ActionListener{
+public class ControladorMenuPrincipal implements ActionListener, Observer {
 	private VentanaMenuPrincipal vista = null;
 	private Nucleo modelo;
 
@@ -22,7 +24,7 @@ public class ControladorMenuPrincipal implements ActionListener{
 		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			this.vista.cerrar();
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion();
-		} else if(e.getActionCommand().equals(IVista.INICIAR_CONVERSACION)) {
+		} else if(e.getActionCommand().equals(IVista.INICIAR_CONEXION)) {
 			String ipDestino = this.vista.getIpDestino();
 			int puertoDestino = 0;
 			try {
@@ -38,7 +40,14 @@ public class ControladorMenuPrincipal implements ActionListener{
 			this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
 			ControladorConversacion controladorConversacion = new ControladorConversacion();
 		}
+	}
 
-
+	@Override
+	public void update(Observable o, Object arg) {
+		String accionObserver = this.modelo.getAccionObserver();
+		if (accionObserver.equals(this.modelo.INICIAR_CONEXION)){
+			this.vista.cerrar();
+			ControladorConversacion controladorConversacion = new ControladorConversacion();
+		}
 	}
 }

@@ -1,12 +1,10 @@
 package src.main.resources.frontEnd;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -102,7 +100,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		this.btnConfigurarPuerto.addActionListener(listener);
 		this.btnNewButton.addActionListener(listener);
 		this.btnConfigurarPuerto.setActionCommand(CONFIGURACION);
-		this.btnNewButton.setActionCommand(INICIAR_CONVERSACION);
+		this.btnNewButton.setActionCommand(INICIAR_CONEXION);
 	}
 
 

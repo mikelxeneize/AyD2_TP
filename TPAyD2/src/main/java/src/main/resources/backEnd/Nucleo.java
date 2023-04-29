@@ -8,13 +8,19 @@ import src.main.resources.conectividad.Conectividad;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Observable;
 
-public class Nucleo {
+public class Nucleo extends Observable {
 	private Conectividad conexion;
 	private static Nucleo instance;
 	private String ip;
 	private int port;
 	private String filePath = "./config.json";
+	private String accionObserver;
+	public static final String ENVIAR_MENSAJE = "enviar_mensaje";
+	public static final String RECIBIR_MENSAJE = "recibir_mensaje";
+	public static final String INICIAR_CONEXION= "iniciar_conexion";
+	public static final String CERRAR_CONEXION = "cerrar_conexion";
 
 
 	public static Nucleo getInstance() {
@@ -47,7 +53,7 @@ public class Nucleo {
 		try (FileReader reader = new FileReader(this.filePath)) {
 			Object obj = jsonParser.parse(reader);
 			configuracion = (JSONObject) obj;
-		} catch (IOException e) {
+		} catch (IOException e) { //TO-DO me parece que hay que propagar
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -70,30 +76,49 @@ public class Nucleo {
 		try (FileWriter file = new FileWriter(filePath)) {
 			file.write(configuracion.toJSONString());
 			file.flush();
-		} catch (IOException e) {
+		} catch (IOException e) { //TO-DO me parece que hay que propagar
 			e.printStackTrace();
 		}
 	}
 
 
 	public void activarEscucha() throws IOException {
+		this.conexion = new Conectividad(this.ip, this.port);
 		this.conexion.escucharConexion(this.port);
 	}
 
-	public void iniciarConexion(String ip, int port) throws RuntimeException{
+	public void iniciarConexion(String ip, int port){
 		this.conexion.iniciarConexion(ip,port);
+		this.accionObserver=this.INICIAR_CONEXION;
+		this.setChanged();
+		this.notifyObservers();
 	}
 
-	public void cerrarConexion() throws RuntimeException{
+	public void cerrarConexion() {
 		this.conexion.cerrarConexion();
+		this.accionObserver=this.CERRAR_CONEXION;
+		setChanged();
+		this.notifyObservers();
 	}
 
 	public void enviarMensaje(String mensaje) {
 		this.conexion.enviarMensaje(mensaje);
+		this.accionObserver=this.ENVIAR_MENSAJE;
+		this.setChanged();
+		this.notifyObservers();
 	}
 
-	public void mostrarMensaje(String mensaje){
-		this.conexion
+	public void recibirMensaje(String mensaje){
+		this.accionObserver=this.RECIBIR_MENSAJE;
+		this.setChanged();
+		this.notifyObservers(mensaje);
 	}
 
+	public String getAccionObserver() {
+		return accionObserver;
+	}
+
+	public Conectividad getConectividad() {
+		return this.conexion;
+	}
 }
