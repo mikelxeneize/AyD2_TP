@@ -94,6 +94,12 @@ public class Nucleo extends Observable {
 		this.notifyObservers();
 	}
 
+	public void recibirConexion(String ip, int port){
+		this.accionObserver=this.INICIAR_CONEXION;
+		this.setChanged();
+		this.notifyObservers();
+	}
+
 	public void cerrarConexion() {
 		this.conexion.cerrarConexion();
 		this.accionObserver=this.CERRAR_CONEXION;

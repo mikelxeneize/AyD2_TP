@@ -1,5 +1,7 @@
 package src.main.resources.conectividad;
 
+import src.main.resources.backEnd.Nucleo;
+
 import java.io.*;
 import java.net.*;
 
@@ -12,7 +14,7 @@ public class Conectividad {
     private EscucharConexionHilo escucharConexion;
 
     private EnviarMensajeHilo enviarMensaje;
-    private RecibirMensajeHilo recibirMensaje;
+    RecibirMensajeHilo recibirMensaje;
     private boolean conectado;
 
 	public Conectividad(String ippersonal, int puertopersonal)  {
@@ -24,9 +26,11 @@ public class Conectividad {
     public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException { // tiene que devolver una excepcion de no conexion
         try {
             this.socket=new Socket(ipserver,puertoserver);
+            this.recibirMensaje();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
@@ -43,10 +47,7 @@ public class Conectividad {
 
     public void recibirMensaje() {
         this.recibirMensaje = new RecibirMensajeHilo(this.socket);
-        while (conectado == true) {
             this.recibirMensaje.start();
-        }
-        ;
     }
 
 

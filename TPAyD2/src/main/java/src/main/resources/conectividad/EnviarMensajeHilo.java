@@ -20,6 +20,5 @@ public class EnviarMensajeHilo extends Thread{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        out.println(mensaje);
     }
 }

@@ -16,13 +16,16 @@ public class EscucharConexionHilo extends Thread{
     @Override
     public void run(){
         try {
+            System.out.println(puertopersonal);
             this.serverSocket = new ServerSocket(puertopersonal);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try {
             serverSocket.accept();
             Nucleo.getInstance().getConectividad().setConectado(true);
+            Nucleo.getInstance().getConectividad().recibirMensaje();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
