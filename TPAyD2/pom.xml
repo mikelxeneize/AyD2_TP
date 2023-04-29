@@ -28,7 +28,6 @@
       <artifactId>json-simple</artifactId>
       <version>1.1.1</version>
     </dependency>
-
     <repositories>
      <repository>
         <id>java.net repository</id>

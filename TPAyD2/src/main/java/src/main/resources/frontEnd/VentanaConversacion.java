@@ -33,7 +33,8 @@ public class VentanaConversacion extends JFrame implements IVista{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+                return null;
+            }
 		});
 	}
 
