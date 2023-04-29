@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import java.awt.Color;
 
 public class VentanaConfiguracion extends JFrame implements IVista{
 
@@ -17,7 +18,7 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 	private JTextField textField_port;
 	private JTextField textField_ip;
 	private JButton btnNewButton;
-
+	private JLabel lblErrorPuerto;
 	/**
 	 * Launch the application.
 	 */
@@ -47,11 +48,11 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		contentPane.setLayout(null);
 		
 		JLabel lblPuerto = new JLabel("Puerto:");
-		lblPuerto.setBounds(60, 48, 49, 14);
+		lblPuerto.setBounds(60, 69, 49, 14);
 		contentPane.add(lblPuerto);
 		
 		textField_port = new JTextField();
-		textField_port.setBounds(93, 73, 261, 33);
+		textField_port.setBounds(93, 94, 261, 33);
 		contentPane.add(textField_port);
 		textField_port.setColumns(10);
 		
@@ -72,7 +73,14 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		btnNewButton = new JButton("Menu principal");
 		btnNewButton.setBounds(293, 297, 130, 33);
 		contentPane.add(btnNewButton);
+		
+		 lblErrorPuerto = new JLabel("El puerto esta ocupado, debe elegir otro");
+		lblErrorPuerto.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblErrorPuerto.setForeground(new Color(255, 0, 0));
+		lblErrorPuerto.setBounds(41, 229, 334, 33);
+		contentPane.add(lblErrorPuerto);
 		this.setVisible(true);
+		this.lblErrorPuerto.setVisible(false);
 	}
 
 	public void addActionListener(ActionListener listener) {
@@ -93,10 +101,17 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 	public String getIp(){
 		return this.textField_ip.getText();
 	}
-
+	
+	public void mostrarErrorPuerto() {
+		this.lblErrorPuerto.setVisible(true);
+	}
+	
+	public void ocultarErrorPuerto() {
+		this.lblErrorPuerto.setVisible(false);
+	}
+	
 	//el controlador se encarga de realizar los casteos
 	public String getPort(){
 		return this.textField_port.getText();
 	}
-
 }

@@ -30,8 +30,9 @@ public class ControladorConfiguracion implements ActionListener{
 			try {
 				this.modelo.activarEscucha(); //TO-DO Revisar si el activar escucha va aca y si se pisa con la otra instancia o si el garbage colector se encarga
 			} catch (IOException ex) {
-				throw new RuntimeException(ex);
+				this.vista.mostrarErrorPuerto();
 			}
+			this.vista.ocultarErrorPuerto();
 			this.vista.cerrar();
 			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 		}

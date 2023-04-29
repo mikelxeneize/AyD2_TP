@@ -34,7 +34,7 @@ public class Conectividad {
     }
 
     public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
-        this.serverSocket = new ServerSocket(puertopersonal);
+        
         this.escucharConexion= new EscucharConexionHilo(puertopersonal);
         escucharConexion.start();
         } //lamada a nucleo

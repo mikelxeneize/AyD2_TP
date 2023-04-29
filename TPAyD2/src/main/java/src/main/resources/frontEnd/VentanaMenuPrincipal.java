@@ -120,10 +120,10 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		
 	}
 	public String getIpDestino(){
-		return this.textField.getText();
+		return this.textField_1.getText();
 	}
 	public String getPortDestino(){
-		return this.textField_1.getText();
+		return this.textField.getText();
 	}
 }
 
