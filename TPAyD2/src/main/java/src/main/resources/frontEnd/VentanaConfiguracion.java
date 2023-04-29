@@ -31,7 +31,8 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+                return null;
+            }
 		});
 	}
 

@@ -1,0 +1,89 @@
+package src.main.resources.conectividad;
+
+import java.io.*;
+import java.net.*;
+
+public class Conectividad {
+    private Socket socket;
+    private ServerSocket serverSocket;
+    private int puertopersonal;
+    private String ippersonal;
+
+    private EscucharConexionHilo escucharConexion;
+
+    private EnviarMensajeHilo enviarMensaje;
+    private RecibirMensajeHilo recibirMensaje;
+    private boolean conectado;
+
+	public Conectividad(String ippersonal, int puertopersonal)  {
+        this.puertopersonal=puertopersonal;
+        this.ippersonal=ippersonal;
+        this.conectado=false;
+    }
+
+    public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException { // tiene que devolver una excepcion de no conexion
+        try {
+            this.socket=new Socket(ipserver,puertoserver);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
+        this.serverSocket = new ServerSocket(puertopersonal);
+        this.escucharConexion= new EscucharConexionHilo(puertopersonal);
+        escucharConexion.start();
+        } //lamada a nucleo
+
+
+    public void enviarMensaje(String mensajeaenviar){
+       this.enviarMensaje =new EnviarMensajeHilo(this.socket,mensajeaenviar);
+       this.enviarMensaje.start();
+    }
+
+    public void recibirMensaje() {
+        this.recibirMensaje = new RecibirMensajeHilo(this.socket);
+        while (conectado == true) {
+            this.recibirMensaje.start();
+        }
+        ;
+    }
+
+
+        public void cerrarConexion(){
+        try {
+            enviarMensaje("conexion cerrada");
+            socket.close();
+            serverSocket.close(); // lo puse por las dudas, puede traer errores
+            escucharConexion(puertopersonal);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getPuertopersonal() {
+        return puertopersonal;
+    }
+
+    public void setPuertopersonal(int puertopersonal) {
+        this.puertopersonal = puertopersonal;
+    }
+
+    public String getIppersonal() {
+        return ippersonal;
+    }
+
+    public void setIppersonal(String ippersonal) {
+        this.ippersonal = ippersonal;
+    }
+
+    public void setConectado(boolean conectado) {
+        this.conectado = conectado;
+    }
+
+    public boolean isConectado() {
+        return conectado;
+    }
+
+
+}
