@@ -2,6 +2,8 @@ package src.main.resources.controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -36,7 +38,13 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 				this.modelo.iniciarConexion(ipDestino, puertoDestino);
 				} catch (RuntimeException ex){
 				//  TO-DO esto tendria que tener un catch para hacer un label que notifique
-			}
+				} catch (UnknownHostException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
 			ControladorConversacion controladorConversacion = new ControladorConversacion();
 		}

@@ -8,6 +8,7 @@ import src.main.resources.conectividad.Conectividad;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Observable;
 
 public class Nucleo extends Observable {
@@ -87,11 +88,10 @@ public class Nucleo extends Observable {
 		this.conexion.escucharConexion(this.port);
 	}
 
-	public void iniciarConexion(String ip, int port){
+	public void iniciarConexion(String ip, int port) throws UnknownHostException, RuntimeException, IOException{
 		this.conexion.iniciarConexion(ip,port);
 		this.accionObserver=this.INICIAR_CONEXION;
-		this.setChanged();
-		this.notifyObservers();
+		
 	}
 
 	public void recibirConexion(String ip, int port){

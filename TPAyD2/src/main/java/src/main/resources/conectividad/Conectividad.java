@@ -23,14 +23,10 @@ public class Conectividad {
         this.conectado=false;
     }
 
-    public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException { // tiene que devolver una excepcion de no conexion
-        try {
-            this.socket=new Socket(ipserver,puertoserver);
-            this.recibirMensaje();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException, UnknownHostException, IOException { // tiene que devolver una excepcion de no conexion
+        
+           this.socket=new Socket(ipserver,puertoserver);
+           this.recibirMensaje();
     }
 
     public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
