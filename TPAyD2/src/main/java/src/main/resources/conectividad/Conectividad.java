@@ -32,8 +32,6 @@ public class Conectividad extends Observable{
         this.conectado=false;
     }
 	
-	
-
 	public List<Observer> getObservers() {
 		return observers;
 	}
@@ -114,6 +112,10 @@ public class Conectividad extends Observable{
 
 	public void setSocket(Socket socket2) {
 		this.socket=socket2;
+	}
+
+	public Socket getSocket() {
+		return this.socket;
 	}
 
 

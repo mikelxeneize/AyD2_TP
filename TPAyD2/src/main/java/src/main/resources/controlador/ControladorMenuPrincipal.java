@@ -53,9 +53,12 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (arg.equals("conexion establecida")){
-			this.vista.cerrar();
-			ControladorConversacion controladorConversacion = new ControladorConversacion();
+		if (arg instanceof Mensaje) {
+			Mensaje datos = (Mensaje) arg;
+			if(datos.getEstado().equals("conexion establecida")) {
+				this.vista.cerrar();
+				ControladorConversacion controladorConversacion = new ControladorConversacion();
+			}
 		}
 	}
 }

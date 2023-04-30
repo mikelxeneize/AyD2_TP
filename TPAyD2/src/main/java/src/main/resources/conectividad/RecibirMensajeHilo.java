@@ -18,25 +18,29 @@ public class RecibirMensajeHilo extends Thread {
 
     @Override
     public void run() {
-        BufferedReader in = null;
-        Mensaje mensaje;
-        try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        String msg = null;
-        try {
-			msg = in.readLine();
-			mensaje = new Mensaje( msg,"mensaje recibido");
-			this.conectividad.recibirMensaje();
-		} catch (IOException e) {
-			mensaje = new Mensaje( msg,"conexion cerrada");
-		}
-        
-        this.conectividad.notificarAccion(mensaje);
+    	String msg = null;
+    	do {
+	        BufferedReader in = null;
+	        Mensaje mensaje;
+	        try {
+	            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	        } catch (IOException e) {
+	            throw new RuntimeException(e);
+	        }
+	        try {
+				msg = in.readLine();
+				if (msg == null) {
+					mensaje = new Mensaje( msg,"conexion cerrada");
+				}else {
+					mensaje = new Mensaje( msg,"mensaje recibido");	
+				}
+				this.conectividad.notificarAccion(mensaje);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+	        
+    	}while(msg != null); //implica que se cerro la conexion
+
     }
-
-
 
 }
