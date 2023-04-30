@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -15,8 +16,8 @@ import java.awt.Font;
 public class VentanaConversacion extends JFrame implements IVista{
 
 	private JPanel contentPane;
-	private JTextField textField_enviarMensaje;
-	private JTextField textField_recibirMensaje;
+	private JTextArea textField_enviarMensaje;
+	private JTextArea textField_recibirMensaje;
 	private JButton btnNewButton_1 ;
 	private JButton btnNewButton;
 	/**
@@ -47,7 +48,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		textField_enviarMensaje = new JTextField();
+		textField_enviarMensaje = new JTextArea();
 		textField_enviarMensaje.setBounds(78, 338, 431, 35);
 		contentPane.add(textField_enviarMensaje);
 		textField_enviarMensaje.setColumns(10);
@@ -61,7 +62,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		btnNewButton.setBounds(519, 338, 125, 35);
 		contentPane.add(btnNewButton);
 		
-		textField_recibirMensaje = new JTextField();
+		textField_recibirMensaje = new JTextArea();
 		textField_recibirMensaje.setBounds(78, 85, 431, 242);
 		contentPane.add(textField_recibirMensaje);
 		textField_recibirMensaje.setColumns(10);
@@ -103,4 +104,10 @@ public class VentanaConversacion extends JFrame implements IVista{
 		setVisible(false);
 		
 	}
+
+	public void setInputChat(String text) {
+		this.textField_enviarMensaje.setText(text);
+		
+	}
+	
 }

@@ -4,25 +4,30 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import src.main.resources.conectividad.Conectividad;
+import src.main.resources.conectividad.Mensaje;
+import src.main.resources.controlador.ControladorConversacion;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
-public class Nucleo extends Observable {
+public class Nucleo extends Observable implements  Observer {
 	private Conectividad conexion;
 	private static Nucleo instance;
 	private String ip;
 	private int port;
 	private String filePath = "./config.json";
 	private String accionObserver;
-	public static final String ENVIAR_MENSAJE = "enviar_mensaje";
-	public static final String RECIBIR_MENSAJE = "recibir_mensaje";
-	public static final String INICIAR_CONEXION= "iniciar_conexion";
-	public static final String CERRAR_CONEXION = "cerrar_conexion";
-
+	public static final String RECIBIR_MENSAJE = "mensaje recibido";
+	public static final String INICIAR_CONEXION= "conexion establecida";
+	public static final String CERRAR_CONEXION = "conexion finalizada";
+    private List<Observer> observers = new ArrayList<>();
+	
 
 	public static Nucleo getInstance() {
 		if (Nucleo.instance == null) {
@@ -85,39 +90,33 @@ public class Nucleo extends Observable {
 
 	public void activarEscucha() throws IOException {
 		this.conexion = new Conectividad(this.ip, this.port);
+		
+		
+		this.conexion.addObserver(this);
 		this.conexion.escucharConexion(this.port);
 	}
 
 	public void iniciarConexion(String ip, int port) throws UnknownHostException, RuntimeException, IOException{
 		this.conexion.iniciarConexion(ip,port);
-		this.accionObserver=this.INICIAR_CONEXION;
-		
 	}
 
 	public void recibirConexion(String ip, int port){
-		this.accionObserver=this.INICIAR_CONEXION;
 		this.setChanged();
-		this.notifyObservers();
+		//crear un objeto para pasar informacion
+		this.notifyObservers(this.INICIAR_CONEXION);
 	}
 
 	public void cerrarConexion() {
 		this.conexion.cerrarConexion();
-		this.accionObserver=this.CERRAR_CONEXION;
-		setChanged();
-		this.notifyObservers();
 	}
 
-	public void enviarMensaje(String mensaje) {
+	public void enviarMensaje(String mensaje) throws IOException {
 		this.conexion.enviarMensaje(mensaje);
-		this.accionObserver=this.ENVIAR_MENSAJE;
-		this.setChanged();
-		this.notifyObservers();
 	}
 
 	public void recibirMensaje(String mensaje){
-		this.accionObserver=this.RECIBIR_MENSAJE;
 		this.setChanged();
-		this.notifyObservers(mensaje);
+		this.notifyObservers(RECIBIR_MENSAJE);
 	}
 
 	public String getAccionObserver() {
@@ -126,5 +125,13 @@ public class Nucleo extends Observable {
 
 	public Conectividad getConectividad() {
 		return this.conexion;
+	}
+
+	
+	@Override
+	public void update(Observable o, Object arg) {	
+		
+			this.setChanged();
+			this.notifyObservers(arg);
 	}
 }

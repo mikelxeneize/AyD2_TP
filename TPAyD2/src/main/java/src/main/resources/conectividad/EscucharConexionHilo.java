@@ -4,13 +4,16 @@ import src.main.resources.backEnd.Nucleo;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class EscucharConexionHilo extends Thread{
     private int puertopersonal;
     private ServerSocket serverSocket;
-
-    public EscucharConexionHilo(int puertopersonal) {
+    private Socket socket;
+    private Conectividad conectividad;
+    public EscucharConexionHilo(int puertopersonal, Conectividad conectividad) {
         this.puertopersonal=puertopersonal;
+        this.conectividad=conectividad;
     }
 
     @Override
@@ -23,9 +26,12 @@ public class EscucharConexionHilo extends Thread{
             throw new RuntimeException(e);
         }
         try {
-            serverSocket.accept();
-            Nucleo.getInstance().getConectividad().setConectado(true);
-            Nucleo.getInstance().getConectividad().recibirMensaje();
+        	socket=serverSocket.accept();
+        	this.conectividad.setConectado(true);
+        	this.conectividad.setSocket(socket);
+        	this.conectividad.recibirMensaje();
+        	Mensaje mensaje = new Mensaje( null,"conexion establecida");
+        	this.conectividad.notificarAccion(mensaje);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

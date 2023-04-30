@@ -4,54 +4,84 @@ import src.main.resources.backEnd.Nucleo;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.EventObject;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class Conectividad {
+public class Conectividad extends Observable{
+	//socket si inicias la conversacion
     private Socket socket;
+    //server socket si te inician la conversacion
     private ServerSocket serverSocket;
+    
+    //Informacion personal
     private int puertopersonal;
     private String ippersonal;
+    private List<Observer> observers = new ArrayList<>();
 
-    private EscucharConexionHilo escucharConexion;
-
-    private EnviarMensajeHilo enviarMensaje;
-    RecibirMensajeHilo recibirMensaje;
+    //Flag de si se encuentra en una conversacion
     private boolean conectado;
-
+    private String estado="";
+    
+    
 	public Conectividad(String ippersonal, int puertopersonal)  {
         this.puertopersonal=puertopersonal;
         this.ippersonal=ippersonal;
         this.conectado=false;
     }
+	
+	
 
+	public List<Observer> getObservers() {
+		return observers;
+	}
+
+
+
+	
     public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException, UnknownHostException, IOException { // tiene que devolver una excepcion de no conexion
+ 
+    	ipserver="127.0.0.1";
+        this.socket=new Socket(ipserver,puertoserver);
+        this.recibirMensaje();
         
-           this.socket=new Socket(ipserver,puertoserver);
-           this.recibirMensaje();
+
     }
 
     public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
-        
-        this.escucharConexion= new EscucharConexionHilo(puertopersonal);
+    	
+    	EscucharConexionHilo escucharConexion= new EscucharConexionHilo(puertopersonal,this);
         escucharConexion.start();
         } //lamada a nucleo
 
 
-    public void enviarMensaje(String mensajeaenviar){
-       this.enviarMensaje =new EnviarMensajeHilo(this.socket,mensajeaenviar);
-       this.enviarMensaje.start();
-    }
+    
 
     public void recibirMensaje() {
-        this.recibirMensaje = new RecibirMensajeHilo(this.socket);
-            this.recibirMensaje.start();
+    	
+    	
+    	RecibirMensajeHilo recibirMensaje = new RecibirMensajeHilo(this.socket,this);
+        recibirMensaje.start();
     }
+    
 
+	public void notificarAccion(Mensaje mensaje) {
+		this.setChanged();
+		this.notifyObservers(mensaje);
+	}
+	
 
-        public void cerrarConexion(){
+	public void enviarMensaje(String mensajeaenviar) throws IOException {
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(mensajeaenviar);
+    }
+	
+
+    public void cerrarConexion(){
         try {
-            enviarMensaje("conexion cerrada");
             socket.close();
-            serverSocket.close(); // lo puse por las dudas, puede traer errores
             escucharConexion(puertopersonal);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -81,6 +111,13 @@ public class Conectividad {
     public boolean isConectado() {
         return conectado;
     }
+
+	public void setSocket(Socket socket2) {
+		this.socket=socket2;
+	}
+
+
+
 
 
 }
