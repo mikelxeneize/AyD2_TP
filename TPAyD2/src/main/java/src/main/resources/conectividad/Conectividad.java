@@ -39,7 +39,8 @@ public class Conectividad extends Observable{
 
 
 	
-    public void iniciarConexion(String ipserver, int puertoserver) throws RuntimeException, UnknownHostException, IOException { // tiene que devolver una excepcion de no conexion
+    public void iniciarConexion(String ipserver, int puertoserver) throws  UnknownHostException, IOException, 
+	IllegalArgumentException { // tiene que devolver una excepcion de no conexion
  
     	ipserver="127.0.0.1";
         this.socket=new Socket(ipserver,puertoserver);
@@ -78,13 +79,9 @@ public class Conectividad extends Observable{
     }
 	
 
-    public void cerrarConexion(){
-        try {
+    public void cerrarConexion() throws IOException{
             socket.close();
             escucharConexion(puertopersonal);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public int getPuertopersonal() {

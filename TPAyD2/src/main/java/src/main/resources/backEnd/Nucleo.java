@@ -96,7 +96,8 @@ public class Nucleo extends Observable implements  Observer {
 		this.conexion.escucharConexion(this.port);
 	}
 
-	public void iniciarConexion(String ip, int port) throws UnknownHostException, RuntimeException, IOException{
+	public void iniciarConexion(String ip, int port) throws UnknownHostException, RuntimeException, IOException, 
+	IllegalArgumentException{
 		this.conexion.iniciarConexion(ip,port);
 	}
 
@@ -106,8 +107,8 @@ public class Nucleo extends Observable implements  Observer {
 		this.notifyObservers(this.INICIAR_CONEXION);
 	}
 
-	public void cerrarConexion() {
-		//this.conexion.deleteObserver(this);
+	public void cerrarConexion() throws IOException {
+		
 		this.conexion.cerrarConexion();
 	}
 

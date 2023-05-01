@@ -33,21 +33,24 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			int puertoDestino = 0;
 			try {
 				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
+				this.modelo.iniciarConexion(ipDestino, puertoDestino);
+				this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
+				ControladorConversacion controladorConversacion = new ControladorConversacion();
+				this.vista.mostrarLabelErrorAlConectar(false);
+				
 			} catch (NumberFormatException ex) {
-				//TO-DO aca habria q notificar en pantalla lo de q no es un numero, podriamos validar rangos puertos tmb
+				this.vista.setTextErrorlabelTexto("Formato de puerto invalido");
+				this.vista.mostrarLabelErrorAlConectar(true);
+			} catch (IOException e1) {
+				this.vista.setTextErrorlabelTexto("La conexion fue rechazada. Revisar el ip y puerto ingresados");
+				this.vista.mostrarLabelErrorAlConectar(true);
 			}
-			try {
-				try {
-					this.modelo.iniciarConexion(ipDestino, puertoDestino);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				} catch (RuntimeException ex){
-				//  TO-DO esto tendria que tener un catch para hacer un label que notifique
-			}
-			this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
-			ControladorConversacion controladorConversacion = new ControladorConversacion();
+			 catch (
+				IllegalArgumentException e1) {
+				this.vista.setTextErrorlabelTexto("Rango de puerto invalido");
+				this.vista.mostrarLabelErrorAlConectar(true);
+			 }
+			
 		}
 	}
 

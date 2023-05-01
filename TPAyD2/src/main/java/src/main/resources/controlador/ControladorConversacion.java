@@ -28,7 +28,12 @@ public class ControladorConversacion implements ActionListener, Observer {
 		if(e.getActionCommand().equals(IVista.CERRAR_CONEXION)) {
 			this.vista.cerrar();
 			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
-			this.modelo.cerrarConexion();
+			try {
+				this.modelo.cerrarConexion();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		else if(e.getActionCommand().equals(IVista.ENVIAR_MENSAJE)) {
 			String mensaje = this.vista.getMensaje();
@@ -54,7 +59,12 @@ public class ControladorConversacion implements ActionListener, Observer {
 			if(datos.getEstado().equals("conexion cerrada")) {
 				this.vista.cerrar();
 				this.modelo.deleteObserver(this);
-				this.modelo.cerrarConexion();
+				try {
+					this.modelo.cerrarConexion();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 			}
 		

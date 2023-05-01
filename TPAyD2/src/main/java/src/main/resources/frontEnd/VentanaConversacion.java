@@ -63,6 +63,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		contentPane.add(btnNewButton);
 		
 		textField_recibirMensaje = new JTextArea();
+		textField_recibirMensaje.setEditable(false);
 		textField_recibirMensaje.setBounds(78, 85, 431, 242);
 		contentPane.add(textField_recibirMensaje);
 		textField_recibirMensaje.setColumns(10);

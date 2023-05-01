@@ -11,9 +11,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JLabel;
+import java.awt.Color;
 
 public class VentanaMenuPrincipal extends JFrame implements IVista{
-
+	private JLabel lblErrorAlConectar;
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
@@ -78,7 +79,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		contentPane.add(btnConfigurarPuerto);
 		
 		JLabel lblNewLabel = new JLabel("Para iniciar la conversacion solicitar la ip a la otra persona, y enviarle la tuya que esta");
-		lblNewLabel.setBounds(86, 328, 434, 104);
+		lblNewLabel.setBounds(86, 341, 434, 104);
 		contentPane.add(lblNewLabel);
 		JLabel lblPepeChat = new JLabel("Pepe Chat");
 		lblPepeChat.setFont(new Font("Tahoma", Font.PLAIN, 30));
@@ -92,7 +93,14 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		JLabel lblNewLabel_1_1 = new JLabel("Puerto destino:");
 		lblNewLabel_1_1.setBounds(57, 191, 83, 28);
 		contentPane.add(lblNewLabel_1_1);
+		
+		lblErrorAlConectar = new JLabel("La conexion fue rechazada. Revisar el ip y puerto ingresados");
+		lblErrorAlConectar.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblErrorAlConectar.setForeground(new Color(255, 0, 0));
+		lblErrorAlConectar.setBounds(73, 312, 420, 43);
+		contentPane.add(lblErrorAlConectar);
 		this.setVisible(true);
+		this.lblErrorAlConectar.setVisible(false);
 	}
 
 
@@ -114,7 +122,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		return textField_1;
 	}
 
-
+	
 	public void cerrar() {
 		setVisible(false);
 		
@@ -124,6 +132,14 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 	}
 	public String getPortDestino(){
 		return this.textField.getText();
+	}
+	
+	public void setTextErrorlabelTexto(String text) {
+		this.lblErrorAlConectar.setText(text);
+	}
+	
+	public void mostrarLabelErrorAlConectar(boolean boleano) {
+		this.lblErrorAlConectar.setVisible(boleano);
 	}
 }
 

@@ -22,11 +22,12 @@ public class RecibirMensajeHilo extends Thread {
     	do {
 	        BufferedReader in = null;
 	        Mensaje mensaje;
-	        try {
-	            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	        } catch (IOException e) {
-	            throw new RuntimeException(e);
-	        }
+	            try {
+					in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+	        
 	        try {
 				msg = in.readLine();
 				if (msg == null) {
