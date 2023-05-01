@@ -62,14 +62,16 @@ public class Nucleo extends Observable implements  Observer {
 		configuracion = (JSONObject) obj;
 		
 		//forma vieja carga desde la configuracion		
-		this.ip= (String) configuracion.get("ip"); 
+		//this.ip= (String) configuracion.get("ip"); 
 
 		//forma entre otras pcs
-		//InetAddress localHost = InetAddress.getLocalHost();
-		//this.ip = localHost.getHostAddress();
+		InetAddress localHost = InetAddress.getLocalHost();
+		this.ip = localHost.getHostAddress();
 		
 		longPort = (Long) configuracion.get("port");
 		this.port = longPort.intValue();
+		
+		this.conexion = new Conectividad(this.ip, this.port);
 	}
 
 	public void setConfiguracion(String ip, int port) {
@@ -93,7 +95,6 @@ public class Nucleo extends Observable implements  Observer {
 	}
 	
 	public void activarEscucha(){
-		this.conexion = new Conectividad(this.ip, this.port);
 		this.conexion.addObserver(this);
 		this.conexion.escucharConexion(this.port);
 	}
@@ -108,7 +109,7 @@ public class Nucleo extends Observable implements  Observer {
 		//crear un objeto para pasar informacion
 		this.notifyObservers(this.INICIAR_CONEXION);
 	}
-
+ 
 	public void cerrarConexion() throws IOException {
 		
 		this.conexion.cerrarConexion();

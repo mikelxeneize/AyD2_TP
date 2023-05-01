@@ -26,14 +26,14 @@ public class ControladorConversacion implements ActionListener, Observer {
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getActionCommand().equals(IVista.CERRAR_CONEXION)) {
-			this.vista.cerrar();
-			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 			try {
 				this.modelo.cerrarConexion();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+			this.vista.cerrar();
+			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 		}
 		else if(e.getActionCommand().equals(IVista.ENVIAR_MENSAJE)) {
 			String mensaje = this.vista.getMensaje();

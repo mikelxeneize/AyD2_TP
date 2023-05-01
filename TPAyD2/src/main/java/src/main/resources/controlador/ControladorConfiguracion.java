@@ -40,7 +40,7 @@ public class ControladorConfiguracion implements ActionListener{
 				this.vista.cerrar();
 				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 			} catch (IOException e1) {
-				this.vista.setTextlabelError("Se aplicaron los cambios, pero no se guardar la configuracion");
+				this.vista.setTextlabelError("No se pudo guardar la configuracion");
 				this.vista.mostrarLabelError();
 			}
 		}else if (actionCommand.equals(IVista.CANCELAR)) {

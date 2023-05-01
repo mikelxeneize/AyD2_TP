@@ -82,7 +82,6 @@ public class Conectividad extends Observable{
 
     public void cerrarConexion() throws IOException{
             socket.close();
-            escucharConexion(puertopersonal);
     }
 
     public int getPuertopersonal() {
