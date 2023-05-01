@@ -53,6 +53,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 				this.vista.recibirMensaje("Colocar ip aqui :" +datos.getMensaje());
 			if(datos.getEstado().equals("conexion cerrada")) {
 				this.vista.cerrar();
+				this.modelo.deleteObserver(this);
 				this.modelo.cerrarConexion();
 				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 			}
