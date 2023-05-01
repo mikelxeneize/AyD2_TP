@@ -43,6 +43,7 @@ public class Conectividad extends Observable{
  
     	ipserver="127.0.0.1";
         this.socket=new Socket(ipserver,puertoserver);
+        this.serverSocket.close();
         this.recibirMensaje();
         
 
@@ -116,6 +117,10 @@ public class Conectividad extends Observable{
 
 	public Socket getSocket() {
 		return this.socket;
+	}
+
+	public void setServerSocket(ServerSocket serverSocket2) {
+		this.serverSocket = serverSocket2;
 	}
 
 

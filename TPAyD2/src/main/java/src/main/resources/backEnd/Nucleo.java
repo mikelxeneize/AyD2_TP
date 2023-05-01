@@ -107,6 +107,7 @@ public class Nucleo extends Observable implements  Observer {
 	}
 
 	public void cerrarConexion() {
+		//this.conexion.deleteObserver(this);
 		this.conexion.cerrarConexion();
 	}
 
@@ -130,7 +131,6 @@ public class Nucleo extends Observable implements  Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {	
-		
 			this.setChanged();
 			this.notifyObservers(arg);
 	}

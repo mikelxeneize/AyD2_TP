@@ -21,19 +21,21 @@ public class EscucharConexionHilo extends Thread{
         try {
             System.out.println(puertopersonal);
             this.serverSocket = new ServerSocket(puertopersonal);
+            this.conectividad.setServerSocket(this.serverSocket);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         try {
         	socket=serverSocket.accept();
+        	this.serverSocket.close();
         	this.conectividad.setConectado(true);
         	this.conectividad.setSocket(socket);
         	this.conectividad.recibirMensaje();
         	Mensaje mensaje = new Mensaje( null,"conexion establecida");
         	this.conectividad.notificarAccion(mensaje);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println();
         }
     }
 }

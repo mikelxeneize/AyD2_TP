@@ -36,7 +36,7 @@ public class RecibirMensajeHilo extends Thread {
 				}
 				this.conectividad.notificarAccion(mensaje);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				System.out.println("escepcion, creo que se cerro la conexion");
 			}
 	        
     	}while(msg != null); //implica que se cerro la conexion
