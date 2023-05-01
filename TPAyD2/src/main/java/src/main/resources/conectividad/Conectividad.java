@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Conectividad extends Observable{
+public class Conectividad extends Observable implements IConectividad{
 	//socket si inicias la conversacion
     private Socket socket;
     //server socket si te inician la conversacion
