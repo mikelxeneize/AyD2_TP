@@ -42,7 +42,6 @@ public class Conectividad extends Observable{
     public void iniciarConexion(String ipserver, int puertoserver) throws  UnknownHostException, IOException, 
 	IllegalArgumentException { // tiene que devolver una excepcion de no conexion
  
-    	ipserver="127.0.0.1";
         this.socket=new Socket(ipserver,puertoserver);
         this.serverSocket.close();
         this.recibirMensaje();
@@ -50,7 +49,9 @@ public class Conectividad extends Observable{
 
     }
 
-    public void escucharConexion(int puertopersonal) throws IOException { // tiene que devolver una excepcion de no conexion
+    
+    
+    public void escucharConexion(int puertopersonal){ // tiene que devolver una excepcion de no conexion
     	
     	EscucharConexionHilo escucharConexion= new EscucharConexionHilo(puertopersonal,this);
         escucharConexion.start();
@@ -118,6 +119,10 @@ public class Conectividad extends Observable{
 
 	public void setServerSocket(ServerSocket serverSocket2) {
 		this.serverSocket = serverSocket2;
+	}
+
+	public void desactivarEscucharConexion() throws IOException {
+		this.serverSocket.close();
 	}
 
 

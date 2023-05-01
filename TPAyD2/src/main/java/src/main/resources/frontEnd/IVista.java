@@ -12,7 +12,8 @@ public interface IVista {
 	// ----------------------MENSAJES------------------------//
 	static final String INICIAR_CONEXION = "iniciar";
 	static final String ENVIAR_MENSAJE = "enviar_mensaje";
-	static final String MENUPRINCIPAL = "menu_principal";
+	static final String ACEPTAR = "aceptar";
+	static final String CANCELAR = "cancelar";
 	static final String CONFIGURACION = "configuracion";
 	static final String CERRAR_CONEXION = "terminar_conversacion";
 	

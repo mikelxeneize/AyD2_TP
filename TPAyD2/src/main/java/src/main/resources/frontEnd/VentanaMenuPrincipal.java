@@ -12,14 +12,15 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JLabel;
 import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class VentanaMenuPrincipal extends JFrame implements IVista{
 	private JLabel lblErrorAlConectar;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField textField_port;
+	private JTextField textField_IP;
 
-	private JButton btnNewButton;
+	private JButton btnIniciarConexion;
 	private JButton btnConfigurarPuerto ;
 	/**
 	 * Launch the application.
@@ -50,40 +51,42 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		btnNewButton = new JButton("Iniciar dialogo");
+		btnIniciarConexion = new JButton("Iniciar dialogo");
 		btnConfigurarPuerto = new JButton("Configurar puerto");
 		
-		textField = new JTextField();
-		textField_1 = new JTextField();
-		textField.setBounds(148, 177, 148, 43);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		textField_port = new JTextField();
+		textField_IP = new JTextField();
+		textField_port.setBounds(148, 177, 148, 43);
+		contentPane.add(textField_port);
+		textField_port.setColumns(10);
 		
-		textField_1.setColumns(10);
-		textField_1.setBounds(148, 231, 148, 43);
-		contentPane.add(textField_1);
+		textField_IP.setColumns(10);
+		textField_IP.setBounds(148, 231, 148, 43);
+		contentPane.add(textField_IP);
 		
 		
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		btnNewButton.addActionListener(new ActionListener() {
+		btnIniciarConexion.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		btnIniciarConexion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnNewButton.setBounds(366, 177, 162, 101);
-		contentPane.add(btnNewButton);
+		btnIniciarConexion.setBounds(366, 177, 162, 101);
+		contentPane.add(btnIniciarConexion);
 		btnConfigurarPuerto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnConfigurarPuerto.setBounds(439, 397, 162, 48);
+		btnConfigurarPuerto.setBounds(439, 376, 162, 48);
 		contentPane.add(btnConfigurarPuerto);
 		
-		JLabel lblNewLabel = new JLabel("Para iniciar la conversacion solicitar la ip a la otra persona, y enviarle la tuya que esta");
-		lblNewLabel.setBounds(86, 341, 434, 104);
+		JLabel lblNewLabel = new JLabel("Para iniciar la conversacion solicitar la ip a la otra persona, y enviale la tuya");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel.setBounds(12, 81, 589, 101);
 		contentPane.add(lblNewLabel);
 		JLabel lblPepeChat = new JLabel("Pepe Chat");
+		lblPepeChat.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPepeChat.setFont(new Font("Tahoma", Font.PLAIN, 30));
-		lblPepeChat.setBounds(238, 11, 142, 104);
+		lblPepeChat.setBounds(24, 12, 589, 104);
 		contentPane.add(lblPepeChat);
 		
 		JLabel lblNewLabel_1 = new JLabel("Ip destino:");
@@ -95,9 +98,10 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		contentPane.add(lblNewLabel_1_1);
 		
 		lblErrorAlConectar = new JLabel("La conexion fue rechazada. Revisar el ip y puerto ingresados");
+		lblErrorAlConectar.setHorizontalAlignment(SwingConstants.CENTER);
 		lblErrorAlConectar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblErrorAlConectar.setForeground(new Color(255, 0, 0));
-		lblErrorAlConectar.setBounds(73, 312, 420, 43);
+		lblErrorAlConectar.setBounds(12, 299, 589, 43);
 		contentPane.add(lblErrorAlConectar);
 		this.setVisible(true);
 		this.lblErrorAlConectar.setVisible(false);
@@ -106,20 +110,9 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 
 	public void addActionListener(ActionListener listener) {
 		this.btnConfigurarPuerto.addActionListener(listener);
-		this.btnNewButton.addActionListener(listener);
+		this.btnIniciarConexion.addActionListener(listener);
 		this.btnConfigurarPuerto.setActionCommand(CONFIGURACION);
-		this.btnNewButton.setActionCommand(INICIAR_CONEXION);
-	}
-
-
-	public JTextField getTextField() {
-		return textField;
-	}
-
-
-
-	public JTextField getTextField_1() {
-		return textField_1;
+		this.btnIniciarConexion.setActionCommand(INICIAR_CONEXION);
 	}
 
 	
@@ -128,13 +121,13 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		
 	}
 	public String getIpDestino(){
-		return this.textField_1.getText();
+		return this.textField_IP.getText();
 	}
 	public String getPortDestino(){
-		return this.textField.getText();
+		return this.textField_port.getText();
 	}
 	
-	public void setTextErrorlabelTexto(String text) {
+	public void setTextlabelError(String text) {
 		this.lblErrorAlConectar.setText(text);
 	}
 	

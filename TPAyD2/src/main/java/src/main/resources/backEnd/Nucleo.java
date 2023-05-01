@@ -10,6 +10,7 @@ import src.main.resources.controlador.ControladorConversacion;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,19 +53,21 @@ public class Nucleo extends Observable implements  Observer {
 		this.port = port;
 	}
 
-	public void cargarConfiguracion() {
+	public void cargarConfiguracion() throws IOException, ParseException {
 		Long longPort = 0L;
 		JSONParser jsonParser = new JSONParser();
 		JSONObject configuracion = null;
-		try (FileReader reader = new FileReader(this.filePath)) {
-			Object obj = jsonParser.parse(reader);
-			configuracion = (JSONObject) obj;
-		} catch (IOException e) { //TO-DO me parece que hay que propagar
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		this.ip= (String) configuracion.get("ip");
+		FileReader reader = new FileReader(this.filePath);
+		Object obj = jsonParser.parse(reader);
+		configuracion = (JSONObject) obj;
+		
+		//forma vieja carga desde la configuracion		
+		this.ip= (String) configuracion.get("ip"); 
+
+		//forma entre otras pcs
+		//InetAddress localHost = InetAddress.getLocalHost();
+		//this.ip = localHost.getHostAddress();
+		
 		longPort = (Long) configuracion.get("port");
 		this.port = longPort.intValue();
 	}
@@ -74,24 +77,23 @@ public class Nucleo extends Observable implements  Observer {
 		this.setIp(ip);
 	}
 
-	public void persistirConfiguracion() {
+	public void persistirConfiguracion() throws IOException {
 		JSONObject configuracion = new JSONObject();
 		configuracion.put("port",this.port);
 		configuracion.put("ip",this.ip);
 
-		try (FileWriter file = new FileWriter(filePath)) {
-			file.write(configuracion.toJSONString());
-			file.flush();
-		} catch (IOException e) { //TO-DO me parece que hay que propagar
-			e.printStackTrace();
-		}
+		FileWriter file = new FileWriter(filePath);
+		file.write(configuracion.toJSONString());
+		file.flush();
+
 	}
-
-
-	public void activarEscucha() throws IOException {
+	
+	public void desactivarEscucha() throws IOException {
+		this.conexion.desactivarEscucharConexion();
+	}
+	
+	public void activarEscucha(){
 		this.conexion = new Conectividad(this.ip, this.port);
-		
-		
 		this.conexion.addObserver(this);
 		this.conexion.escucharConexion(this.port);
 	}

@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import org.json.simple.parser.ParseException;
+
 import src.main.resources.backEnd.Nucleo;
 import src.main.resources.frontEnd.IVista;
 import src.main.resources.frontEnd.VentanaConfiguracion;
@@ -18,26 +20,34 @@ public class ControladorConfiguracion implements ActionListener{
 	public ControladorConfiguracion() {
 		this.vista = new VentanaConfiguracion();
 		this.modelo = Nucleo.getInstance();
-		this.vista.addActionListener(this);
+		try {
+			this.modelo.desactivarEscucha();
+		} catch (IOException e) {
+			// no deebria pasar jamas
+			e.printStackTrace();
+		}
 		this.vista.cargarConfiguracion(this.modelo.getIp(), Integer.toString(this.modelo.getPort()));
+		this.vista.addActionListener(this);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		
-		if(e.getActionCommand().equals(IVista.MENUPRINCIPAL)) {
+		String actionCommand = e.getActionCommand();
+		if(actionCommand.equals(IVista.ACEPTAR)) {	
 			this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
-			this.modelo.persistirConfiguracion();
 			try {
-				this.modelo.activarEscucha(); //TO-DO Revisar si el activar escucha va aca y si se pisa con la otra instancia o si el garbage colector se encarga
-			} catch (IOException ex) {
-				this.vista.mostrarErrorPuerto();
+				this.modelo.persistirConfiguracion();
+				this.vista.ocultarLabelError();
+				this.vista.cerrar();
+				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+			} catch (IOException e1) {
+				this.vista.setTextlabelError("Se aplicaron los cambios, pero no se guardar la configuracion");
+				this.vista.mostrarLabelError();
 			}
-			this.vista.ocultarErrorPuerto();
+		}else if (actionCommand.equals(IVista.CANCELAR)) {
+			this.vista.ocultarLabelError();
 			this.vista.cerrar();
 			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 		}
-		
-		
-	}
+	} 
 	
 }

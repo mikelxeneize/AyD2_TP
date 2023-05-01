@@ -3,8 +3,11 @@ package src.main.resources.controlador;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.Observer;
+
+import org.json.simple.parser.ParseException;
 
 import src.main.resources.backEnd.Nucleo;
 import src.main.resources.conectividad.Mensaje;
@@ -19,7 +22,14 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		this.vista = new VentanaMenuPrincipal();
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
-
+		try {
+			Nucleo.getInstance().cargarConfiguracion();
+		} catch (IOException | ParseException e) {
+			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion \nIr a configuracion");
+			this.vista.mostrarLabelErrorAlConectar(true);
+		}
+		Nucleo.getInstance().activarEscucha();
+		this.vista.mostrarLabelErrorAlConectar(false);
 		this.modelo.addObserver(this);
 	}
 
@@ -30,24 +40,23 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion();
 		} else if(e.getActionCommand().equals(IVista.INICIAR_CONEXION)) {
 			String ipDestino = this.vista.getIpDestino();
-			int puertoDestino = 0;
+			int puertoDestino;
 			try {
 				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
 				this.modelo.iniciarConexion(ipDestino, puertoDestino);
-				this.vista.cerrar(); //TO-DO esto se ejecuta despues de salir del catch?
+				this.vista.cerrar(); 
 				ControladorConversacion controladorConversacion = new ControladorConversacion();
 				this.vista.mostrarLabelErrorAlConectar(false);
 				
 			} catch (NumberFormatException ex) {
-				this.vista.setTextErrorlabelTexto("Formato de puerto invalido");
+				this.vista.setTextlabelError("Formato de puerto invalido");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			} catch (IOException e1) {
-				this.vista.setTextErrorlabelTexto("La conexion fue rechazada. Revisar el ip y puerto ingresados");
+			} catch (IOException e1) { //esta cachea el UnknownHostException tmb
+				this.vista.setTextlabelError("La conexion fue rechazada. Revisar el ip y puerto ingresados");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			}
-			 catch (
+			} catch (
 				IllegalArgumentException e1) {
-				this.vista.setTextErrorlabelTexto("Rango de puerto invalido");
+				this.vista.setTextlabelError("Rango de puerto invalido");
 				this.vista.mostrarLabelErrorAlConectar(true);
 			 }
 			
@@ -62,6 +71,9 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 				this.vista.cerrar();
 				this.modelo.deleteObserver(this);
 				ControladorConversacion controladorConversacion = new ControladorConversacion();
+			}else if (datos.getEstado().equals("error al escuchar")) {
+				this.vista.setTextlabelError("No estas en modo escucha, tu puerto esta ocupado \nIr a configuracion");
+				this.vista.mostrarLabelErrorAlConectar(true);
 			}
 		}
 	}

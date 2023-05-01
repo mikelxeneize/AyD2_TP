@@ -11,14 +11,16 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import java.awt.Color;
+import javax.swing.SwingConstants;
 
 public class VentanaConfiguracion extends JFrame implements IVista{
 
 	private JPanel contentPane;
 	private JTextField textField_port;
 	private JTextField textField_ip;
-	private JButton btnNewButton;
-	private JLabel lblErrorPuerto;
+	private JButton btnAceptar;
+	private JButton btnCancelar;
+	private JLabel lblError;
 	/**
 	 * Launch the application.
 	 */
@@ -57,35 +59,44 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		textField_port.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("Ip:");
-		lblNewLabel.setBounds(60, 138, 49, 14);
+		lblNewLabel.setBounds(60, 150, 49, 14);
 		contentPane.add(lblNewLabel);
 		
 		textField_ip = new JTextField();
+		textField_ip.setEnabled(false);
 		textField_ip.setColumns(10);
 		textField_ip.setBounds(93, 173, 261, 33);
 		contentPane.add(textField_ip);
 		
 		JLabel lblConfiguracion = new JLabel("Configuracion");
-		lblConfiguracion.setFont(new Font("Tahoma", Font.PLAIN, 17));
-		lblConfiguracion.setBounds(161, 11, 144, 33);
+		lblConfiguracion.setHorizontalAlignment(SwingConstants.CENTER);
+		lblConfiguracion.setFont(new Font("Dialog", Font.PLAIN, 24));
+		lblConfiguracion.setBounds(12, 11, 436, 50);
 		contentPane.add(lblConfiguracion);
 		
-		btnNewButton = new JButton("Menu principal");
-		btnNewButton.setBounds(293, 297, 130, 33);
-		contentPane.add(btnNewButton);
+		btnAceptar = new JButton("Aceptar");
+		btnAceptar.setBounds(293, 297, 130, 33);
+		contentPane.add(btnAceptar);
 		
-		 lblErrorPuerto = new JLabel("El puerto esta ocupado, debe elegir otro");
-		lblErrorPuerto.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		lblErrorPuerto.setForeground(new Color(255, 0, 0));
-		lblErrorPuerto.setBounds(41, 229, 334, 33);
-		contentPane.add(lblErrorPuerto);
+		 lblError = new JLabel("El puerto esta ocupado, debe elegir otro");
+		 lblError.setHorizontalAlignment(SwingConstants.CENTER);
+		lblError.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblError.setForeground(new Color(255, 0, 0));
+		lblError.setBounds(12, 229, 436, 33);
+		contentPane.add(lblError);
+		
+		btnCancelar = new JButton("Cancelar");
+		btnCancelar.setBounds(49, 297, 130, 33);
+		contentPane.add(btnCancelar);
 		this.setVisible(true);
-		this.lblErrorPuerto.setVisible(false);
+		this.lblError.setVisible(false);
 	}
 
 	public void addActionListener(ActionListener listener) {
-		this.btnNewButton.addActionListener(listener);
-		this.btnNewButton.setActionCommand(MENUPRINCIPAL);
+		this.btnAceptar.addActionListener(listener);
+		this.btnAceptar.setActionCommand(ACEPTAR);
+		this.btnCancelar.addActionListener(listener);
+		this.btnCancelar.setActionCommand(CANCELAR);
 	}
 
 	public void cerrar() {
@@ -102,16 +113,20 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		return this.textField_ip.getText();
 	}
 	
-	public void mostrarErrorPuerto() {
-		this.lblErrorPuerto.setVisible(true);
+	public void mostrarLabelError() {
+		this.lblError.setVisible(true);
 	}
 	
-	public void ocultarErrorPuerto() {
-		this.lblErrorPuerto.setVisible(false);
+	public void ocultarLabelError() {
+		this.lblError.setVisible(false);
 	}
 	
 	//el controlador se encarga de realizar los casteos
 	public String getPort(){
 		return this.textField_port.getText();
+	}
+	
+	public void setTextlabelError(String text) {
+		this.lblError.setText(text);
 	}
 }
