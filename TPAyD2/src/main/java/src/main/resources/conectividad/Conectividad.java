@@ -19,6 +19,7 @@ public class Conectividad extends Observable{
     //Informacion personal
     private int puertopersonal;
     private String ippersonal;
+    
     private List<Observer> observers = new ArrayList<>();
 
     //Flag de si se encuentra en una conversacion

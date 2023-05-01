@@ -19,7 +19,8 @@ public class ControladorConversacion implements ActionListener, Observer {
 		this.vista = new VentanaConversacion();
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
-
+		this.vista.recibirMensaje(">>Bienvenido a Pepe Chat!");
+		this.vista.recibirMensaje(">>Conexion establecida ");
 		this.modelo.addObserver(this);
 	}
 	

@@ -34,7 +34,7 @@ public class RecibirMensajeHilo extends Thread {
 					mensaje = new Mensaje( msg,"conexion cerrada");
 				}else {
 					mensaje = new Mensaje( msg,"mensaje recibido");	
-					mensaje.setIp(this.conectividad.getIppersonal());
+					mensaje.setIp(this.socket.getInetAddress().getHostAddress());
 					mensaje.setPuerto(this.conectividad.getPuertopersonal());
 				}
 				this.conectividad.notificarAccion(mensaje);

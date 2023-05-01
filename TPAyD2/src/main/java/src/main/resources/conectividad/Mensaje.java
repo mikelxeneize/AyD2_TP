@@ -1,5 +1,7 @@
 package src.main.resources.conectividad;
 
+import java.net.InetAddress;
+
 public class Mensaje {
 	private String mensaje;
 	private String estado;
@@ -30,9 +32,6 @@ public class Mensaje {
 		return ip;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
 
 	public int getPuerto() {
 		return puerto;
@@ -40,6 +39,10 @@ public class Mensaje {
 
 	public void setPuerto(int puerto) {
 		this.puerto = puerto;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 	
 	

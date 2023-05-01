@@ -70,31 +70,32 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnIniciarConexion.setBounds(366, 177, 162, 101);
+		btnIniciarConexion.setBounds(366, 177, 178, 101);
 		contentPane.add(btnIniciarConexion);
 		btnConfigurarPuerto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnConfigurarPuerto.setBounds(439, 376, 162, 48);
+		btnConfigurarPuerto.setBounds(408, 376, 193, 48);
 		contentPane.add(btnConfigurarPuerto);
 		
-		JLabel lblNewLabel = new JLabel("Para iniciar la conversacion solicitar la ip a la otra persona, y enviale la tuya");
+		JLabel lblNewLabel = new JLabel("<html>Para iniciar una conversación, pedile a la otra persona su dirección IP pública y el número de puerto al que deseas conectarte, e ingresalos debajo!");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(12, 81, 589, 101);
+		lblNewLabel.setBounds(82, 85, 466, 101);
 		contentPane.add(lblNewLabel);
 		JLabel lblPepeChat = new JLabel("Pepe Chat");
 		lblPepeChat.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPepeChat.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lblPepeChat.setFont(new Font("Tahoma", Font.PLAIN, 43));
 		lblPepeChat.setBounds(24, 12, 589, 104);
 		contentPane.add(lblPepeChat);
 		
 		JLabel lblNewLabel_1 = new JLabel("Ip destino:");
-		lblNewLabel_1.setBounds(55, 238, 83, 28);
+		lblNewLabel_1.setBounds(64, 231, 116, 36);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Puerto destino:");
-		lblNewLabel_1_1.setBounds(57, 191, 83, 28);
+		lblNewLabel_1_1.setBounds(42, 183, 115, 31);
 		contentPane.add(lblNewLabel_1_1);
 		
 		lblErrorAlConectar = new JLabel("La conexion fue rechazada. Revisar el ip y puerto ingresados");

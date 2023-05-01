@@ -74,7 +74,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		contentPane.add(lblNewLabel);
 		
 		 btnNewButton_1 = new JButton("Terminar conversacion");
-		btnNewButton_1.setBounds(484, 23, 154, 51);
+		btnNewButton_1.setBounds(446, 23, 192, 45);
 		contentPane.add(btnNewButton_1);
 		this.setVisible(true);
 	}
