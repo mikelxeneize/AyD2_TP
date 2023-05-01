@@ -4,7 +4,7 @@ public class Mensaje {
 	private String mensaje;
 	private String estado;
 	private String ip;
-	private String puerto;
+	private int puerto;
 	
 	
 	public Mensaje(String mensaje, String estado) {
@@ -24,6 +24,22 @@ public class Mensaje {
 	}
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPuerto() {
+		return puerto;
+	}
+
+	public void setPuerto(int puerto) {
+		this.puerto = puerto;
 	}
 	
 	

@@ -55,7 +55,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 		if (arg instanceof Mensaje) {
 			Mensaje datos = (Mensaje) arg;
 			if(datos.getEstado().equals("mensaje recibido"))
-				this.vista.recibirMensaje("Colocar ip aqui :" +datos.getMensaje());
+				this.vista.recibirMensaje("["+datos.getIp()+"]:  " +datos.getMensaje());
 			if(datos.getEstado().equals("conexion cerrada")) {
 				this.vista.cerrar();
 				this.modelo.deleteObserver(this);
