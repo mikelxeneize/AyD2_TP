@@ -19,6 +19,14 @@ public class Conectividad extends Observable implements IConectividad{
     //Informacion personal
     private int puertopersonal;
     private String ippersonal;
+
+    //Informacion personal
+    private int puertoReceptor;
+    private String ipReceptor;
+    
+  //Informacion Servidor
+    private int puertoServidor= 5000;
+    private String ipServidor="localhost";
     
     private List<Observer> observers = new ArrayList<>();
 
@@ -40,20 +48,32 @@ public class Conectividad extends Observable implements IConectividad{
 
 
 	
-    public void iniciarConexion(String ipserver, int puertoserver) throws  UnknownHostException, IOException, 
+    public void iniciarConversacion(String ipserver, int puertoserver) throws  UnknownHostException, IOException, 
 	IllegalArgumentException { // tiene que devolver una excepcion de no conexion
- 
-        this.socket=new Socket(ipserver,puertoserver);
+
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(ipserver +":" + Integer.toString(puertoserver)+ ":" + "mensaje" );
+        
+        this.ipReceptor=ipserver;
+        this.puertoReceptor=puertoserver;
+        
         this.serverSocket.close();
         this.recibirMensaje();
         
 
     }
 
+	
+
+    public void iniciarConexionServidor() throws  UnknownHostException, IOException, IllegalArgumentException {
+        this.socket=new Socket(this.ipServidor,this.puertoServidor,InetAddress.getByName(this.ippersonal),this.puertopersonal);//se conecta al servidor
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(this.ippersonal +":" + Integer.toString(this.puertopersonal)+ ":" + "este es mi puerto" );
     
+    }
+
     
     public void escucharConexion(int puertopersonal){ // tiene que devolver una excepcion de no conexion
-    	
     	EscucharConexionHilo escucharConexion= new EscucharConexionHilo(puertopersonal,this);
         escucharConexion.start();
         } //lamada a nucleo
@@ -77,7 +97,7 @@ public class Conectividad extends Observable implements IConectividad{
 
 	public void enviarMensaje(String mensajeaenviar) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(mensajeaenviar);
+        out.println(this.ipReceptor +":" + Integer.toString(this.puertoReceptor)+ ":" + mensajeaenviar );
     }
 	
 

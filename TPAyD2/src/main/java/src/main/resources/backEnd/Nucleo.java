@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +102,7 @@ public class Nucleo extends Observable implements  Observer {
 
 	public void iniciarConexion(String ip, int port) throws UnknownHostException, RuntimeException, IOException, 
 	IllegalArgumentException{
-		this.conexion.iniciarConexion(ip,port);
+		this.conexion.iniciarConversacion(ip,port);
 	}
 
 	public void recibirConexion(String ip, int port){
@@ -137,5 +138,9 @@ public class Nucleo extends Observable implements  Observer {
 	public void update(Observable o, Object arg) {	
 			this.setChanged();
 			this.notifyObservers(arg);
+	}
+
+	public void establecerConexionConElServidor() throws UnknownHostException, IllegalArgumentException, IOException {
+		this.conexion.iniciarConexionServidor();
 	}
 }

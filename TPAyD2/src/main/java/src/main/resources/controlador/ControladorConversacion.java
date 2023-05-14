@@ -34,7 +34,12 @@ public class ControladorConversacion implements ActionListener, Observer {
 				e1.printStackTrace();
 			}
 			this.vista.cerrar();
-			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+			try {
+				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+			} catch (IllegalArgumentException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		else if(e.getActionCommand().equals(IVista.ENVIAR_MENSAJE)) {
 			String mensaje = this.vista.getMensaje();
@@ -66,7 +71,12 @@ public class ControladorConversacion implements ActionListener, Observer {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+				try {
+					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+				} catch (IllegalArgumentException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		
 		}

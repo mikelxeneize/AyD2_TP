@@ -18,7 +18,7 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 	private VentanaMenuPrincipal vista = null;
 	private Nucleo modelo;
 
-	public ControladorMenuPrincipal() {
+	public ControladorMenuPrincipal() throws UnknownHostException, IllegalArgumentException, IOException {
 		this.vista = new VentanaMenuPrincipal();
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
@@ -28,6 +28,7 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion .Ir a configuracion");
 			this.vista.mostrarLabelErrorAlConectar(true);
 		}
+		Nucleo.getInstance().establecerConexionConElServidor();
 		Nucleo.getInstance().activarEscucha();
 		this.vista.mostrarLabelErrorAlConectar(false);
 		this.modelo.addObserver(this);

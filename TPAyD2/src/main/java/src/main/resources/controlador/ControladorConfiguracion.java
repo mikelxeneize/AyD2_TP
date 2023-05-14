@@ -46,7 +46,12 @@ public class ControladorConfiguracion implements ActionListener{
 		}else if (actionCommand.equals(IVista.CANCELAR)) {
 			this.vista.ocultarLabelError();
 			this.vista.cerrar();
-			ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+			try {
+				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+			} catch (IllegalArgumentException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	} 
 	
