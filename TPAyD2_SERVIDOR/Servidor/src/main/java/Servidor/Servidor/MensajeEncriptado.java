@@ -9,11 +9,22 @@ public class MensajeEncriptado {
 	private int puerto;
 	
 	
+	public MensajeEncriptado(String mensaje, String estado, String ip, int puerto) {
+		super();
+		this.mensaje = mensaje;
+		this.estado = estado;
+		this.ip = ip;
+		this.puerto = puerto;
+	}
+
 	public MensajeEncriptado(String mensaje) {
 		String[] partes = mensaje.split(":");
-		this.setIp(partes[0]);
 		this.setPuerto(Integer.parseInt(partes[1]));
 		this.setMensaje(partes[2]);
+		if(partes[0].equals("localhost"))
+			this.setIp("/127.0.0.1");
+		else
+			this.setIp("/"+partes[0]);
 	}
 	
 	public String getMensaje() {
@@ -34,6 +45,10 @@ public class MensajeEncriptado {
 	}
 
 
+	public String getIpTruncada() {
+		return ip.substring(1);
+	}
+
 	public int getPuerto() {
 		return puerto;
 	}
@@ -48,7 +63,7 @@ public class MensajeEncriptado {
 
 	@Override
 	public String toString() {
-		return ip+":"+puerto+""+mensaje;
+		return ip+":"+puerto+":"+mensaje;
 	}
 	
 	
