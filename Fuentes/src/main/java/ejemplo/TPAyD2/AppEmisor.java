@@ -6,7 +6,7 @@ import src.main.resources.controlador.ControladorMenuPrincipal;
  * Hello world!
  *
  */
-public class App 
+public class AppEmisor 
 {
     public static void main( String[] args ) throws Exception {
 		Nucleo.getInstance().iniciarNucleo();

@@ -48,6 +48,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
+		this.setTitle(TITULO_VENTANA);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 

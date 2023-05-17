@@ -45,7 +45,7 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		setBounds(100, 100, 460, 389);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
+		this.setTitle(TITULO_VENTANA);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		

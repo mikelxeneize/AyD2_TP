@@ -20,6 +20,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 	private JTextArea textField_recibirMensaje;
 	private JButton btnNewButton_1 ;
 	private JButton btnNewButton;
+	private JTextField textConectadoCon;
 	/**
 	 * Launch the application.
 	 */
@@ -41,10 +42,11 @@ public class VentanaConversacion extends JFrame implements IVista{
 	 */
 	public VentanaConversacion() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 681, 433);
+		setBounds(100, 100, 681, 486);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
+		this.setTitle(TITULO_VENTANA);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -70,12 +72,22 @@ public class VentanaConversacion extends JFrame implements IVista{
 		
 		JLabel lblNewLabel = new JLabel("CHAT");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		lblNewLabel.setBounds(265, 11, 102, 63);
+		lblNewLabel.setBounds(290, -8, 184, 72);
 		contentPane.add(lblNewLabel);
 		
 		 btnNewButton_1 = new JButton("Terminar conversacion");
-		btnNewButton_1.setBounds(446, 23, 192, 45);
+		btnNewButton_1.setBounds(465, 414, 192, 35);
 		contentPane.add(btnNewButton_1);
+		
+		JLabel lblNewLabel_1 = new JLabel("Conectado con:");
+		lblNewLabel_1.setBounds(35, 21, 137, 26);
+		contentPane.add(lblNewLabel_1);
+		
+		textConectadoCon = new JTextField();
+		textConectadoCon.setEditable(false);
+		textConectadoCon.setBounds(35, 48, 231, 26);
+		contentPane.add(textConectadoCon);
+		textConectadoCon.setColumns(10);
 		this.setVisible(true);
 	}
 
@@ -109,6 +121,10 @@ public class VentanaConversacion extends JFrame implements IVista{
 	public void setInputChat(String text) {
 		this.textField_enviarMensaje.setText(text);
 		
+	}
+
+	public void setTextConectadoCon(String text) {
+		textConectadoCon.setText(text);;
 	}
 	
 }
