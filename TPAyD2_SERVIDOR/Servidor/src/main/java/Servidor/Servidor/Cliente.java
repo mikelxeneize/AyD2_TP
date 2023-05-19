@@ -20,10 +20,11 @@ public class Cliente {
 		this.puerto = puerto;
 	}
 	
-	public Cliente(int puerto, String ip) {
+	public Cliente(int puerto, String ip, Socket socket) {
 		super();
 		this.puerto = puerto;
 		this.ip = ip;
+		this.socket=socket;
 	}
 	public String getIp() {
 		return ip;

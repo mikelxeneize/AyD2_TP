@@ -2,9 +2,12 @@ package Servidor.Servidor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -16,7 +19,7 @@ public class Servidor {
 	private ServerSocket serverSocket;
 	private static Servidor instance;
 
-    private int puertoServidor= 5000;
+    private int puertoServidor= 50000;
     private String ipServidor="localhost";
 
 	public static Servidor getInstance() throws IOException {
@@ -35,27 +38,24 @@ public class Servidor {
 		Socket socket;
 		Cliente cliente;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
-		serverSocket= new ServerSocket(5000);
+		serverSocket= new ServerSocket();
+		serverSocket.setReuseAddress(true); 
+		serverSocket.bind(new InetSocketAddress(50100)); 
 		while(true) {
 			socket=serverSocket.accept();
-			cliente= getRegistradoByIp(socket.getPort(),socket.getInetAddress().toString());
-			if(cliente != null) {
-				this.enlazarSocket(socket);
-				recibirMensajeHilo=new ServidorRecibirMensajeHilo(cliente,this);
-				recibirMensajeHilo.start();
-			}
-			else{
-				this.listaConectados.add(new Cliente(socket.getPort(),socket.getInetAddress().toString()));
-				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-		        out.println("CERRAR_SOCKET");
-				socket.close();
+        	socket.setReuseAddress(true);
+			cliente= new Cliente(socket.getPort(),socket.getInetAddress().toString(),socket);
+			this.listaConectados.add(cliente);
+			
+			recibirMensajeHilo=new ServidorRecibirMensajeHilo(cliente,this);
+			recibirMensajeHilo.start();
 				
-			}
+			
 		}
 		
 	}
 
-
+/*
 	private void enlazarSocket(Socket socket) {
 		int puerto;
 		String ip;
@@ -68,7 +68,7 @@ public class Servidor {
 			}
 		}
 	}
-
+*/
 
 	private Cliente getRegistradoByIp(int puertoObj, String ipObj) {
 		int puerto;
@@ -107,39 +107,39 @@ public class Servidor {
 		
 		
 	}
-	public Socket iniciarConexionAReceptor(MensajeEncriptado mensaje, MensajeEncriptado mensajeAReceptor) throws UnknownHostException, IOException, InterruptedException {
+	public void iniciarConexionAReceptor(MensajeEncriptado mensaje, MensajeEncriptado mensajeAReceptor) throws UnknownHostException, IOException, InterruptedException {
 		Cliente cliente;
 		cliente= getRegistradoByIp(mensaje.getPuerto(),mensaje.getIp());
 		
 		if(cliente != null ) {//cliente registrado y disponible para conectarse
-			Socket socket=new Socket(mensaje.getIpTruncada(),mensaje.getPuerto());//se conecta al servidor
-			Thread.sleep(500);
+			Socket socket=cliente.getSocket();
 			cliente.setIpReceptor(mensajeAReceptor.getIp());
 			cliente.setPuertoReceptor(mensajeAReceptor.getPuerto());
-			cliente.setSocket(socket);
+			
 			//mensaje para informar quien lo contacto
 			this.enviarMensajeACliente(mensajeAReceptor, socket.getInetAddress().toString(),socket.getPort());
 			ServidorRecibirMensajeHilo recibirMensajeHilo=new ServidorRecibirMensajeHilo(cliente,this);
 			recibirMensajeHilo.start();
-			return socket;
 			//cliente aun no registrado, devolver excepcion
 		}
-		return null;
+		else {//rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
+			
+		}
 		
 	}
 	public void cortarConexionAReceptor(String ip, int puerto) throws IOException {
 		Cliente cliente;
 		cliente= getRegistradoByIp(puerto,ip);
-		
 		if(cliente != null ) {//cliente registrado y disponible para conectarse
-			cliente.getSocket().close();
+			
+			PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+	        out.println(cliente.getIpReceptor() +":" + Integer.toString(cliente.getPuertoReceptor())+ ":" + "%cerrar_conexion%" );
+	    
 			cliente.setEstado("Disponible");
 			cliente.setIpReceptor(null);
 		}
 		
 	}
 
-    
-	
 	
 }

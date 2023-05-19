@@ -30,13 +30,14 @@ public class RecibirMensajeHilo extends Thread {
 	        
 	        try {
 				msg = in.readLine();
-				if (msg == null) {
+				MensajeEncriptado mensajeEncriptado=new MensajeEncriptado(msg);
+				
+				if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) {
 					mensaje = new Mensaje( msg,"conexion cerrada");
 					this.conectividad.notificarAccion(mensaje);
+					this.conectividad.setIpReceptor(null);
 				}else {
 					//mensaje recibido 
-					MensajeEncriptado mensajeEncriptado=new MensajeEncriptado(msg);
-					
 					if(this.conectividad.getIpReceptor()==null) {
 						this.conectividad.setIpReceptor(mensajeEncriptado.getIp());
 						this.conectividad.setPuertoReceptor(mensajeEncriptado.getPuerto());

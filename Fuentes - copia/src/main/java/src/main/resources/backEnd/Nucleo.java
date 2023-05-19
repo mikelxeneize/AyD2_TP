@@ -97,7 +97,6 @@ public class Nucleo extends Observable implements  Observer {
 	}
 	
 	public void activarEscucha(){
-		this.conexion.addObserver(this);
 		this.conexion.escucharConexion(this.port);
 	}
 
@@ -147,6 +146,7 @@ public class Nucleo extends Observable implements  Observer {
 	
 	public void iniciarNucleo() throws IOException, ParseException {
 		this.conexion= new Conectividad();
+		this.conexion.addObserver(this);
 		this.cargarConfiguracion();
 		this.establecerConexionConElServidor();
 		

@@ -28,7 +28,6 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion .Ir a configuracion");
 			this.vista.mostrarLabelErrorAlConectar(true);
 		}
-		Nucleo.getInstance().activarEscucha();
 		this.vista.mostrarLabelErrorAlConectar(false);
 		this.modelo.addObserver(this);
 	}

@@ -32,14 +32,13 @@ public class ServidorRecibirMensajeHilo extends Thread {
 				msg = in.readLine();
 				
 				System.out.println(msg);
-				if (msg == null) {
+				mensaje = new MensajeEncriptado(msg);	
+				if (mensaje.getMensaje().equals("%cerrar_conexion%")) {
 					//cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
 					this.cliente.setEstado("Disponible");
 					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
 					this.cliente.setIpReceptor(null);
-					this.cliente.socket.close();
-				}else {
-					mensaje = new MensajeEncriptado(msg);	
+				}else {	
 					if(this.cliente.getIpReceptor()==null ){
 						mensajeAReceptor= new MensajeEncriptado( "Solicitud_Conexion", "",this.cliente.getIp(), this.cliente.getPuerto());
 						this.servidor.iniciarConexionAReceptor(mensaje,mensajeAReceptor);
@@ -52,6 +51,16 @@ public class ServidorRecibirMensajeHilo extends Thread {
 				}
 			} catch (IOException e) {
 				System.out.println("excepcion, creo que se cerro la conexion");
+				this.cliente.setEstado("Disponible");
+				try {
+					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				this.cliente.setIpReceptor(null);
+				msg=null;
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -25,7 +25,7 @@ public class Conectividad extends Observable implements IConectividad{
     private String ipReceptor;
     
   //Informacion Servidor
-    private int puertoServidor= 5000;
+    private int puertoServidor= 50100;
     private String ipServidor="localhost";
     
     private List<Observer> observers = new ArrayList<>();
@@ -46,22 +46,17 @@ public class Conectividad extends Observable implements IConectividad{
 
 
 	
-    public void iniciarConversacion(String ipserver, int puertoserver) throws  UnknownHostException, IOException, 
+    public void iniciarConversacion(String ipcliente2, int puertocliente2) throws  UnknownHostException, IOException, 
 	IllegalArgumentException { // tiene que devolver una excepcion de no conexion
 
-        this.serverSocket.close();
     	this.ippersonal="localhost";
-        this.socket=new Socket(this.ipServidor,this.puertoServidor,InetAddress.getByName(this.ippersonal),this.puertopersonal);//se conecta al servidor
-       
+    	
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(ipserver +":" + Integer.toString(puertoserver)+ ":" + "mensaje" );
+        out.println(ipcliente2 +":" + Integer.toString(puertocliente2)+ ":" + "%mensaje%" );
         
-        this.ipReceptor=ipserver;
-        this.puertoReceptor=puertoserver;
+        this.ipReceptor=ipcliente2;
+        this.puertoReceptor=puertocliente2;
         
-        this.recibirMensaje();
-        
-    
 
     }
 
@@ -69,13 +64,16 @@ public class Conectividad extends Observable implements IConectividad{
 
     public void iniciarConexionServidor() throws  UnknownHostException, IOException, IllegalArgumentException {
     	this.ippersonal="localhost";
-    	this.socket=new Socket(this.ipServidor,this.puertoServidor,InetAddress.getByName(this.ippersonal),this.puertopersonal);//se conecta al servidor
-    	
+        System.out.println("socket abierto servidor inicial");
+        this.socket = new Socket();
+    	this.socket.setReuseAddress(true); 
+    	this.socket.bind(new InetSocketAddress(this.puertopersonal)); 
+    	this.socket.connect(new InetSocketAddress(this.ipServidor, this.puertoServidor));
+        
+    	this.setSocket(socket);
+        System.out.println("Socket conectado al servidor");
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		in.readLine();
-		this.socket.close();
-        System.out.println("socket cerrado");
+        this.recibirMensaje();
         
     }
 
@@ -125,7 +123,9 @@ public class Conectividad extends Observable implements IConectividad{
 	
 
     public void cerrarConexion() throws IOException{
-            socket.close();
+    	PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println(this.ipReceptor +":" + Integer.toString(this.puertoReceptor)+ ":" + "%cerrar_conexion%" );
+		this.setIpReceptor(null);
     }
 
     public int getPuertopersonal() {

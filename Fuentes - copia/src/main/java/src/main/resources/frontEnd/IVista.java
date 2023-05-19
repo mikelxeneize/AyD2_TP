@@ -16,6 +16,6 @@ public interface IVista {
 	static final String CANCELAR = "cancelar";
 	static final String CONFIGURACION = "configuracion";
 	static final String CERRAR_CONEXION = "terminar_conversacion";
-	static final String TITULO_VENTANA = "Pepe-Chat Escucha";
+	static final String TITULO_VENTANA = "Pepe-Chat_Escucha";
 	
 }

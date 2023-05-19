@@ -21,6 +21,7 @@ public class EscucharConexionHilo extends Thread{
         try {
             System.out.println(puertopersonal);
             this.serverSocket = new ServerSocket(puertopersonal);
+            System.out.println("server socket abierto");
             this.conectividad.setServerSocket(this.serverSocket);
         } catch (IOException e) {
         	Mensaje mensaje = new Mensaje("puerto ocupado" ,"error al escuchar");
@@ -28,8 +29,10 @@ public class EscucharConexionHilo extends Thread{
         }
         try {
         	socket=serverSocket.accept();
+        	this.socket.setReuseAddress(true);
         	System.out.println("conexion establecida con otro cliente ");
         	this.serverSocket.close();
+            System.out.println("server socket cerrado");
         	this.conectividad.setConectado(true);
         	this.conectividad.setSocket(socket);
         	this.conectividad.recibirMensaje(); 
