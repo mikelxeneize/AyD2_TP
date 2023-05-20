@@ -50,7 +50,6 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				System.out.println("excepcion, creo que se cerro la conexion");
 				this.cliente.setEstado("Disponible");
 				try {
 					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
@@ -59,7 +58,7 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					e1.printStackTrace();
 				}
 				this.cliente.setIpReceptor(null);
-				//msg=null;
+				msg=null;
 
 			} catch (InterruptedException e) {
 				e.printStackTrace();
