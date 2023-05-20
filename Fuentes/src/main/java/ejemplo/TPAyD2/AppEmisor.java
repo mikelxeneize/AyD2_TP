@@ -10,6 +10,6 @@ import src.main.resources.controlador.ControladorMenuPrincipal;
 public class AppEmisor 
 {
     public static void main( String[] args ) throws Exception {
-		ControladorConfiguracionInicial controlador = new ControladorConfiguracionInicial();
+		ControladorConfiguracionInicial controlador = new ControladorConfiguracionInicial(null);
 	}
 }

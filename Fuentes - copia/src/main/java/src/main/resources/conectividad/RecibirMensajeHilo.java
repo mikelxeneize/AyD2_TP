@@ -41,7 +41,6 @@ public class RecibirMensajeHilo extends Thread {
 					if(this.conectividad.getIpReceptor()==null) {
 						this.conectividad.setIpReceptor(mensajeEncriptado.getIp());
 						this.conectividad.setPuertoReceptor(mensajeEncriptado.getPuerto());
-						
 						this.conectividad.notificarAccion(new Mensaje("","conexion establecida"));
 					}
 					else {

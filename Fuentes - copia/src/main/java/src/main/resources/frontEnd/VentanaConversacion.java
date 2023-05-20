@@ -1,5 +1,6 @@
 package src.main.resources.frontEnd;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -28,7 +29,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaConversacion frame = new VentanaConversacion();
+					VentanaConversacion frame = new VentanaConversacion(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -40,7 +41,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 	/**
 	 * Create the frame.
 	 */
-	public VentanaConversacion() {
+	public VentanaConversacion(IVista vista) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 681, 486);
 		contentPane = new JPanel();
@@ -89,6 +90,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		contentPane.add(textConectadoCon);
 		textConectadoCon.setColumns(10);
 		this.setVisible(true);
+		this.setLocationRelativeTo((Component) vista);
 	}
 
 	public void addActionListener(ActionListener listener) {

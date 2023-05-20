@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JLabel;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.SwingConstants;
 
 public class VentanaMenuPrincipal extends JFrame implements IVista{
@@ -29,7 +31,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaMenuPrincipal frame = new VentanaMenuPrincipal();
+					VentanaMenuPrincipal frame = new VentanaMenuPrincipal(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -42,7 +44,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 	/**
 	 * Create the frame.
 	 */
-	public VentanaMenuPrincipal() {
+	public VentanaMenuPrincipal(IVista vista) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 625, 493);
 		contentPane = new JPanel();
@@ -107,6 +109,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		contentPane.add(lblErrorAlConectar);
 		this.setVisible(true);
 		this.lblErrorAlConectar.setVisible(false);
+		this.setLocationRelativeTo((Component) vista);
 	}
 
 

@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.SwingConstants;
 
 public class VentanaConfiguracion extends JFrame implements IVista{
@@ -28,7 +30,7 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					VentanaConfiguracion frame = new VentanaConfiguracion();
+					VentanaConfiguracion frame = new VentanaConfiguracion(null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -39,8 +41,10 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 
 	/**
 	 * Create the frame.
+	 * @param vista 
+	 * @param  
 	 */
-	public VentanaConfiguracion() {
+	public VentanaConfiguracion(IVista vista ) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 460, 389);
 		contentPane = new JPanel();
@@ -90,6 +94,7 @@ public class VentanaConfiguracion extends JFrame implements IVista{
 		contentPane.add(btnCancelar);
 		this.setVisible(true);
 		this.lblError.setVisible(false);
+		this.setLocationRelativeTo((Component) vista);
 	}
 
 	public void addActionListener(ActionListener listener) {

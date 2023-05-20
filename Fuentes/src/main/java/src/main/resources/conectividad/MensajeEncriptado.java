@@ -14,9 +14,9 @@ public class MensajeEncriptado {
 		this.setPuerto(Integer.parseInt(partes[1]));
 		this.setMensaje(partes[2]);
 		if(partes[0].equals("localhost"))
-			this.setIp("/127.0.0.1");
+			this.setIp("127.0.0.1");
 		else
-			this.setIp("/"+partes[0]);
+			this.setIp(partes[0]);
 	}
 	
 	public String getMensaje() {

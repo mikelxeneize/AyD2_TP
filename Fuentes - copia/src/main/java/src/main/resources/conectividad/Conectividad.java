@@ -72,7 +72,6 @@ public class Conectividad extends Observable implements IConectividad{
         
     	this.setSocket(socket);
         System.out.println("Socket conectado al servidor");
-
         this.recibirMensaje();
         
     }
