@@ -20,9 +20,9 @@ public class ControladorConfiguracionInicial implements ActionListener{
 	private VentanaConfiguracionInicial vista = null;
 	private Nucleo modelo;
 	
-	public ControladorConfiguracionInicial(IVista vista) {
+	public ControladorConfiguracionInicial(IVista vista2) {
 		String ip;
-		this.vista = new VentanaConfiguracionInicial(this.vista);
+		this.vista = new VentanaConfiguracionInicial(vista2);
 		try {
 			InetAddress localHost;
 			localHost = InetAddress.getLocalHost();
@@ -46,6 +46,7 @@ public class ControladorConfiguracionInicial implements ActionListener{
 				this.modelo.establecerConexionConElServidor();
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
+					
 				} catch (IllegalArgumentException | IOException e1) {
 					e1.printStackTrace();
 				}

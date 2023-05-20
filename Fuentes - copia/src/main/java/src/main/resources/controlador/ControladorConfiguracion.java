@@ -17,7 +17,7 @@ public class ControladorConfiguracion implements ActionListener{
 	private Nucleo modelo;
 	
 	public ControladorConfiguracion(IVista vista2) {
-		this.vista = new VentanaConfiguracion(this.vista);
+		this.vista = new VentanaConfiguracion(vista2);
 		this.modelo = Nucleo.getInstance();
 		this.vista.cargarConfiguracion(this.modelo.getIp(), Integer.toString(this.modelo.getPort()));
 		this.vista.addActionListener(this);

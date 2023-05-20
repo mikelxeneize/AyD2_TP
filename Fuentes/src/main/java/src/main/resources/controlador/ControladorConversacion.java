@@ -17,11 +17,11 @@ public class ControladorConversacion implements ActionListener, Observer {
 	private Nucleo modelo;
 	
 	public ControladorConversacion(IVista vista2) {
-		this.vista = new VentanaConversacion(this.vista);
+		this.vista = new VentanaConversacion(vista2);
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
 		this.vista.recibirMensaje(">>Bienvenido a Pepe Chat!");
-		this.vista.recibirMensaje(">>Conexion establecida ");;
+		this.vista.recibirMensaje(">>Conexion establecida ");
 		this.modelo.addObserver(this);
 		this.vista.setTextConectadoCon("Ip: "+this.modelo.getInstance().getConectividad().getIpReceptor() + "  Puerto: "+this.modelo.getInstance().getConectividad().getPuertoReceptor());
 		
@@ -38,6 +38,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 			}
 			try {
 				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
+				this.modelo.deleteObserver(this);
 			} catch (IllegalArgumentException | IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -75,6 +76,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 				}
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
+					this.modelo.deleteObserver(this);
 				} catch (IllegalArgumentException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

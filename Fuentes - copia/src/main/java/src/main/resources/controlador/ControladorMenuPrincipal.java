@@ -38,6 +38,7 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion(this.vista);
 			this.vista.cerrar();
+			this.modelo.deleteObserver(this);
 		} else if(e.getActionCommand().equals(IVista.INICIAR_CONEXION)) {
 			String ipDestino = this.vista.getIpDestino();
 			int puertoDestino;
@@ -45,6 +46,7 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
 				this.modelo.iniciarConexion(ipDestino, puertoDestino);
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
+				this.modelo.deleteObserver(this);
 				this.vista.cerrar(); 
 				this.vista.mostrarLabelErrorAlConectar(false);
 				
@@ -68,8 +70,8 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		if (arg instanceof Mensaje) {
 			Mensaje datos = (Mensaje) arg;
 			if(datos.getEstado().equals("conexion establecida")) {
-				this.modelo.deleteObserver(this);
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
+				this.modelo.deleteObserver(this);
 				this.vista.cerrar(); 
 			}else if (datos.getEstado().equals("error al escuchar")) {
 				this.vista.setTextlabelError("No estas en modo escucha, tu puerto esta ocupado \nIr a configuracion");
