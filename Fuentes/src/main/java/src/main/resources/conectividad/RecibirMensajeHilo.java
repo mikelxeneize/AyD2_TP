@@ -10,6 +10,8 @@ import java.net.Socket;
 public class RecibirMensajeHilo extends Thread {
     private Socket socket;
 	private Conectividad conectividad;
+	private String clave;
+	private String algoritmo;
 
     public RecibirMensajeHilo(Socket socket, Conectividad conectividad){
         this.socket=socket;
@@ -30,7 +32,9 @@ public class RecibirMensajeHilo extends Thread {
 	        
 	        try {
 				msg = in.readLine();
-				MensajeEncriptado mensajeEncriptado=new MensajeEncriptado(msg);
+				this.clave=this.conectividad.getClave();
+				this.algoritmo=this.conectividad.getAlgoritmo();
+				MensajeEncriptado mensajeEncriptado=new MensajeEncriptado(this.clave,msg,this.algoritmo);
 				
 				if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) {
 					mensaje = new Mensaje( msg,"conexion cerrada");

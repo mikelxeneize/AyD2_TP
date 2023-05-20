@@ -9,10 +9,16 @@ public class MensajeEncriptado {
 	private int puerto;
 	
 	
-	public MensajeEncriptado(String mensaje) {
+	public MensajeEncriptado(String clave,String mensaje, String algoritmo) {
 		String[] partes = mensaje.split(":");
 		this.setPuerto(Integer.parseInt(partes[1]));
-		this.setMensaje(partes[2]);
+		if (partes[2].equals("%cerrar_conexion%"))
+			this.setMensaje("%cerrar_conexion%");
+	else 
+		if (partes[2].equals("%Solicitud_Conexion%"))
+			this.setMensaje("%Solicitud_Conexion%");
+		else
+			this.setMensaje(Codificacion.desencriptar(clave, partes[2], algoritmo));
 		if(partes[0].equals("localhost"))
 			this.setIp("127.0.0.1");
 		else

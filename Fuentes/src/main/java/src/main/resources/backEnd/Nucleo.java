@@ -59,29 +59,23 @@ public class Nucleo extends Observable implements  Observer {
 		this.port = port;
 	}
 
-//deprecado
-//	public void cargarConfiguracion() throws IOException, ParseException {
-//		Long longPort = 0L;
-//		JSONParser jsonParser = new JSONParser();
-//		JSONObject configuracion = null;
-//		FileReader reader = new FileReader(this.filePath);
-//		Object obj = jsonParser.parse(reader);
-//		configuracion = (JSONObject) obj;
-//		
-//		//forma vieja carga desde la configuracion		
-//		//this.ip= (String) configuracion.get("ip"); 
-//
-//		//forma entre otras pcs
-//		InetAddress localHost = InetAddress.getLocalHost();
-//		this.ip = localHost.getHostAddress();
-//		
-//		longPort = (Long) configuracion.get("port");
-//		this.port = longPort.intValue();
-//		
-//		this.conexion.setIppersonal(ip);
-//		this.conexion.setPuertopersonal(port);
-//	}
+	public void cargarConfiguracion() throws IOException, ParseException {
+		Long longPort = 0L;
+		JSONParser jsonParser = new JSONParser();
+		JSONObject configuracion = null;
+		FileReader reader = new FileReader(this.filePath);
+		Object obj = jsonParser.parse(reader);
+		configuracion = (JSONObject) obj;
+		
+		//forma vieja carga desde la configuracion		
+		//this.ip= (String) configuracion.get("ip"); 
 
+		//forma entre otras pcs
+		String clave=(String) configuracion.get("clave");
+		String algot=(String) configuracion.get("algoritmo");
+		this.conexion.setClave(clave);
+		this.conexion.setAlgoritmo(algot);
+	}
 	public void setConfiguracion(String ip, int port) {
 		this.setPort(port);
 		this.setIp(ip);

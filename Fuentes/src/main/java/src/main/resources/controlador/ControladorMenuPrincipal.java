@@ -23,12 +23,12 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		this.vista = new VentanaMenuPrincipal(vista2);
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
-//		try {
-//			Nucleo.getInstance().cargarConfiguracion();
-//		} catch (IOException | ParseException e) {
-//			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion .Ir a configuracion");
-//			this.vista.mostrarLabelErrorAlConectar(true);
-//		}
+		try {
+			Nucleo.getInstance().cargarConfiguracion();
+		} catch (IOException | ParseException e) {
+			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion .Ir a configuracion");
+			this.vista.mostrarLabelErrorAlConectar(true);
+		}
 		this.vista.mostrarLabelErrorAlConectar(false);
 		this.modelo.addObserver(this);
 	}

@@ -34,6 +34,8 @@ public class Conectividad extends Observable implements IConectividad{
     private boolean conectado;
     private String estado="";
     
+    private String clave;
+    private String algoritmo;    
     
 	public Conectividad()  {
         this.conectado=false;
@@ -42,9 +44,6 @@ public class Conectividad extends Observable implements IConectividad{
 	public List<Observer> getObservers() {
 		return observers;
 	}
-
-
-
 	
     public void iniciarConversacion(String ipcliente2, int puertocliente2) throws  UnknownHostException, IOException, 
 	IllegalArgumentException { // tiene que devolver una excepcion de no conexion
@@ -117,7 +116,8 @@ public class Conectividad extends Observable implements IConectividad{
 
 	public void enviarMensaje(String mensajeaenviar) throws IOException {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-        out.println(this.ipReceptor +":" + Integer.toString(this.puertoReceptor)+ ":" + mensajeaenviar );
+        String mensajeencriptado=Codificacion.encriptar(getClave(), mensajeaenviar, getAlgoritmo());
+        out.println(this.ipReceptor +":" + Integer.toString(this.puertoReceptor)+ ":" + mensajeencriptado );
     }
 	
 
@@ -165,6 +165,22 @@ public class Conectividad extends Observable implements IConectividad{
 
 	public void desactivarEscucharConexion() throws IOException {
 		this.serverSocket.close();
+	}
+
+	public String getClave() {
+		return clave;
+	}
+
+	public void setClave(String clave) {
+		this.clave = clave;
+	}
+
+	public String getAlgoritmo() {
+		return algoritmo;
+	}
+
+	public void setAlgoritmo(String algoritmo) {
+		this.algoritmo = algoritmo;
 	}
 
 
