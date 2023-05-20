@@ -40,7 +40,7 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					this.cliente.setIpReceptor(null);
 				}else {	
 					if(this.cliente.getIpReceptor()==null ){
-						mensajeAReceptor= new MensajeEncriptado( "Solicitud_Conexion", "",this.cliente.getIp(), this.cliente.getPuerto());
+						mensajeAReceptor= new MensajeEncriptado( "%Solicitud_Conexion%", "",this.cliente.getIp(), this.cliente.getPuerto());
 						this.servidor.iniciarConexionAReceptor(mensaje,mensajeAReceptor);
 						this.cliente.setIpReceptor(mensaje.getIp());
 						this.cliente.setPuertoReceptor(mensaje.getPuerto());
@@ -59,7 +59,7 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					e1.printStackTrace();
 				}
 				this.cliente.setIpReceptor(null);
-				msg=null;
+				//msg=null;
 
 			} catch (InterruptedException e) {
 				e.printStackTrace();

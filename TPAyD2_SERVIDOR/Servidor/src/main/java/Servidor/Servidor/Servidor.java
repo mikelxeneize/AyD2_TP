@@ -48,9 +48,7 @@ public class Servidor {
 			this.listaConectados.add(cliente);
 			
 			recibirMensajeHilo=new ServidorRecibirMensajeHilo(cliente,this);
-			recibirMensajeHilo.start();
-				
-			
+			recibirMensajeHilo.start();		
 		}
 		
 	}

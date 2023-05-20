@@ -41,20 +41,21 @@ public class ControladorConfiguracionInicial implements ActionListener{
 		String actionCommand = e.getActionCommand();
 		if(actionCommand.equals(IVista.ACEPTAR)) {	
 			this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
+			this.vista.ocultarLabelError();
 			try {
-				Nucleo.getInstance().iniciarNucleo();
-				this.vista.ocultarLabelError();
+				this.modelo.establecerConexionConElServidor();
 				this.vista.cerrar();
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 				} catch (IllegalArgumentException | IOException e1) {
 					e1.printStackTrace();
 				}
-			} catch (IOException | ParseException e1) {
+			} catch (IllegalArgumentException | IOException e1) {
 				this.vista.setTextlabelError(IVista.SERVER_ERROR);
 				this.vista.mostrarLabelError();
 				e1.printStackTrace();
 			}
+			
 		}
 	} 
 	

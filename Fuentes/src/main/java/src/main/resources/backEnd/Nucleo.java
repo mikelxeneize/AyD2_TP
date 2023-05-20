@@ -37,6 +37,11 @@ public class Nucleo extends Observable implements  Observer {
 		}
 		return instance;
 	}
+	
+	public Nucleo() {
+		this.conexion= new Conectividad();
+		this.conexion.addObserver(this);
+	}
 
 	public String getIp() {
 		return ip;
@@ -80,6 +85,8 @@ public class Nucleo extends Observable implements  Observer {
 	public void setConfiguracion(String ip, int port) {
 		this.setPort(port);
 		this.setIp(ip);
+		this.conexion.setIppersonal(ip);
+		this.conexion.setPuertopersonal(port);
 	}
 
 //	public void persistirConfiguracion() throws IOException {
@@ -145,11 +152,4 @@ public class Nucleo extends Observable implements  Observer {
 		this.conexion.iniciarConexionServidor();
 	}
 	
-	public void iniciarNucleo() throws IOException, ParseException {
-		this.conexion= new Conectividad();
-		this.conexion.addObserver(this);
-//		this.cargarConfiguracion();
-		this.establecerConexionConElServidor();
-		
-	}
 }

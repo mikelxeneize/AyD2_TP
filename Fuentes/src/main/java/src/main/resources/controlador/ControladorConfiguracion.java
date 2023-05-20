@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import org.json.simple.parser.ParseException;
-
 import src.main.resources.backEnd.Nucleo;
 import src.main.resources.frontEnd.IVista;
 import src.main.resources.frontEnd.VentanaConfiguracion;
@@ -38,21 +36,21 @@ public class ControladorConfiguracion implements ActionListener{
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				} 
-				this.modelo.setConfiguracion(ipVentana, portVentana);
+				this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
+				this.vista.ocultarLabelError();
 				try {
-					Nucleo.getInstance().iniciarNucleo();
-					this.vista.ocultarLabelError();
+					this.modelo.establecerConexionConElServidor();
 					this.vista.cerrar();
 					try {
 						ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
 					} catch (IllegalArgumentException | IOException e1) {
 						e1.printStackTrace();
 					}
-				} catch (IOException | ParseException e1) {
+				} catch (IllegalArgumentException | IOException e1) {
 					this.vista.setTextlabelError(IVista.SERVER_ERROR);
 					this.vista.mostrarLabelError();
 					e1.printStackTrace();
-				}
+			}
 			}else { // vuelve al menu sin realizar cambios
 				this.vista.ocultarLabelError();
 				this.vista.cerrar();
