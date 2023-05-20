@@ -16,22 +16,24 @@ public class ServidorRecibirMensajeHilo extends Thread {
     }
 
     @Override
-    public void run() {
-    	String msg = null;
-		MensajeEncriptado mensaje;
-		MensajeEncriptado mensajeAReceptor;
-    	do {
-	        BufferedReader in = null;
-	            try {
-					in = new BufferedReader(new InputStreamReader(cliente.getSocket().getInputStream()));
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-	        
-	        try {
-				msg = in.readLine();
-				
-				System.out.println(msg);
+public void run() {
+	String msg = null;
+	MensajeEncriptado mensaje;
+	MensajeEncriptado mensajeAReceptor;
+	do {
+        BufferedReader in = null;
+            try {
+				in = new BufferedReader(new InputStreamReader(cliente.getSocket().getInputStream()));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+        
+        try {
+			msg = in.readLine();
+			System.out.println(msg);
+			if (msg==null)
+				this.servidor.getListaConectados().remove(cliente);
+			else {
 				mensaje = new MensajeEncriptado(msg);	
 				if (mensaje.getMensaje().equals("%cerrar_conexion%")) {
 					//cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
@@ -49,22 +51,23 @@ public class ServidorRecibirMensajeHilo extends Thread {
 						this.servidor.enviarMensajeACliente(mensaje,this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
 					}
 				}
-			} catch (IOException e) {
-				this.cliente.setEstado("Disponible");
-				try {
-					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			}
+		} catch (IOException e) {
+			this.cliente.setEstado("Disponible");
+			try {
+				this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),this.cliente.getPuertoReceptor());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 				this.cliente.setIpReceptor(null);
 				msg=null;
-
+	
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 	        
-    	}while(msg != null); //implica que se cerro la conexion
+	}while(msg != null); //implica que se cerro la conexion
 
-    }
+}
 }

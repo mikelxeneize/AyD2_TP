@@ -139,5 +139,9 @@ public class Servidor {
 		
 	}
 
-	
+
+	public ArrayList<Cliente> getListaConectados() {
+		return listaConectados;
+	}
+
 }
