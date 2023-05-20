@@ -20,28 +20,47 @@ public class ControladorConfiguracion implements ActionListener{
 	public ControladorConfiguracion() {
 		this.vista = new VentanaConfiguracion();
 		this.modelo = Nucleo.getInstance();
-		try {
-			this.modelo.desactivarEscucha();
-		} catch (IOException e) {
-			// no deebria pasar jamas
-			e.printStackTrace();
-		}
 		this.vista.cargarConfiguracion(this.modelo.getIp(), Integer.toString(this.modelo.getPort()));
 		this.vista.addActionListener(this);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
+		
 		if(actionCommand.equals(IVista.ACEPTAR)) {	
-			this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
-			try {
-				this.modelo.persistirConfiguracion();
+			String ipVentana = this.vista.getIp();
+			int portVentana = Integer.parseInt(this.vista.getPort());
+			int portModelo = this.modelo.getPort();
+			
+			if (portVentana != portModelo) { // valida si se realizo algun cambio
+				try {
+					this.modelo.cerrarConexion();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} 
+				this.modelo.setConfiguracion(ipVentana, portVentana);
+				try {
+					Nucleo.getInstance().iniciarNucleo();
+					this.vista.ocultarLabelError();
+					this.vista.cerrar();
+					try {
+						ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+					} catch (IllegalArgumentException | IOException e1) {
+						e1.printStackTrace();
+					}
+				} catch (IOException | ParseException e1) {
+					this.vista.setTextlabelError(IVista.SERVER_ERROR);
+					this.vista.mostrarLabelError();
+					e1.printStackTrace();
+				}
+			}else { // vuelve al menu sin realizar cambios
 				this.vista.ocultarLabelError();
 				this.vista.cerrar();
-				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
-			} catch (IOException e1) {
-				this.vista.setTextlabelError("No se pudo guardar la configuracion");
-				this.vista.mostrarLabelError();
+				try {
+					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal();
+				} catch (IllegalArgumentException | IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}else if (actionCommand.equals(IVista.CANCELAR)) {
 			this.vista.ocultarLabelError();

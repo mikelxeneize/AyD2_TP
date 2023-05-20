@@ -54,43 +54,44 @@ public class Nucleo extends Observable implements  Observer {
 		this.port = port;
 	}
 
-	public void cargarConfiguracion() throws IOException, ParseException {
-		Long longPort = 0L;
-		JSONParser jsonParser = new JSONParser();
-		JSONObject configuracion = null;
-		FileReader reader = new FileReader(this.filePath);
-		Object obj = jsonParser.parse(reader);
-		configuracion = (JSONObject) obj;
-		
-		//forma vieja carga desde la configuracion		
-		//this.ip= (String) configuracion.get("ip"); 
-
-		//forma entre otras pcs
-		InetAddress localHost = InetAddress.getLocalHost();
-		this.ip = localHost.getHostAddress();
-		
-		longPort = (Long) configuracion.get("port");
-		this.port = longPort.intValue();
-		
-		this.conexion.setIppersonal(ip);
-		this.conexion.setPuertopersonal(port);
-	}
+//deprecado
+//	public void cargarConfiguracion() throws IOException, ParseException {
+//		Long longPort = 0L;
+//		JSONParser jsonParser = new JSONParser();
+//		JSONObject configuracion = null;
+//		FileReader reader = new FileReader(this.filePath);
+//		Object obj = jsonParser.parse(reader);
+//		configuracion = (JSONObject) obj;
+//		
+//		//forma vieja carga desde la configuracion		
+//		//this.ip= (String) configuracion.get("ip"); 
+//
+//		//forma entre otras pcs
+//		InetAddress localHost = InetAddress.getLocalHost();
+//		this.ip = localHost.getHostAddress();
+//		
+//		longPort = (Long) configuracion.get("port");
+//		this.port = longPort.intValue();
+//		
+//		this.conexion.setIppersonal(ip);
+//		this.conexion.setPuertopersonal(port);
+//	}
 
 	public void setConfiguracion(String ip, int port) {
 		this.setPort(port);
 		this.setIp(ip);
 	}
 
-	public void persistirConfiguracion() throws IOException {
-		JSONObject configuracion = new JSONObject();
-		configuracion.put("port",this.port);
-		configuracion.put("ip",this.ip);
-
-		FileWriter file = new FileWriter(filePath);
-		file.write(configuracion.toJSONString());
-		file.flush();
-
-	}
+//	public void persistirConfiguracion() throws IOException {
+//		JSONObject configuracion = new JSONObject();
+//		configuracion.put("port",this.port);
+//		configuracion.put("ip",this.ip);
+//
+//		FileWriter file = new FileWriter(filePath);
+//		file.write(configuracion.toJSONString());
+//		file.flush();
+//
+//	}
 	
 	public void desactivarEscucha() throws IOException {
 		this.conexion.desactivarEscucharConexion();
@@ -147,7 +148,7 @@ public class Nucleo extends Observable implements  Observer {
 	public void iniciarNucleo() throws IOException, ParseException {
 		this.conexion= new Conectividad();
 		this.conexion.addObserver(this);
-		this.cargarConfiguracion();
+//		this.cargarConfiguracion();
 		this.establecerConexionConElServidor();
 		
 	}
