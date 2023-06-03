@@ -1,24 +1,23 @@
 package src.main.resources.frontEnd;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.JScrollBar;
 import javax.swing.JLabel;
 import java.awt.Font;
 
 public class VentanaConversacion extends JFrame implements IVista{
 
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextArea textField_enviarMensaje;
+	private JTextArea textField_recibirMensaje;
 	private JButton btnNewButton_1 ;
 	private JButton btnNewButton;
 	/**
@@ -33,7 +32,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
+            }
 		});
 	}
 
@@ -49,10 +48,10 @@ public class VentanaConversacion extends JFrame implements IVista{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		textField = new JTextField();
-		textField.setBounds(78, 338, 431, 35);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		textField_enviarMensaje = new JTextArea();
+		textField_enviarMensaje.setBounds(78, 338, 431, 35);
+		contentPane.add(textField_enviarMensaje);
+		textField_enviarMensaje.setColumns(10);
 		
 		 btnNewButton = new JButton("Enviar mensaje");
 		
@@ -63,10 +62,11 @@ public class VentanaConversacion extends JFrame implements IVista{
 		btnNewButton.setBounds(519, 338, 125, 35);
 		contentPane.add(btnNewButton);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(78, 85, 431, 242);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		textField_recibirMensaje = new JTextArea();
+		textField_recibirMensaje.setEditable(false);
+		textField_recibirMensaje.setBounds(78, 85, 431, 242);
+		contentPane.add(textField_recibirMensaje);
+		textField_recibirMensaje.setColumns(10);
 		
 		JLabel lblNewLabel = new JLabel("CHAT");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 25));
@@ -74,7 +74,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		contentPane.add(lblNewLabel);
 		
 		 btnNewButton_1 = new JButton("Terminar conversacion");
-		btnNewButton_1.setBounds(484, 23, 154, 51);
+		btnNewButton_1.setBounds(446, 23, 192, 45);
 		contentPane.add(btnNewButton_1);
 		this.setVisible(true);
 	}
@@ -82,23 +82,33 @@ public class VentanaConversacion extends JFrame implements IVista{
 	public void addActionListener(ActionListener listener) {
 		this.btnNewButton.addActionListener(listener);
 		this.btnNewButton_1.addActionListener(listener);
-		this.btnNewButton_1.setActionCommand(TERMINAR_CONVERSACION);
+		this.btnNewButton_1.setActionCommand(CERRAR_CONEXION);
 		this.btnNewButton.setActionCommand(ENVIAR_MENSAJE);
 		
 		
 	}
 
 	public String getMensaje(){
-		return this.textField.getText();
+		return this.textField_enviarMensaje.getText();
 	}
 
 	public void vaciarMensaje(){
-		this.textField.setText("");
+		this.textField_enviarMensaje.setText("");
 	}
 
+	public void recibirMensaje(String mensajeRecibido){
+		String mensajesPrevios = this.textField_recibirMensaje.getText();
+		this.textField_recibirMensaje.setText(mensajesPrevios + "\n" + mensajeRecibido);
+	}
 
 	public void cerrar() {
 		setVisible(false);
 		
 	}
+
+	public void setInputChat(String text) {
+		this.textField_enviarMensaje.setText(text);
+		
+	}
+	
 }

@@ -9,7 +9,7 @@ import src.main.resources.controlador.ControladorMenuPrincipal;
 public class App 
 {
     public static void main( String[] args ) throws Exception {
+		Nucleo.getInstance().iniciarNucleo();
         ControladorMenuPrincipal contr= new ControladorMenuPrincipal();
-        Nucleo.getInstance().cargarConfiguracion();
     }
 }
