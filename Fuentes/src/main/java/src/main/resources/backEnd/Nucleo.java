@@ -28,7 +28,10 @@ public class Nucleo extends Observable implements  Observer {
 	public static final String RECIBIR_MENSAJE = "mensaje recibido";
 	public static final String INICIAR_CONEXION= "conexion establecida";
 	public static final String CERRAR_CONEXION = "conexion finalizada";
-    private List<Observer> observers = new ArrayList<>();
+	public static final String ACTUALIZAR = "Actualizar";
+	private List<Observer> observers = new ArrayList<>();
+    private String username;
+    private ArrayList<Cliente> conectados=new ArrayList<Cliente>();
 	
 
 	public static Nucleo getInstance() {
@@ -81,6 +84,15 @@ public class Nucleo extends Observable implements  Observer {
 		this.setIp(ip);
 		this.conexion.setIppersonal(ip);
 		this.conexion.setPuertopersonal(port);
+	}
+	
+	public void setConfiguracion(String ip, int port, String username) {
+		this.setPort(port);
+		this.setIp(ip);
+		this.setUsername(username);
+		this.conexion.setIppersonal(ip);
+		this.conexion.setPuertopersonal(port);
+		this.conexion.setUsername(username);
 	}
 
 //	public void persistirConfiguracion() throws IOException {
@@ -144,6 +156,27 @@ public class Nucleo extends Observable implements  Observer {
 
 	public void establecerConexionConElServidor() throws UnknownHostException, IllegalArgumentException, IOException {
 		this.conexion.iniciarConexionServidor();
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void actualizarEstado(String mensaje){
+		this.setChanged();
+		this.notifyObservers(ACTUALIZAR);
+	}
+
+	public ArrayList<Cliente> getConectados() {
+		return conectados;
+	}
+
+	public void setConectados(ArrayList<Cliente> conectados) {
+		this.conectados = conectados;
 	}
 	
 }

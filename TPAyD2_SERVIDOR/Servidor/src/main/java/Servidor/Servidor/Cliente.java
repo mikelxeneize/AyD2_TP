@@ -8,7 +8,8 @@ public class Cliente {
 	String ip;
 	Socket socket;
 	String estado = "disponible";
-
+	
+	String username;
 
 	int puertoReceptor;
 	String ipReceptor;
@@ -56,6 +57,18 @@ public class Cliente {
 	public void setIpReceptor(String ipReceptor) {
 		this.ipReceptor = ipReceptor;
 	}
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String actualizacion() {
+		return username+"="+puerto+"=" +ip+"="+estado;
+	}
+	
 	
 	
 }

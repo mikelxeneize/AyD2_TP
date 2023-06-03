@@ -33,13 +33,13 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		this.modelo.addObserver(this);
 	}
 
-	//valida que el puerto sea un numero y se encarga de castearlo
+	// valida que el puerto sea un numero y se encarga de castearlo
 	public void actionPerformed(ActionEvent e) {
-		if(e.getActionCommand().equals(IVista.CONFIGURACION)) {
+		if (e.getActionCommand().equals(IVista.CONFIGURACION)) {
 			ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion(this.vista);
 			this.vista.cerrar();
 			this.modelo.deleteObserver(this);
-		} else if(e.getActionCommand().equals(IVista.INICIAR_CONEXION)) {
+		} else if (e.getActionCommand().equals(IVista.INICIAR_CONEXION)) {
 			String ipDestino = this.vista.getIpDestino();
 			int puertoDestino;
 			try {
@@ -47,21 +47,20 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 				this.modelo.iniciarConexion(ipDestino, puertoDestino);
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
 				this.modelo.deleteObserver(this);
-				this.vista.cerrar(); 
+				this.vista.cerrar();
 				this.vista.mostrarLabelErrorAlConectar(false);
-				
+
 			} catch (NumberFormatException ex) {
 				this.vista.setTextlabelError("Formato de puerto invalido");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			} catch (IOException e1) { //esta cachea el UnknownHostException tmb
+			} catch (IOException e1) { // esta cachea el UnknownHostException tmb
 				this.vista.setTextlabelError("La conexion fue rechazada. Revisar el ip y puerto ingresados");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			} catch (
-				IllegalArgumentException e1) {
+			} catch (IllegalArgumentException e1) {
 				this.vista.setTextlabelError("Rango de puerto invalido");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			 }
-			
+			}
+
 		}
 	}
 
@@ -69,11 +68,16 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof Mensaje) {
 			Mensaje datos = (Mensaje) arg;
-			if(datos.getEstado().equals("conexion establecida")) {
+			if (datos.getEstado().equals("Actualizar")) {
+				for (int i=0; i< this.modelo.getConectados().size(); i++) {
+					this.vista.recibirConectado(this.modelo.getConectados().get(i).toString());
+				}
+			}
+			else if (datos.getEstado().equals("conexion establecida")) {
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
 				this.modelo.deleteObserver(this);
-				this.vista.cerrar(); 
-			}else if (datos.getEstado().equals("error al escuchar")) {
+				this.vista.cerrar();
+			} else if (datos.getEstado().equals("error al escuchar")) {
 				this.vista.setTextlabelError("No estas en modo escucha, tu puerto esta ocupado \nIr a configuracion");
 				this.vista.mostrarLabelErrorAlConectar(true);
 			}

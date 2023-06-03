@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/Fuentes">
+      <sourceFolder url="file://$MODULE_DIR$/Fuentes/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Fuentes/src/test/java" isTestSource="false" />
+    </content>
+    <content url="file://$MODULE_DIR$/TPAyD2_SERVIDOR">
+      <sourceFolder url="file://$MODULE_DIR$/TPAyD2_SERVIDOR/Servidor/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/TPAyD2_SERVIDOR/Servidor/src/test/java" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="json-simple-2.1.2" level="project" />
+    <orderEntry type="library" name="googlecode.json.simple" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
+  </component>
+</module>

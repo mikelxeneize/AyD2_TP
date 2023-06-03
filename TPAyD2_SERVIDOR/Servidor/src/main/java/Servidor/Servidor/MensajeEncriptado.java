@@ -7,6 +7,7 @@ public class MensajeEncriptado {
 	private String estado;
 	private String ip;
 	private int puerto;
+	private String username;
 	
 	
 	public MensajeEncriptado(String mensaje, String estado, String ip, int puerto) {
@@ -21,6 +22,7 @@ public class MensajeEncriptado {
 		String[] partes = mensaje.split(":");
 		this.setPuerto(Integer.parseInt(partes[1]));
 		this.setMensaje(partes[2]);
+		this.setUsername(partes[3]);
 		if(partes[0].equals("localhost"))
 			this.setIp("/127.0.0.1");
 		else
@@ -61,9 +63,17 @@ public class MensajeEncriptado {
 		this.ip = ip;
 	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	@Override
 	public String toString() {
-		return ip+":"+puerto+":"+mensaje;
+		return ip+":"+puerto+":"+mensaje+":"+"pepe";
 	}
 	
 	

@@ -7,33 +7,38 @@ public class MensajeEncriptado {
 	private String estado;
 	private String ip;
 	private int puerto;
-	
-	
-	public MensajeEncriptado(String clave,String mensaje, String algoritmo) {
+	private String clientecompleto;
+
+	public MensajeEncriptado(String clave, String mensaje, String algoritmo) {
 		String[] partes = mensaje.split(":");
 		this.setPuerto(Integer.parseInt(partes[1]));
-		if (partes[2].equals("%cerrar_conexion%"))
+		this.setClientecompleto(partes[3]);
+		if (partes[2].equals("%Actualizar%"))
+			this.setMensaje("%Actualizar%");
+		else if (partes[2].equals("%cerrar_conexion%"))
 			this.setMensaje("%cerrar_conexion%");
-	else 
-		if (partes[2].equals("%Solicitud_Conexion%"))
+		else if (partes[2].equals("%Solicitud_Conexion%"))
 			this.setMensaje("%Solicitud_Conexion%");
 		else
 			this.setMensaje(Codificacion.desencriptar(clave, partes[2], algoritmo));
-		if(partes[0].equals("localhost"))
+		if (partes[0].equals("localhost"))
 			this.setIp("127.0.0.1");
 		else
 			this.setIp(partes[0]);
 	}
-	
+
 	public String getMensaje() {
 		return mensaje;
 	}
+
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
 	}
+
 	public String getEstado() {
 		return estado;
 	}
+
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
@@ -41,7 +46,6 @@ public class MensajeEncriptado {
 	public String getIp() {
 		return ip;
 	}
-
 
 	public String getIpTruncada() {
 		return ip.substring(1);
@@ -61,8 +65,16 @@ public class MensajeEncriptado {
 
 	@Override
 	public String toString() {
-		return ip+":"+puerto+":"+mensaje;
+		return ip + ":" + puerto + ":" + mensaje;
 	}
-	
-	
+
+	public String getClientecompleto() {
+		return clientecompleto;
+	}
+
+	public void setClientecompleto(String clientecompleto) {
+		this.clientecompleto = clientecompleto;
+	}
+
+
 }
