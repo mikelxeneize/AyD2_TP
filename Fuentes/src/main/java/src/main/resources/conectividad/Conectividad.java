@@ -193,18 +193,11 @@ public class Conectividad extends Observable implements IConectividad {
 	}
 
 	public void actualizar(String cliente) {
+		
 		String[] partes = cliente.split("=");
 		Cliente clienteNuevo = new Cliente(partes[0], partes[1], partes[2], partes[3]);
-		int i = 0;
-			while (i<Nucleo.getInstance().getConectados().size() &&(!Nucleo.getInstance().getConectados().get(i).getIp().equals(clienteNuevo.getIp()) || !Nucleo.getInstance().getConectados().get(i).getPuerto().equals(clienteNuevo.getPuerto()))) {
-				i++;
-			}
-			if (i==Nucleo.getInstance().getConectados().size()) {
-				Nucleo.getInstance().getConectados().add(clienteNuevo);
-			}
-			else{
-				Nucleo.getInstance().getConectados().get(i).setEstado(clienteNuevo.getEstado());
-			}
+		Nucleo.getInstance().getConectados().add(clienteNuevo);
+		
 	}
 
 	

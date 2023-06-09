@@ -19,6 +19,10 @@ public class MensajeEncriptado {
 			this.setMensaje("%cerrar_conexion%");
 		else if (partes[2].equals("%Solicitud_Conexion%"))
 			this.setMensaje("%Solicitud_Conexion%");
+		else if (partes[2].equals("%Usuarios%"))
+			this.setMensaje("%Usuarios%");
+		else if (partes[2].equals("%Imprimir%"))
+			this.setMensaje("%Imprimir%");
 		else
 			this.setMensaje(Codificacion.desencriptar(clave, partes[2], algoritmo));
 		if (partes[0].equals("localhost"))

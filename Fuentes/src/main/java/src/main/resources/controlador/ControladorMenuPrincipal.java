@@ -70,10 +70,8 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		if (arg instanceof Mensaje) {
 			Mensaje datos = (Mensaje) arg;
 			if (datos.getEstado().equals("Actualizar")) {
-				for (int i=0; i< this.modelo.getConectados().size(); i++) {
-					this.vista.recibirConectado(this.modelo.getConectados().get(i).toString());
+					this.vista.recibirConectado(this.modelo.getConectados());
 				}
-			}
 			else if (datos.getEstado().equals("conexion establecida")) {
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
 				this.modelo.deleteObserver(this);

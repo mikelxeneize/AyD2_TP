@@ -38,20 +38,26 @@ public class RecibirMensajeHilo extends Thread {
 			}
 			this.clave = this.conectividad.getClave();
 			this.algoritmo = this.conectividad.getAlgoritmo();
-			if (msg != null) { 
-				MensajeEncriptado mensajeEncriptado = new MensajeEncriptado(this.clave, msg, this.algoritmo);							
-				if (mensajeEncriptado.getMensaje().equals("%Actualizar%")) { //actualiza lista usuarios
+			if (msg != null) {
+				MensajeEncriptado mensajeEncriptado = new MensajeEncriptado(this.clave, msg, this.algoritmo);
+				if (mensajeEncriptado.getMensaje().equals("%Actualizar%")) { // actualiza lista usuarios
 					this.conectividad.actualizar(mensajeEncriptado.getClientecompleto());
-					mensaje= new Mensaje("","Actualizar");
+					mensaje = new Mensaje("", "Actualizar");
 					this.conectividad.notificarAccion(mensaje);
-				} else if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) { //cierra conversacion
+
+				} else if (mensajeEncriptado.getMensaje().equals("%Usuarios%")) { // crea lista usuarios
+					this.conectividad.actualizar(mensajeEncriptado.getClientecompleto());
+				} else if (mensajeEncriptado.getMensaje().equals("%Imprimir%")) { //
+					mensaje = new Mensaje("", "Actualizar");
+					this.conectividad.notificarAccion(mensaje);
+				} else if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) { // cierra conversacion
 					mensaje = new Mensaje(msg, "conexion cerrada");
 					this.conectividad.notificarAccion(mensaje);
 					this.conectividad.setIpReceptor(null);
-					mensaje= new Mensaje("","Actualizar");
+					mensaje = new Mensaje("", "Actualizar");
 					this.conectividad.notificarAccion(mensaje);
-				} else { //mensaje recibido
-					if (this.conectividad.getIpReceptor() == null) { //alguien te inicio un chat
+				} else { // mensaje recibido
+					if (this.conectividad.getIpReceptor() == null) { // alguien te inicio un chat
 						this.conectividad.setIpReceptor(mensajeEncriptado.getIp());
 						this.conectividad.setPuertoReceptor(mensajeEncriptado.getPuerto());
 						this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));

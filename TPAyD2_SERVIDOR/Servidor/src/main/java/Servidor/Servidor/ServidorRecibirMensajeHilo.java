@@ -33,12 +33,14 @@ public class ServidorRecibirMensajeHilo extends Thread {
 				System.out.println(msg);
 				if (msg == null) {
 					this.cliente.setEstado("Desconectado");
-					this.servidor.actualizarClientes(this.cliente);
+					this.servidor.getListaConectados().remove(this.cliente);
+					this.servidor.MandarLista1(this.cliente);
 				} else {
 					mensaje = new MensajeEncriptado(msg);
 					if (mensaje.getMensaje().equals("%nombre_usuario%")) {
 						this.cliente.setUsername(mensaje.getUsername());
-						this.servidor.actualizarClientes(this.cliente);
+						this.servidor.MandarLista1(this.cliente);
+						//this.servidor.actualizarClientes(this.cliente);
 					} else if (mensaje.getMensaje().equals("%cerrar_conexion%")) {
 						// cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
 						this.cliente.setEstado("Disponible");

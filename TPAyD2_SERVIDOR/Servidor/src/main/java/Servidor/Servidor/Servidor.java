@@ -149,8 +149,25 @@ public class Servidor {
 					+ cliente.actualizacion());
 			System.out.println(cliente.getIp() + ":" + Integer.toString(cliente.getPuerto()) + ":" + "%Actualizar%"
 					+ ":" + cliente.actualizacion() + "\n");
-
 		}
 	}
 
+	public void MandarLista1(Cliente cliente) {
+		PrintWriter out = null;
+		for (int j = 0; j < this.getListaConectados().size(); j++) {
+			try {
+				out = new PrintWriter(this.getListaConectados().get(j).getSocket().getOutputStream(), true);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for (int i = 0; i < this.getListaConectados().size(); i++) {
+
+				out.println(cliente.getIp() + ":" + Integer.toString(cliente.getPuerto()) + ":" + "%Usuarios%" + ":"
+						+ this.getListaConectados().get(i).actualizacion());
+			}
+			out.println(
+					cliente.getIp() + ":" + Integer.toString(cliente.getPuerto()) + ":" + "%Imprimir%" + ":" + "pepe");
+		}
+	}
 }

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1b4a4f00-e7b5-42f1-8885-39e2ffb29737" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Fuentes/src/main/java/ejemplo/TPAyD2/AppEmisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fuentes/src/main/java/ejemplo/TPAyD2/AppEmisor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fuentes/src/main/java/src/main/resources/frontEnd/IVista.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fuentes/src/main/java/src/main/resources/frontEnd/IVista.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/src/main/java/Servidor/Servidor/SocketBean.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/maven/Servidor/Servidor/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/maven/Servidor/Servidor/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/Servidor/Servidor/SocketBean.class" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2Q4qIuh44gx8z2bKBxMSWTq74tV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/mikel/Documentos/Facultad/AnalisisYDiseño2/TPAYD2/AyD2_TP/TPAyD2_SERVIDOR",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.AppEmisor">
+    <configuration name="AppEmisor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ejemplo.TPAyD2.AppEmisor" />
+      <module name="AyD2_TP" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ejemplo.TPAyD2.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TAYD2" type="Application" factoryName="Application">
+      <module name="AyD2_TP" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.AppEmisor" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1b4a4f00-e7b5-42f1-8885-39e2ffb29737" name="Changes" comment="" />
+      <created>1684623124483</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684623124483</updated>
+      <workItem from="1684623125534" duration="346000" />
+      <workItem from="1684703352276" duration="556000" />
+      <workItem from="1684707527018" duration="349000" />
+      <workItem from="1684709642767" duration="661000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

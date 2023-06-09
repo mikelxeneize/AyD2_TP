@@ -5,9 +5,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import src.main.resources.backEnd.Cliente;
+
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JLabel;
@@ -162,9 +166,13 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 	public void mostrarLabelErrorAlConectar(boolean boleano) {
 		this.lblErrorAlConectar.setVisible(boleano);
 	}
-	public void recibirConectado(String mensajeRecibido){
-		String mensajesPrevios = this.textField_clientes.getText();
-		this.textField_clientes.setText(mensajesPrevios + "\n" + mensajeRecibido);
+	public void recibirConectado(ArrayList<Cliente> mensajeRecibido){
+		String mensajesPrevios = "";
+		this.textField_clientes.setText("");
+		for (int i = 0; i < mensajeRecibido.size(); i++) {
+			this.textField_clientes.setText(mensajesPrevios + mensajeRecibido.get(i).toString() + "\n");
+			mensajesPrevios = this.textField_clientes.getText();
+		}
 	}
 }
 
