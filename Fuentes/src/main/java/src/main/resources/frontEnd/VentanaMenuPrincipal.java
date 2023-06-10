@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import src.main.resources.backEnd.Cliente;
 
 import javax.swing.JTextField;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,9 +28,14 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 	private JTextField textField_port;
 	private JTextField textField_IP;
 	private JTextArea textField_clientes;
-
+	private JLabel lblPingEcho = new JLabel("Ping: ");
+	private JLabel lblPingEchoValor = new JLabel("");
 	private JButton btnIniciarConexion;
 	private JButton btnConfigurarPuerto ;
+	
+	static final String ROJO ="Rojo";
+	static final String VERDE ="Verde";
+	static final String AMARILLO ="Amarillo";
 	/**
 	 * Launch the application.
 	 */
@@ -91,12 +97,12 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		JLabel lblNewLabel = new JLabel("<html>Para iniciar una conversación, pedile a la otra persona su dirección IP pública y el número de puerto al que deseas conectarte, e ingresalos debajo!");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(82, 63, 466, 76);
+		lblNewLabel.setBounds(82, 75, 466, 76);
 		contentPane.add(lblNewLabel);
 		JLabel lblPepeChat = new JLabel("Pepe Chat");
 		lblPepeChat.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPepeChat.setFont(new Font("Tahoma", Font.PLAIN, 43));
-		lblPepeChat.setBounds(24, -20, 589, 104);
+		lblPepeChat.setBounds(98, -18, 361, 104);
 		contentPane.add(lblPepeChat);
 		
 		JLabel lblNewLabel_1 = new JLabel("Ip destino:");
@@ -120,20 +126,32 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 		contentPane.add(textField_clientes);
 		
 		JLabel lblNewLabel_1_1_1 = new JLabel("Ip:");
-		lblNewLabel_1_1_1.setBounds(126, 312, 27, 31);
+		lblNewLabel_1_1_1.setBounds(162, 313, 27, 31);
 		contentPane.add(lblNewLabel_1_1_1);
 		
 		JLabel lblNewLabel_1_1_1_1 = new JLabel("Nombre de \nusuario");
-		lblNewLabel_1_1_1_1.setBounds(24, 309, 78, 36);
+		lblNewLabel_1_1_1_1.setBounds(24, 309, 142, 36);
 		contentPane.add(lblNewLabel_1_1_1_1);
 		
 		JLabel lblNewLabel_1_1_1_1_1 = new JLabel("Puerto:");
-		lblNewLabel_1_1_1_1_1.setBounds(184, 312, 49, 31);
+		lblNewLabel_1_1_1_1_1.setBounds(228, 313, 49, 31);
 		contentPane.add(lblNewLabel_1_1_1_1_1);
 		
 		JLabel lblNewLabel_1_1_1_1_1_1 = new JLabel("Estado:");
-		lblNewLabel_1_1_1_1_1_1.setBounds(305, 312, 49, 31);
+		lblNewLabel_1_1_1_1_1_1.setBounds(315, 313, 49, 31);
 		contentPane.add(lblNewLabel_1_1_1_1_1_1);
+		lblPingEcho.setForeground(new Color(0, 0, 0));
+		lblPingEcho.setBounds(10, 11, 49, 14);
+		contentPane.add(lblPingEcho);
+		
+		lblPingEchoValor.setForeground(Color.GREEN);
+		lblPingEchoValor.setBounds(47, 11, 55, 14);
+		contentPane.add(lblPingEchoValor);
+		
+		JLabel lblGif = new JLabel("");
+		lblGif.setIcon(new ImageIcon(VentanaMenuPrincipal.class.getResource("/src/main/resources/frontEnd/pepechatGif.gif")));
+		lblGif.setBounds(420, 11, 148, 97);
+		contentPane.add(lblGif);
 		this.setVisible(true);
 		this.lblErrorAlConectar.setVisible(false);
 		this.setLocationRelativeTo((Component) vista);
@@ -174,5 +192,26 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 			mensajesPrevios = this.textField_clientes.getText();
 		}
 	}
+
+
+	public String getLblPingEchoValor() {
+		return lblPingEchoValor.getText();
+	}
+
+
+	public void setLblPingEchoValor(String valor) {
+		this.lblPingEchoValor.setText(valor + "  ms");
+	}
+
+
+	public void setLblPingEchoColor(String color) {
+		if(color.equals(AMARILLO))
+			this.lblPingEchoValor.setForeground(Color.orange);
+		else if (color.equals(VERDE))
+			this.lblPingEchoValor.setForeground(Color.green);
+		else
+			this.lblPingEchoValor.setForeground(Color.red);
+	}
+	
 }
 

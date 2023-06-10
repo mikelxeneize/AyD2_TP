@@ -20,6 +20,7 @@ public class ServidorRecibirMensajeHilo extends Thread {
 		String msg = null;
 		MensajeEncriptado mensaje;
 		MensajeEncriptado mensajeAReceptor;
+		MensajeEncriptado mensajeConfirmacion;
 		do {
 			BufferedReader in = null;
 			try {
@@ -30,42 +31,59 @@ public class ServidorRecibirMensajeHilo extends Thread {
 
 			try {
 				msg = in.readLine();
-				System.out.println(msg);
+				System.out.println("1: "+msg);
 				if (msg == null) {
-					this.cliente.setEstado("Desconectado");
+					//this.cliente.setEstado("Desconectado");
 					this.servidor.getListaConectados().remove(this.cliente);
-					this.servidor.MandarLista1(this.cliente);
+					this.servidor.MandarLista1();
 				} else {
 					mensaje = new MensajeEncriptado(msg);
-					if (mensaje.getMensaje().equals("%nombre_usuario%")) {
+					if (mensaje.getMensaje().equals("%nombre_usuario%")) {// Recibe comando de registro de usuario
 						this.cliente.setUsername(mensaje.getUsername());
-						this.servidor.MandarLista1(this.cliente);
-						//this.servidor.actualizarClientes(this.cliente);
-					} else if (mensaje.getMensaje().equals("%cerrar_conexion%")) {
+						this.servidor.MandarLista1();
+					} 
+					
+					else if (mensaje.getMensaje().equals("%cerrar_conexion%")) { // Recibe comando de cerrar la conexion con el otro cliente
 						// cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
 						this.cliente.setEstado("Disponible");
-						this.servidor.actualizarClientes(this.cliente);
+						this.servidor.MandarLista1();
 						this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),
 								this.cliente.getPuertoReceptor());
 						this.cliente.setIpReceptor(null);
-					} else {
-						if (this.cliente.getIpReceptor() == null) {
-							mensajeAReceptor = new MensajeEncriptado("%Solicitud_Conexion%", "", this.cliente.getIp(),
+					} 
+					
+					else if (mensaje.getMensaje().equals("%PingEcho%")) {// Recibe comando de Ping, y emite una señal al cliente
+						this.servidor.enviarMensajeACliente(new MensajeEncriptado("%Respuesta_Ping_Echo%", "", this.cliente.getIp(),
+								this.cliente.getPuerto()), this.cliente.getIp(),
+								this.cliente.getPuerto());
+					} 
+					
+					else if (mensaje.getMensaje().equals("%Iniciar_Conversacion%") && this.cliente.getEstado().equals("Disponible") ) {// Recibe comando de iniciar conversacion con otro cliente
+							mensajeAReceptor = new MensajeEncriptado("%Conexion_establecida%", "", this.cliente.getIp(),
 									this.cliente.getPuerto());
-							this.servidor.iniciarConexionAReceptor(mensaje, mensajeAReceptor);
+							mensajeConfirmacion=new MensajeEncriptado("%Conexion_rechazada%", "", this.cliente.getIp(),
+									this.cliente.getPuerto());
+							//Inicia conexion con el receptor
+							this.servidor.iniciarConexionAReceptor(mensaje, mensajeAReceptor,mensajeConfirmacion);
+							//Le envia un mensaje al cliente 1 con la confirmacion de que la conexion se establecio
+							this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(),
+									this.cliente.getPuerto());
+							//Configura el arraylist con los nuevos estados
 							this.cliente.setIpReceptor(mensaje.getIp());
 							this.cliente.setPuertoReceptor(mensaje.getPuerto());
-							this.cliente.setEstado("Ocupado");
-							this.servidor.actualizarClientes(this.cliente);
-						} else {
+							this.cliente.setEstado("Disponible");
+							//Notifica a todos los usuarios del sistema sobre esta nueva conexion
+							this.servidor.MandarLista1();
+						} 
+					
+					else {// Recibe un mensaje a transmitir en un chat ya activo
 							this.servidor.enviarMensajeACliente(mensaje, this.cliente.getIpReceptor(),
 									this.cliente.getPuertoReceptor());
-						}
 					}
 				}
 			} catch (IOException e) {
 				this.cliente.setEstado("Disponible");
-				this.servidor.actualizarClientes(this.cliente);
+				this.servidor.MandarLista1();
 				try {
 					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),
 							this.cliente.getPuertoReceptor());
@@ -75,9 +93,12 @@ public class ServidorRecibirMensajeHilo extends Thread {
 				}
 				this.cliente.setIpReceptor(null);
 				msg = null;
-
+				this.servidor.getListaConectados().remove(this.cliente);
+				this.servidor.MandarLista1();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				this.servidor.getListaConectados().remove(this.cliente);
+				this.servidor.MandarLista1();
 			}
 
 		} while (msg != null); // implica que se cerro la conexion

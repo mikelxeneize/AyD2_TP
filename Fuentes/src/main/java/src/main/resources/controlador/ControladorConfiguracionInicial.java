@@ -24,7 +24,7 @@ public class ControladorConfiguracionInicial implements ActionListener{
 		String ip;
 		this.vista = new VentanaConfiguracionInicial(vista2);
 		try {
-			InetAddress localHost;
+			InetAddress localHost; 
 			localHost = InetAddress.getLocalHost();
 			ip = localHost.getHostAddress();
 		} catch (UnknownHostException e) {

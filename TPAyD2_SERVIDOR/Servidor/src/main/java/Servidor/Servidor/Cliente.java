@@ -7,7 +7,7 @@ public class Cliente {
 	int puerto;
 	String ip;
 	Socket socket;
-	String estado = "disponible";
+	String estado = "Disponible";
 	
 	String username;
 
@@ -66,7 +66,7 @@ public class Cliente {
 	}
 	
 	public String actualizacion() {
-		return username+"="+puerto+"=" +ip+"="+estado;
+		return username+"="+puerto+"=" +ip+"="+estado+";";
 	}
 	
 	

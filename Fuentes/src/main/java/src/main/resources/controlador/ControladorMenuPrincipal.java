@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 
 import src.main.resources.backEnd.Nucleo;
 import src.main.resources.conectividad.Mensaje;
+import src.main.resources.conectividad.PingEchoHilo;
 import src.main.resources.frontEnd.IVista;
 import src.main.resources.frontEnd.VentanaConfiguracionInicial;
 import src.main.resources.frontEnd.VentanaMenuPrincipal;
@@ -31,8 +32,10 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		}
 		this.modelo.pedirServidorSecundario();
 		this.vista.mostrarLabelErrorAlConectar(false);
+		MostrarPingEchoHilo pingechohilo= new MostrarPingEchoHilo(this,this.vista);
+		pingechohilo.start();
 		this.modelo.addObserver(this);
-	}
+	} 
 
 	// valida que el puerto sea un numero y se encarga de castearlo
 	public void actionPerformed(ActionEvent e) {
@@ -46,10 +49,6 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			try {
 				puertoDestino = Integer.parseInt(this.vista.getPortDestino());
 				this.modelo.iniciarConexion(ipDestino, puertoDestino);
-				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
-				this.modelo.deleteObserver(this);
-				this.vista.cerrar();
-				this.vista.mostrarLabelErrorAlConectar(false);
 
 			} catch (NumberFormatException ex) {
 				this.vista.setTextlabelError("Formato de puerto invalido");
@@ -72,21 +71,37 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			if (datos.getEstado().equals("Actualizar")) {
 					this.vista.recibirConectado(this.modelo.getConectados());
 				}
+			
+			else if (datos.getEstado().equals("Conexion_rechazada")) {
+				this.vista.setTextlabelError("La conexion fue rechazada. Revisar el ip y puerto ingresados");
+				this.vista.mostrarLabelErrorAlConectar(true);
+			}
+			
 			else if (datos.getEstado().equals("conexion establecida")) {
+				
 				ControladorConversacion controladorConversacion = new ControladorConversacion(this.vista);
 				this.modelo.deleteObserver(this);
 				this.vista.cerrar();
-			} else if (datos.getEstado().equals("error al escuchar")) {
+				this.vista.mostrarLabelErrorAlConectar(false);
+			} 
+			
+			else if (datos.getEstado().equals("error al escuchar")) {
 				this.vista.setTextlabelError("No estas en modo escucha, tu puerto esta ocupado \nIr a configuracion");
 				this.vista.mostrarLabelErrorAlConectar(true);
-			} else if (datos.getEstado().equals("informacion servidor secundario")) {
+			} 
+			
+			else if (datos.getEstado().equals("informacion servidor secundario")) {
 				try {
 					this.modelo.conectarServidorSecundario();
-				} catch (IllegalArgumentException | IOException e) {
+				} catch (IllegalArgumentException | IOException e) { 
 					e.printStackTrace();
 					System.out.println("No se puede establcer conexion con el servidor secundario");
 				}
 			}
-		}
+			
+		} 
+	}
+	public long getPingEcho() {
+		return this.modelo.getConectividad().getPingEchoTime();
 	}
 }

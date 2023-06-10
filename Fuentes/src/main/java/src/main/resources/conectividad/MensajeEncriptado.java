@@ -23,6 +23,16 @@ public class MensajeEncriptado {
 			this.setMensaje("%Usuarios%");
 		else if (partes[2].equals("%Imprimir%"))
 			this.setMensaje("%Imprimir%");
+		else if (partes[2].equals("%Enviar_Lista%"))
+			this.setMensaje("%Enviar_Lista%");
+		else if (partes[2].equals("%HeartBeat%"))
+			this.setMensaje("%HeartBeat%");
+		else if (partes[2].equals("%Respuesta_Ping_Echo%"))
+			this.setMensaje("%Respuesta_Ping_Echo%");
+		else if (partes[2].equals("%Conexion_rechazada%"))
+			this.setMensaje("%Conexion_rechazada%");
+		else if (partes[2].equals("%Conexion_establecida%"))
+			this.setMensaje("%Conexion_establecida%");
 		else
 			this.setMensaje(Codificacion.desencriptar(clave, partes[2], algoritmo));
 		if (partes[0].equals("localhost"))

@@ -22,25 +22,25 @@ public class Codificacion {
 			try {
 				cipher = Cipher.getInstance(algoritmo);
 			} catch (NoSuchAlgorithmException e) {
-				System.out.println("no ecnripto porque lo que se paso no es un algoritmo");
+				System.out.println("2: "+"no ecnripto porque lo que se paso no es un algoritmo");
 				e.printStackTrace();
 			} catch (NoSuchPaddingException e) {
-				System.out.println("no ecnripto porque el relleno no es correcto");
+				System.out.println("3: "+"no ecnripto porque el relleno no es correcto");
 				e.printStackTrace();
 			}
 			try {
 				cipher.init(Cipher.ENCRYPT_MODE, key);
 			} catch (InvalidKeyException e) {
-				System.out.println("no ecnripto porque la key es incorrecta");
+				System.out.println("4: "+"no ecnripto porque la key es incorrecta");
 				e.printStackTrace();
 			}
 			try {
 				codificadobyte= cipher.doFinal(mensaje.getBytes());
 			} catch (IllegalBlockSizeException e) {
-				System.out.println("no ecnripto porque el blocksize es ilegal");
+				System.out.println("5: "+"no ecnripto porque el blocksize es ilegal");
 				e.printStackTrace();
 			} catch (BadPaddingException e) {
-				System.out.println("no ecnripto porque lo que se paso no es un algoritmo");
+				System.out.println("6: "+"no ecnripto porque lo que se paso no es un algoritmo");
 				e.printStackTrace();
 			}
 			codificado= Base64.getEncoder().encodeToString(codificadobyte);
