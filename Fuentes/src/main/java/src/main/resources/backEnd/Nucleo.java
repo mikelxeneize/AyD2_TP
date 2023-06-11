@@ -172,13 +172,6 @@ public class Nucleo extends Observable implements  Observer {
 		this.conectados = conectados;
 	}
 
-	public void pedirServidorSecundario() throws IOException {
-		//this.conexion.enviarMensaje(PEDIR_SERVIDOR_SECUNDARIO);;
-	}
-	
-	public void conectarServidorSecundario() throws UnknownHostException, IllegalArgumentException, IOException {
-		this.conexion.iniciarConexionServidorSecundario();
-	}
 	public long getPingEcho() {
 		return this.getConectividad().getPingEchoTime();
 	}

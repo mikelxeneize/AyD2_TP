@@ -18,8 +18,24 @@ public class Servidor {
 	private ServerSocket serverSocket;
 	private static Servidor instance;
 
-	private int puertoServidor = 5000;
+	private Socket servidorVecino;
+	private boolean isPrincipal = false;
+	
+
+	// parametros de notificacion de configuracion
+	private int PUERTO_1 = 5001; 
+	private int PUERTO_2 = 5002;
+	
+	private int puertoServidor;
 	private String ipServidor = "localhost";
+
+	public int getPuertoServidor() {
+		return puertoServidor;
+	}
+
+	public String getIpServidor() {
+		return ipServidor;
+	}
 
 	public static Servidor getInstance() throws IOException {
 		if (Servidor.instance == null) {
@@ -30,8 +46,13 @@ public class Servidor {
 
 	public Servidor() throws IOException {
 		iniciarHeartBeat();
+		redundanciaPasiva();
 		iniciarEscucha();
+		if (! this.isPrincipal) {
+			notificarServidor();
+		}
 	}
+
 
 	private void iniciarHeartBeat() {
 		HeartBeatHilo hilo = new HeartBeatHilo(this,false);
@@ -175,4 +196,58 @@ public class Servidor {
 		}
 		
 	}
+	
+	//determina si hay servidor principal y decide en que puerto va a escuchar
+	private void redundanciaPasiva() { 
+		this.isPrincipal = false;
+		this.puertoServidor = PUERTO_1;
+		if  (conectarServidor("localhost",PUERTO_1)) { //hay un servidor principal en puerto_1
+			this.puertoServidor = PUERTO_2;
+		}else if(conectarServidor("localhost",PUERTO_2)) { //hay servidor principal en puerto_2
+			//seguis escuchando en el puerto_1
+		}else { // no hay servidor principal, entonces este lo sera
+			System.out.println("44: No hay server principal");	
+			this.isPrincipal = true;
+		}
+	}
+	
+	public boolean conectarServidor(String ip, int puerto){
+		boolean conecto = true;
+		System.out.println("43: intentando conexion a servidor en puerto "+ puerto);
+		try {
+			this.servidorVecino = new Socket(ip,puerto);
+		} catch (Exception e) {
+			conecto = false;
+		}
+		return conecto;
+	}
+	
+	private void notificarServidor() {
+		PrintWriter out;
+		try {
+			out = new PrintWriter(servidorVecino.getOutputStream(), true);
+			out.println(this.ipServidor + ":" + this.puertoServidor+ ":" + "%nuevoServidorPasivo%" + ":" + "Servidor_Servidor");
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		System.out.println(this.ipServidor + ":" + this.puertoServidor+ ":" + "%nuevoServidorPasivo%" + ":" + "Servidor_Servidor"); 	
+	}
+
+	void notificarUsuarios(String ip, int puerto) { 
+		for (Cliente cliente : this.listaConectados) {
+			try {
+				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+				out.println(ip + ":" + puerto + ":" + "%nuevoServidorPasivo%" + ":" + "Servidor_Cliente");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(cliente.getIp() + ":" + Integer.toString(cliente.getPuerto()) + ":" + "%nuevoServidorPasivo%" + ":" + "Servidor_Cliente");
+		}
+	}
+	
+	public boolean isPrincipal() {
+		return isPrincipal;
+	}
+	
 }

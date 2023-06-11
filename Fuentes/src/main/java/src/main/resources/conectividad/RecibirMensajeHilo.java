@@ -83,6 +83,15 @@ public class RecibirMensajeHilo extends Thread {
 					this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));
 				} 
 				
+				else if (mensajeEncriptado.getMensaje().equals("%nuevoServidorPasivo%")){ // Servidor informa de nuesvo serverPasiovo, hay q conectarse
+					this.conectividad.registrarServidorSecundario(mensajeEncriptado.getIp(),mensajeEncriptado.getPuerto());
+				} 
+				
+
+				else if (mensajeEncriptado.getMensaje().equals("%responder_principal%")){ // Sos informado que el server q te envio esto es el principal
+					this.conectividad.actualizarServidorPrincipal(mensajeEncriptado.getIp(),mensajeEncriptado.getPuerto());
+				} 
+				
 				else {
 					mensaje = new Mensaje(mensajeEncriptado.getMensaje(), "mensaje recibido"); //Recibe mensaje  normal CREO
 					mensaje.setIp(this.socket.getInetAddress().getHostAddress());

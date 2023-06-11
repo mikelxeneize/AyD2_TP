@@ -76,6 +76,18 @@ public class ServidorRecibirMensajeHilo extends Thread {
 							this.servidor.MandarLista1();
 						} 
 					
+					else if (mensaje.getMensaje().equals("%nuevoServidorPasivo%")) { // Recibe comando de Ping, y emite una señal al cliente
+						this.servidor.notificarUsuarios(mensaje.getIp(),mensaje.getPuerto());
+					} 
+					
+					else if (mensaje.getMensaje().equals("%preguntar_principal%")) { // Le preugntan al servidor si es el principal
+						if (this.servidor.isPrincipal()) {
+							mensajeConfirmacion=new MensajeEncriptado("%responder_principal%", "", this.servidor.getIpServidor(),			
+									this.servidor.getPuertoServidor());
+							this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(), this.cliente.getPuerto());
+						}
+					}
+					
 					else {// Recibe un mensaje a transmitir en un chat ya activo
 							this.servidor.enviarMensajeACliente(mensaje, this.cliente.getIpReceptor(),
 									this.cliente.getPuertoReceptor());

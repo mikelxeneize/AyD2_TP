@@ -3,37 +3,19 @@ package src.main.resources.conectividad;
 import java.net.InetAddress;
 
 public class MensajeEncriptado {
-	private String mensaje;
-	private String estado;
-	private String ip;
-	private int puerto;
-	private String clientecompleto;
+	private String mensaje; //[] comando 
+	private String estado; //[2]
+	private String ip; //[0]
+	private int puerto; //[1]
+	private String clientecompleto; //[3]
 
 	public MensajeEncriptado(String clave, String mensaje, String algoritmo) throws java.lang.NullPointerException{
 		String[] partes = mensaje.split(":");
 		this.setPuerto(Integer.parseInt(partes[1]));
 		this.setClientecompleto(partes[3]);
-		if (partes[2].equals("%Actualizar%"))
-			this.setMensaje("%Actualizar%");
-		else if (partes[2].equals("%cerrar_conexion%"))
-			this.setMensaje("%cerrar_conexion%");
-		else if (partes[2].equals("%Solicitud_Conexion%"))
-			this.setMensaje("%Solicitud_Conexion%");
-		else if (partes[2].equals("%Usuarios%"))
-			this.setMensaje("%Usuarios%");
-		else if (partes[2].equals("%Imprimir%"))
-			this.setMensaje("%Imprimir%");
-		else if (partes[2].equals("%Enviar_Lista%"))
-			this.setMensaje("%Enviar_Lista%");
-		else if (partes[2].equals("%HeartBeat%"))
-			this.setMensaje("%HeartBeat%");
-		else if (partes[2].equals("%Respuesta_Ping_Echo%"))
-			this.setMensaje("%Respuesta_Ping_Echo%");
-		else if (partes[2].equals("%Conexion_rechazada%"))
-			this.setMensaje("%Conexion_rechazada%");
-		else if (partes[2].equals("%Conexion_establecida%"))
-			this.setMensaje("%Conexion_establecida%");
-		else
+		if (partes[2].charAt(0) == '%') { //cuando el mensaje es un comando y NO esta encriptado
+			this.setMensaje(partes[2]);
+		}else
 			this.setMensaje(Codificacion.desencriptar(clave, partes[2], algoritmo));
 		if (partes[0].equals("localhost"))
 			this.setIp("127.0.0.1");

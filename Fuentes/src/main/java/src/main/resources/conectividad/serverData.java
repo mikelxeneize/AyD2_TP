@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public class serverData {
 	Socket socket;
-	String ip;
+	 String ip;
 	int puerto;
 	
 	public serverData(String ip, int puerto) {

@@ -30,7 +30,6 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			this.vista.setTextlabelError("No se pudo cargar el archivo de configuracion .Ir a configuracion");
 			this.vista.mostrarLabelErrorAlConectar(true);
 		}
-		this.modelo.pedirServidorSecundario();
 		this.vista.mostrarLabelErrorAlConectar(false);
 		MostrarPingEchoHilo pingechohilo= new MostrarPingEchoHilo(this,this.vista);
 		pingechohilo.start();
@@ -91,12 +90,8 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 			} 
 			
 			else if (datos.getEstado().equals("informacion servidor secundario")) {
-				try {
-					this.modelo.conectarServidorSecundario();
-				} catch (IllegalArgumentException | IOException e) { 
-					e.printStackTrace();
-					System.out.println("No se puede establcer conexion con el servidor secundario");
-				}
+			//pepe	
+				
 			}
 			
 		} 

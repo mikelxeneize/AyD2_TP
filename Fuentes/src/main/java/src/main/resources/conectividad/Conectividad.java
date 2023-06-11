@@ -32,6 +32,10 @@ public class Conectividad extends Observable implements IConectividad {
 	private boolean conectado;
 	private String estado = "";
 
+	// parametros de notificacion de configuracion
+	private int PUERTO_1 = 5001; 
+	private int PUERTO_2 = 5002;
+	
 	private String clave;
 	private String algoritmo;
 
@@ -43,7 +47,7 @@ public class Conectividad extends Observable implements IConectividad {
 	
 	public Conectividad() {
 		this.conectado = false;
-		this.servidorPrincipal = new serverData("localhost", 5000);
+		this.servidorPrincipal = new serverData("localhost", 0);
 		this.servidorSecundario = null;
 	}
 
@@ -67,42 +71,37 @@ public class Conectividad extends Observable implements IConectividad {
 
 	}
 
-	public void iniciarConexionServidorPrincipal() throws UnknownHostException, IOException, IllegalArgumentException {
-		this.ipPersonal = "localhost";
-		System.out.println("9: "+"socket abierto servidor inicial");
-		this.servidorPrincipal.socket = new Socket();
-		this.servidorPrincipal.socket.setReuseAddress(true);
-		this.servidorPrincipal.socket.bind(new InetSocketAddress(this.puertoPersonal));
-		this.servidorPrincipal.socket.connect(new InetSocketAddress(this.servidorPrincipal.ip, this.servidorPrincipal.puerto));
-
-		this.setSocketPrincipal(servidorPrincipal.socket);
-		System.out.println("10: "+"Socket conectado al servidorPrincipal");
-		this.recibirMensaje();
-
-		PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
-		out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username); // comunico al servidor mi nombre de usuario
-		PingEchoHilo pingechohilo= new PingEchoHilo(this.servidorPrincipal,this);
-		pingechohilo.start();
-		System.out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username);
+	public Socket iniciarConexionServidor(String ip, int puerto) throws IOException {
+		Socket socket = new Socket();
+		socket.setReuseAddress(true);
+		socket.bind(new InetSocketAddress(this.puertoPersonal));
+		socket.connect(new InetSocketAddress(ip,puerto));
+		return socket;
 	}
 	
-	public void iniciarConexionServidorSecundario() throws UnknownHostException, IOException, IllegalArgumentException {
+	public void iniciarConexionServidorPrincipal() throws UnknownHostException, IllegalArgumentException {
+		
+		Socket socket1, socket2;
 		this.ipPersonal = "localhost";
-		System.out.println("7: "+"socket abierto servidorSecundario");
-		this.servidorSecundario.socket = new Socket();
-		this.servidorSecundario.socket.setReuseAddress(true);
-		this.servidorSecundario.socket.bind(new InetSocketAddress(this.puertoPersonal));
-		this.servidorSecundario.socket.connect(new InetSocketAddress(this.servidorSecundario.ip, this.servidorSecundario.puerto));
-
-		this.setSocketSecundario(servidorSecundario.socket);
-		System.out.println("8: "+"Socket conectado al servidorSecundario");
-		this.recibirMensaje();
-
-		PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
-		out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username);
-		System.out.println("24: "+this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username);
-
+		System.out.println("9: "+"intento conexion Servidor Principal");
+			
+		try {
+			this.servidorPrincipal.socket = iniciarConexionServidor("localhost", PUERTO_1);
+			PrintWriter out = new PrintWriter(this.servidorPrincipal.socket.getOutputStream(), true);
+			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%preguntar_principal%" + ":" + this.username);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			this.servidorSecundario.socket = iniciarConexionServidor("localhost", PUERTO_2);
+			PrintWriter out = new PrintWriter(this.servidorSecundario.socket.getOutputStream(), true);
+			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%preguntar_principal%" + ":" + this.username);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
 
 	public int getPuertoReceptor() {
 		return puertoReceptor;
@@ -275,6 +274,28 @@ public class Conectividad extends Observable implements IConectividad {
 		if(i==cantIntentos) {
 			//No se pudo conectar. Swap
 		}
+	}
+
+	public void registrarServidorSecundario(String ip, int puerto) {
+		this.servidorSecundario = new serverData(ip, puerto);
+		try {
+			this.servidorSecundario.setSocket(new Socket(ip, puerto));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void actualizarServidorPrincipal(String ip, int puerto) {
+		if (servidorSecundario.getSocket() != null && servidorSecundario.getPuerto() == puerto && servidorSecundario.getIp() == ip) {
+			this.servidorSwap();
+		}
+	}
+
+	private void servidorSwap() {
+		serverData servidorAux; 
+		servidorAux = this.servidorPrincipal;
+		servidorPrincipal = this.servidorSecundario;
+		servidorSecundario = servidorAux;
 	}
 	
 }
