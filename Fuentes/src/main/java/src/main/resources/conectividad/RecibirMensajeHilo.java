@@ -23,14 +23,13 @@ public class RecibirMensajeHilo extends Thread {
 	public void run() {
 		String msg = null;
 		Mensaje mensaje;
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		do {
-			BufferedReader in = null;
-			try {
-				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-
 			try {
 				msg = in.readLine();
 			} catch (SocketException e) {
@@ -43,8 +42,7 @@ public class RecibirMensajeHilo extends Thread {
 			this.algoritmo = this.conectividad.getAlgoritmo();
 			if (msg != null) { 
 				MensajeEncriptado mensajeEncriptado = new MensajeEncriptado(this.clave, msg, this.algoritmo);
-				
-				//System.out.println("30 :"+msg);
+				//System.out.println("30 :"+msg); 
 				if (!mensajeEncriptado.getMensaje().equals("%Respuesta_Ping_Echo%")) {
 					System.out.println("30 :"+msg);
 				}
