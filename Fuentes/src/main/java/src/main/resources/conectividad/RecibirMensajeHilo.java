@@ -50,7 +50,7 @@ public class RecibirMensajeHilo extends Thread {
 				}
 				
 				else if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) { //  Recibe comando de cerrar el chat
-					mensaje = new Mensaje(msg, "conexion cerrada");
+					mensaje = new Mensaje(msg, "te cerraron la conexion papirrin");
 					this.conectividad.notificarAccion(mensaje);
 					this.conectividad.setIpReceptor(null);
 					mensaje = new Mensaje("", "Actualizar");

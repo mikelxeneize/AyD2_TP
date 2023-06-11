@@ -35,6 +35,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				System.out.println("MANDE PARA CERRAR Y ME ROMPI BEBEEEEE");
 			}
 			try {
 				ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
@@ -74,6 +75,16 @@ public class ControladorConversacion implements ActionListener, Observer {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				try {
+					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
+					this.modelo.deleteObserver(this);
+				} catch (IllegalArgumentException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				this.vista.cerrar();
+			} else if(datos.getEstado().equals("te cerraron la conexion papirrin")) {
+				this.modelo.deleteObserver(this);
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
 					this.modelo.deleteObserver(this);
