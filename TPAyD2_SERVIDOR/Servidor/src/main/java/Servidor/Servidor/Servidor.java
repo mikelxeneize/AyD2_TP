@@ -47,10 +47,11 @@ public class Servidor {
 	public Servidor() throws IOException {
 		iniciarHeartBeat();
 		redundanciaPasiva();
-		iniciarEscucha();
 		if (! this.isPrincipal) {
 			notificarServidor();
 		}
+		iniciarEscucha();
+
 	}
 
 
@@ -63,7 +64,7 @@ public class Servidor {
 	public void iniciarEscucha() throws IOException {
 		Socket socket;
 		Cliente cliente;
-		ServidorRecibirMensajeHilo recibirMensajeHilo;
+		ServidorRecibirMensajeHilo recibirMensajeHilo; 
 		serverSocket = new ServerSocket();
 		serverSocket.setReuseAddress(true);
 		serverSocket.bind(new InetSocketAddress(puertoServidor));
@@ -71,8 +72,9 @@ public class Servidor {
 			socket = serverSocket.accept();
 			socket.setReuseAddress(true);
 			cliente = new Cliente(socket.getPort(), socket.getInetAddress().toString(), socket);
-			this.listaConectados.add(cliente);
-
+			if (socket.getPort() != PUERTO_1 || socket.getPort() != PUERTO_2) {
+				this.listaConectados.add(cliente);
+			}
 			recibirMensajeHilo = new ServidorRecibirMensajeHilo(cliente, this);
 			recibirMensajeHilo.start();
 		}

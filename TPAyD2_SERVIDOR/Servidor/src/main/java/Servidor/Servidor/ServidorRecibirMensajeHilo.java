@@ -78,7 +78,7 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					
 					else if (mensaje.getMensaje().equals("%nuevoServidorPasivo%")) { // Recibe comando de Ping, y emite una señal al cliente
 						this.servidor.notificarUsuarios(mensaje.getIp(),mensaje.getPuerto());
-					} 
+					}  
 					
 					else if (mensaje.getMensaje().equals("%preguntar_principal%")) { // Le preugntan al servidor si es el principal
 						if (this.servidor.isPrincipal()) {

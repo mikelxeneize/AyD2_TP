@@ -42,8 +42,12 @@ public class RecibirMensajeHilo extends Thread {
 			this.clave = this.conectividad.getClave();
 			this.algoritmo = this.conectividad.getAlgoritmo();
 			if (msg != null) { 
-				System.out.println("30 :"+msg);
 				MensajeEncriptado mensajeEncriptado = new MensajeEncriptado(this.clave, msg, this.algoritmo);
+				
+				//System.out.println("30 :"+msg);
+				if (!mensajeEncriptado.getMensaje().equals("%Respuesta_Ping_Echo%")) {
+					System.out.println("30 :"+msg);
+				}
 				
 				if (mensajeEncriptado.getMensaje().equals("%Actualizar%")) { // Recibe comando de actualizacion de directorio
 					this.conectividad.actualizar(mensajeEncriptado.getClientecompleto());
@@ -103,6 +107,7 @@ public class RecibirMensajeHilo extends Thread {
 		System.out.println("13: "+"cerraron la ventana, sali por despues del while");
 		mensaje = new Mensaje("", "servidor desconectado");
 		this.conectividad.notificarAccion(mensaje);
+		this.conectividad.reintento();
 	}
 
 }
