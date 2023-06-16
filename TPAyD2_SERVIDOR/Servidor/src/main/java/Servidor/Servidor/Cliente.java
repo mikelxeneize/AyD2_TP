@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Cliente {
+	
 	int puerto;
 	String ip;
 	String username;

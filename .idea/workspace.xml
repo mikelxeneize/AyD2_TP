@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1b4a4f00-e7b5-42f1-8885-39e2ffb29737" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Fuentes/src/main/java/ejemplo/TPAyD2/AppEmisor.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fuentes/src/main/java/ejemplo/TPAyD2/AppEmisor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fuentes/src/main/java/src/main/resources/frontEnd/IVista.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fuentes/src/main/java/src/main/resources/frontEnd/IVista.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/src/main/java/Servidor/Servidor/SocketBean.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/MANIFEST.MF" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/maven/Servidor/Servidor/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/META-INF/maven/Servidor/Servidor/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TPAyD2_SERVIDOR/Servidor/target/classes/Servidor/Servidor/SocketBean.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +29,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/mikel/Documentos/Facultad/AnalisisYDiseño2/TPAYD2/AyD2_TP/TPAyD2_SERVIDOR",
+    "last_opened_file_path": "/home/mikel/Documentos/Facultad/AnalisisYDiseño2/TPAYD2/AyD2_TP/Fuentes",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -83,6 +78,8 @@
       <workItem from="1684703352276" duration="556000" />
       <workItem from="1684707527018" duration="349000" />
       <workItem from="1684709642767" duration="661000" />
+      <workItem from="1686568676093" duration="34000" />
+      <workItem from="1686568748165" duration="18000" />
     </task>
     <servers />
   </component>
