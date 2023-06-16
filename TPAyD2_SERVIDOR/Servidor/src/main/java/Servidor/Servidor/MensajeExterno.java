@@ -29,7 +29,33 @@ public class MensajeExterno {
 		this.comando = comando;
 		this.cuerpo = cuerpo;
 		this.auxiliar = auxiliar;
-
+		if (iporigen.equals("")){
+			this.iporigen = " ";
+		}
+		if (puertoorigen.equals("")){
+			this.puertoorigen = " ";
+		}
+		if (usernameorigen.equals("")){
+			this.usernameorigen = " ";
+		}
+		if (ipdestino.equals("")){
+			this.ipdestino = " ";
+		}
+		if (puertodestino.equals("")){
+			this.puertodestino = " ";
+		}
+		if (usernamedestino.equals("")){
+			this.usernamedestino = " ";
+		}
+		if (comando.equals("")){
+			this.comando = " ";
+		}
+		if (cuerpo.equals("")){
+			this.cuerpo = " ";
+		}
+		if (auxiliar.equals("")){
+			this.auxiliar = " ";
+		}
 	}
 
 	// cosntructor que se usa cuando llega un mensaje, para parsearlo
@@ -51,7 +77,6 @@ public class MensajeExterno {
 		this.setComando(partes[6]);
 		this.setCuerpo(partes[7]);
 		this.setAuxiliar(partes[8]);
-
 	}
 
 	public String getIporigen() {
