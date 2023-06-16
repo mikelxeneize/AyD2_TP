@@ -62,9 +62,10 @@ public class Servidor {
 		Socket socket;
 		Cliente cliente;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
-		serverSocket = new ServerSocket();
+		serverSocket = new ServerSocket();//agregarle ip y puerto
 		serverSocket.setReuseAddress(true);
 		serverSocket.bind(new InetSocketAddress(puertoServidor));
+		// buscar a otros servidores si hay que actualizarse
 		while (true) {
 			socket = serverSocket.accept();
 			socket.setReuseAddress(true);
@@ -133,7 +134,7 @@ public class Servidor {
 																			// conectarse
 			Socket socket = cliente.getSocket();
 			cliente.setIpReceptor(mensajeAReceptor.getIpdestino());
-			cliente.setPuertoReceptor(Integer.parseInt(mensajeA.getPuertodestino());
+			cliente.setPuertoReceptor(Integer.parseInt(mensaje.getPuertodestino()));
 			mensajeConfirmacion.setComando("%Conexion_establecida%");
 			mensajeConfirmacion.setPuerto(cliente.getPuerto());
 			// mensaje para informar quien lo contacto
