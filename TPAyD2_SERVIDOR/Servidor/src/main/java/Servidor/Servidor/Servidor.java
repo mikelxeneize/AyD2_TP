@@ -44,10 +44,10 @@ public class Servidor {
 
 	public Servidor() throws IOException {
 		//iniciarHeartBeat();
-		redundanciaPasiva();
-		if (!this.isPrincipal) {
-			notificarServidor();
-		}
+		//redundanciaPasiva();
+		//if (!this.isPrincipal) {
+		//	notificarServidor();
+		//}
 		iniciarEscucha();
 
 	}
@@ -133,7 +133,7 @@ public class Servidor {
 																			// conectarse
 			Socket socket = cliente.getSocket();
 			cliente.setIpReceptor(mensajeAReceptor.getIpdestino());
-			cliente.setPuertoReceptor(Integer.parseInt(mensajeA.getPuertodestino());
+			cliente.setPuertoReceptor(Integer.parseInt(mensajeAReceptor.getPuertodestino());
 			mensajeConfirmacion.setComando("%Conexion_establecida%");
 			mensajeConfirmacion.setPuerto(cliente.getPuerto());
 			// mensaje para informar quien lo contacto
