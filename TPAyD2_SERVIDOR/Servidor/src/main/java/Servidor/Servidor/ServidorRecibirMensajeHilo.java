@@ -18,9 +18,9 @@ public class ServidorRecibirMensajeHilo extends Thread {
 	@Override
 	public void run() {
 		String msg = null;
-		MensajeEncriptado mensaje;
-		MensajeEncriptado mensajeAReceptor;
-		MensajeEncriptado mensajeConfirmacion;
+		MensajeExterno mensajerecibido;
+		MensajeExterno mensajeAReceptor;
+		MensajeExterno mensajeConfirmacion;
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new InputStreamReader(cliente.getSocket().getInputStream()));
@@ -38,47 +38,44 @@ public class ServidorRecibirMensajeHilo extends Thread {
 					this.servidor.getListaConectados().remove(this.cliente);
 					this.servidor.MandarLista1();
 				} else {
-					mensaje = new MensajeEncriptado(msg);
-					if (mensaje.getMensaje().equals("%nombre_usuario%")) {// Recibe comando de registro de usuario
-						this.cliente.setUsername(mensaje.getUsername());
+					mensajerecibido = new MensajeExterno(msg);
+					if (mensajerecibido.getComando().equals("%nombre_usuario%")) {// Recibe comando de registro de usuario
+						this.cliente.setUsername(mensajerecibido.getUsernameorigen()); // el mensaje tiene que llegar en vacio en receptor
 						this.servidor.MandarLista1();
 						
 					}
 
-					else if (mensaje.getMensaje().equals("%cerrar_conexion%")) { // Recibe comando de cerrar la conexion
+					else if (mensajerecibido.getComando().equals("%cerrar_conexion%")) { // Recibe comando de cerrar la conexion
 																					// con el otro cliente
 						// cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
 						this.cliente.setEstado("Disponible");
 						this.servidor.MandarLista1();
-						this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),
-								this.cliente.getPuertoReceptor());
+						this.servidor.cortarConexionAReceptor(this.cliente);
 						this.cliente.setIpReceptor(null);
 					}
 
-					else if (mensaje.getMensaje().equals("%PingEcho%")) {// Recibe comando de Ping, y emite una señal al
+					else if (mensajerecibido.getComando().equals("%PingEcho%")) {// Recibe comando de Ping, y emite una señal al
 																			// cliente
-						this.servidor
-								.enviarMensajeACliente(
-										new MensajeEncriptado("%Respuesta_Ping_Echo%", "", this.cliente.getIp(),
-												this.cliente.getPuerto()),
-										this.cliente.getIp(), this.cliente.getPuerto());
+						MensajeExterno mensajePingEcho = new MensajeExterno(this.servidor.getIpServidor(),Integer.toString(this.servidor.getPuertoServidor())," ",this.cliente.ip, Integer.toString(this.cliente.puerto), this.cliente.username,"%Respuesta_Ping_Echo%"," "," ");
+						this.servidor.enviarMensajeACliente(mensajePingEcho, mensajerecibido.getIporigen(),Integer.parseInt(mensajerecibido.getPuertoorigen()));
 					}
 
-					else if (mensaje.getMensaje().equals("%Iniciar_Conversacion%")
+					else if (mensajerecibido.getComando().equals("%Iniciar_Conversacion%")
 							&& this.cliente.getEstado().equals("Disponible")) {// Recibe comando de iniciar conversacion
 																				// con otro cliente
-						mensajeAReceptor = new MensajeEncriptado("%Conexion_establecida%", "", this.cliente.getIp(),
+						mensajeAReceptor = new MensajeExterno(this.servidor.getIpServidor(),Integer.toString(this.servidor.getPuertoServidor())," ",this.cliente.ip, Integer.toString(this.cliente.puerto), this.cliente.username,"%Conexion_establecida%"," "," ");
+						mensajeAReceptor = new MensajeExterno("%Conexion_establecida%", "", this.cliente.getIp(),
 								this.cliente.getPuerto());
-						mensajeConfirmacion = new MensajeEncriptado("%Conexion_rechazada%", "", this.cliente.getIp(),
+						mensajeConfirmacion = new MensajeExterno("%Conexion_rechazada%", "", this.cliente.getIp(),
 								this.cliente.getPuertoReceptor());
 						// Inicia conexion con el receptor
-						if (this.servidor.iniciarConexionAReceptor(mensaje, mensajeAReceptor, mensajeConfirmacion)==true) {
+						if (this.servidor.iniciarConexionAReceptor(mensajerecibido, mensajeAReceptor, mensajeConfirmacion)==true) {
 						// Le envia un mensaje al cliente 1 con la confirmacion de que la conexion se
 						// establecio	
 						
 						// Configura el arraylist con los nuevos estados
-						this.cliente.setIpReceptor(mensaje.getIp());
-						this.cliente.setPuertoReceptor(mensaje.getPuerto());
+						this.cliente.setIpReceptor(mensajerecibido.getIp());
+						this.cliente.setPuertoReceptor(mensajerecibido.getPuerto());
 						this.cliente.setEstado("Ocupado");
 						// Notifica a todos los usuarios del sistema sobre esta nueva conexion
 						this.servidor.MandarLista1();
@@ -87,21 +84,22 @@ public class ServidorRecibirMensajeHilo extends Thread {
 								this.cliente.getPuerto());
 					}
 
-					else if (mensaje.getMensaje().equals("%nuevoServidorPasivo%")) { // Recibe comando de Ping, y emite
+					// else if (mensajerecibido.getComando().equals("%nuevoServidorPasivo%")) { // Recibe comando de Ping, y emite
 																						// una señal al cliente
-						this.servidor.notificarUsuarios(mensaje.getIp(), mensaje.getPuerto());
-					} else if (mensaje.getMensaje().equals("%preguntar_principal%")) { // Le preugntan al servidor si es
-																						// el principal
-						if (this.servidor.isPrincipal()) {
-							mensajeConfirmacion = new MensajeEncriptado("%responder_principal%", "",
-									this.servidor.getIpServidor(), this.servidor.getPuertoServidor());
-							this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(),
-									this.cliente.getPuerto());
-						}
-					}
+					//	this.servidor.notificarUsuarios(mensajerecibido.getIp(), mensajerecibido.getPuerto());
+					//
+					//} else if (mensajerecibido.getComando().equals("%preguntar_principal%")) { // Le preugntan al servidor si es
+					//																	// el principal
+					//	if (this.servidor.isPrincipal()) {
+					//		mensajeConfirmacion = new MensajeExterno("%responder_principal%", "",
+					//				this.servidor.getIpServidor(), this.servidor.getPuertoServidor());
+					//		this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(),
+					//				this.cliente.getPuerto());
+					//	}
+					//} 
 
 					else {// Recibe un mensaje a transmitir en un chat ya activo
-						this.servidor.enviarMensajeACliente(mensaje, this.cliente.getIpReceptor(),
+						this.servidor.enviarMensajeACliente(mensajerecibido, this.cliente.getIpReceptor(),
 								this.cliente.getPuertoReceptor());
 					}
 				}
