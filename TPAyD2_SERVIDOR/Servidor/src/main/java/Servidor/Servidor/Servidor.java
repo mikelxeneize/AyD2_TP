@@ -43,7 +43,7 @@ public class Servidor {
 	}
 
 	public Servidor() throws IOException {
-		iniciarHeartBeat();
+		//iniciarHeartBeat();
 		redundanciaPasiva();
 		if (!this.isPrincipal) {
 			notificarServidor();
@@ -52,11 +52,11 @@ public class Servidor {
 
 	}
 
-	private void iniciarHeartBeat() {
+	/*private void iniciarHeartBeat() {
 		HeartBeatHilo hilo = new HeartBeatHilo(this, false);
 		hilo.start();
 
-	}
+	}*/
 
 	public void iniciarEscucha() throws IOException {
 		Socket socket;
@@ -109,7 +109,7 @@ public class Servidor {
 	 * }
 	 */
 
-	public void enviarMensajeACliente(MensajeEncriptado mensaje, String ipObj, int puertoObj) throws IOException {
+	public void enviarMensajeACliente(MensajeExterno mensaje, String ipObj, int puertoObj) throws IOException {
 		String ip;
 		int puerto;
 		for (Cliente cliente : listaConectados) {
@@ -124,17 +124,17 @@ public class Servidor {
 
 	}
 
-	public boolean iniciarConexionAReceptor(MensajeEncriptado mensaje, MensajeEncriptado mensajeAReceptor,
-			MensajeEncriptado mensajeConfirmacion) throws UnknownHostException, IOException, InterruptedException {
+	public boolean iniciarConexionAReceptor(MensajeExterno mensaje, MensajeExterno mensajeAReceptor,
+			MensajeExterno mensajeConfirmacion) throws UnknownHostException, IOException, InterruptedException {
 		Cliente cliente;
-		cliente = getRegistradoByIp(mensaje.getPuerto(), mensaje.getIp());
+		cliente = getRegistradoByIp(Integer.parseInt(mensaje.getPuertodestino()), mensaje.getIpdestino());
 
 		if (cliente != null && cliente.getEstado().equals("Disponible")) {// cliente registrado y disponible para
 																			// conectarse
 			Socket socket = cliente.getSocket();
-			cliente.setIpReceptor(mensajeAReceptor.getIp());
-			cliente.setPuertoReceptor(mensajeAReceptor.getPuerto());
-			mensajeConfirmacion.setMensaje("%Conexion_establecida%");
+			cliente.setIpReceptor(mensajeAReceptor.getIpdestino());
+			cliente.setPuertoReceptor(Integer.parseInt(mensajeA.getPuertodestino());
+			mensajeConfirmacion.setComando("%Conexion_establecida%");
 			mensajeConfirmacion.setPuerto(cliente.getPuerto());
 			// mensaje para informar quien lo contacto
 			cliente.setEstado("Ocupado");
@@ -144,22 +144,21 @@ public class Servidor {
 			return true;
 			// cliente aun no registrado, devolver excepcion
 		} else {// rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
-			mensajeConfirmacion.setMensaje("%Conexion_rechazada%");
+			mensajeConfirmacion.setComando("%Conexion_rechazada%");
 			return false;
 		}
 
 	}
 
-	public void cortarConexionAReceptor(String ip, int puerto) throws IOException {
+	public void cortarConexionAReceptor(Cliente emisor) throws IOException {
 		Cliente cliente;
-		cliente = getRegistradoByIp(puerto, ip);
+		cliente = getRegistradoByIp(emisor.getPuertoReceptor(), emisor.getIpReceptor());
 		if (cliente != null) {// cliente registrado y disponible para conectarse
 
 			PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
-			out.println(cliente.getIpReceptor() + ":" + Integer.toString(cliente.getPuertoReceptor()) + ":"
-					+ "%cerrar_conexion%" + ":" + "pepe");
-			System.out.println("14: " + cliente.getIpReceptor() + ":" + Integer.toString(cliente.getPuertoReceptor())
-					+ ":" + "%cerrar_conexion%" + ":" + "pepe");
+			MensajeExterno mensaje = new MensajeExterno(emisor.getIp(),Integer.toString(emisor.getPuerto()),emisor.getUsername(),emisor.getIpReceptor(),Integer.toString(emisor.getPuertoReceptor()), " ","cerrar_conexion%","","");
+			this.enviarMensajeACliente(mensaje,emisor.getIpReceptor() ,emisor.getPuertoReceptor());
+			System.out.println(mensaje.toString());
 
 			cliente.setEstado("Disponible");
 			this.MandarLista1();

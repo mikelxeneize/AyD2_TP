@@ -6,10 +6,10 @@ import java.util.ArrayList;
 public class Cliente {
 	int puerto;
 	String ip;
+	String username;
+	
 	Socket socket;
 	String estado = "Disponible";
-	
-	String username;
 
 	int puertoReceptor;
 	String ipReceptor;
