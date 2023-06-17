@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class ServidorRecibirMensajeHilo extends Thread implements IConstantes{
+public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEstados {
 	private Cliente cliente;
 	private Servidor servidor;
 
@@ -19,8 +19,6 @@ public class ServidorRecibirMensajeHilo extends Thread implements IConstantes{
 	public void run() {
 		String msg = null;
 		MensajeExterno mensajerecibido;
-		MensajeExterno mensajeAReceptor;
-		MensajeExterno mensajeConfirmacion;
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new InputStreamReader(cliente.getSocket().getInputStream()));
@@ -29,7 +27,6 @@ public class ServidorRecibirMensajeHilo extends Thread implements IConstantes{
 		}
 
 		do {
-
 			try {
 				msg = in.readLine();
 				// System.out.println("1: "+msg);
@@ -40,80 +37,46 @@ public class ServidorRecibirMensajeHilo extends Thread implements IConstantes{
 				} else {
 					mensajerecibido = new MensajeExterno(msg);
 					if (mensajerecibido.getComando().equals(NOMBRE_USUARIO)) {// Recibe comando de registro de usuario
-						this.cliente.setUsername(mensajerecibido.getUsernameorigen()); // el mensaje tiene que llegar en vacio en receptor
+						this.cliente.setUsername(mensajerecibido.getUsernameorigen()); // el mensaje tiene que llegar en
+																						// vacio en receptor
 						this.servidor.MandarLista1();
+
+					}
+
+					else if (mensajerecibido.getComando().equals(CERRAR_CONVERSACION)) { // Recibe comando de cerrar la
+																						// conexion
+																						// con el otro cliente cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
+						this.servidor.cortarConversacion(mensajerecibido);
 						
 					}
 
-					else if (mensajerecibido.getComando().equals(CERRAR_CONEXION)) { // Recibe comando de cerrar la conexion
-																					// con el otro cliente
-						// cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
-						this.cliente.setEstado("Disponible");
-						this.servidor.MandarLista1();
-						this.servidor.cortarConexionAReceptor(this.cliente);
-						this.cliente.setIpReceptor(null);
-					}
-
-					else if (mensajerecibido.getComando().equals(PING_ECHO)) {// Recibe comando de Ping, y emite una señal al
-																			// cliente
-						MensajeExterno mensajePingEcho = new MensajeExterno(this.servidor.getIpServidor(),Integer.toString(this.servidor.getPuertoServidor())," ",this.cliente.ip, Integer.toString(this.cliente.puerto), this.cliente.username,"%Respuesta_Ping_Echo%"," "," ");
-						this.servidor.enviarMensajeACliente(mensajePingEcho, mensajerecibido.getIporigen(),Integer.parseInt(mensajerecibido.getPuertoorigen()));
+					else if (mensajerecibido.getComando().equals(PING_ECHO)) {// Recibe comando de Ping, y emite una
+																				// señal al
+																				// cliente
+						MensajeExterno mensajePingEcho = new MensajeExterno(this.servidor.getIpServidor(),
+								Integer.toString(this.servidor.getPuertoServidor()), " ", this.cliente.ip,
+								Integer.toString(this.cliente.puerto), this.cliente.username,RESPUESTA_PING_ECHO,
+								" ", " ");
+						this.servidor.enviarMensajeACliente(mensajePingEcho);
 					}
 
 					else if (mensajerecibido.getComando().equals(INICIAR_CONVERSACION)
-							&& this.cliente.getEstado().equals("Disponible")) {// Recibe comando de iniciar conversacion
+							&& this.cliente.getEstado().equals(DISPONIBLE)) {// Recibe comando de iniciar conversacion
 																				// con otro cliente
-						//mensajeAReceptor = new MensajeExterno(this.servidor.getIpServidor(),Integer.toString(this.servidor.getPuertoServidor())," ",this.cliente.ip, Integer.toString(this.cliente.puerto), this.cliente.username,"%Conexion_establecida%"," "," ");
-						mensajeAReceptor = new MensajeExterno("%Conexion_establecida%", "", this.cliente.getIp(),
-								this.cliente.getPuerto());
-						mensajeConfirmacion = new MensajeExterno("%Conexion_rechazada%", "", this.cliente.getIpReceptor(),
-								this.cliente.getPuertoReceptor());
-						// Inicia conexion con el receptor
-						if (this.servidor.iniciarConexionAReceptor(mensajerecibido, mensajeAReceptor, mensajeConfirmacion)==true) {
-						// Le envia un mensaje al cliente 1 con la confirmacion de que la conexion se
-						// establecio	
-						
-						// Configura el arraylist con los nuevos estados
-						this.cliente.setIpReceptor(mensajerecibido.getIp());
-						this.cliente.setPuertoReceptor(mensajerecibido.getPuerto());
-						this.cliente.setEstado("Ocupado");
-						// Notifica a todos los usuarios del sistema sobre esta nueva conexion
-						this.servidor.MandarLista1();
-						}
-						this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(),
-								this.cliente.getPuerto());
+						this.servidor.iniciarConexionAReceptor(mensajerecibido);
 					}
-
-					// else if (mensajerecibido.getComando().equals("%nuevoServidorPasivo%")) { // Recibe comando de Ping, y emite
-																						// una señal al cliente
-					//	this.servidor.notificarUsuarios(mensajerecibido.getIp(), mensajerecibido.getPuerto());
-					//
-					//} else if (mensajerecibido.getComando().equals("%preguntar_principal%")) { // Le preugntan al servidor si es
-					//																	// el principal
-					//	if (this.servidor.isPrincipal()) {
-					//		mensajeConfirmacion = new MensajeExterno("%responder_principal%", "",
-					//				this.servidor.getIpServidor(), this.servidor.getPuertoServidor());
-					//		this.servidor.enviarMensajeACliente(mensajeConfirmacion, this.cliente.getIp(),
-					//				this.cliente.getPuerto());
-					//	}
-					//} 
-
 					else {// Recibe un mensaje a transmitir en un chat ya activo
-						this.servidor.enviarMensajeACliente(mensajerecibido, this.cliente.getIpReceptor(),
-								this.cliente.getPuertoReceptor());
+						this.servidor.enviarMensajeACliente(mensajerecibido);
 					}
 				}
 			} catch (IOException e) {
-				this.cliente.setEstado("Disponible");
-				this.servidor.MandarLista1();
+				MensajeExterno mensajeCerrado = new MensajeExterno(this.cliente.getIp(),Integer.toString(this.cliente.getPuerto()),this.cliente.getUsername(),this.cliente.getIpReceptor(),Integer.toString(this.cliente.getPuertoReceptor())," ",CERRAR_CONVERSACION," "," ");
 				try {
-					this.servidor.cortarConexionAReceptor(this.cliente.getIpReceptor(),
-							this.cliente.getPuertoReceptor());
+					this.servidor.cortarConversacion(mensajeCerrado);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				this.cliente.setIpReceptor(null);
 				msg = null;
 				this.servidor.getListaConectados().remove(this.cliente);
 				this.servidor.MandarLista1();
