@@ -1,6 +1,7 @@
 package src.main.resources.conectividad;
 
 import src.main.resources.backEnd.Nucleo;
+import utils.IComandos;
 import src.main.resources.backEnd.Cliente;
 
 import java.io.*;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Conectividad extends Observable implements IConectividad {
+public class Conectividad extends Observable implements IConectividad, IComandos{
 	// socket y datos ServidorPrincipal 
 	private serverData servidorPrincipal;
 
@@ -21,11 +22,13 @@ public class Conectividad extends Observable implements IConectividad {
 	// Informacion personal
 	private int puertoPersonal;
 	private String ipPersonal;
-
+	private String usernamePersonal;
+	
 	// Informacion receptor
-	private int puertoReceptor;
-	private String ipReceptor;
-
+	private int puertoReceptor = -9999;
+	private String ipReceptor = "";
+	private String usernameReceptor = "";
+	
 	private List<Observer> observers = new ArrayList<>();
 
 	// Flag de si se encuentra en una conversacion
@@ -39,7 +42,7 @@ public class Conectividad extends Observable implements IConectividad {
 	private String clave;
 	private String algoritmo;
 
-	private String username;
+	
 
 	private long pingEchoTime=0;
 	private long  pingEchoAbs=0;
@@ -55,20 +58,18 @@ public class Conectividad extends Observable implements IConectividad {
 		return observers;
 	}
 
-	public void iniciarConversacion(String ipDestino, int puertoDestino)
-			throws UnknownHostException, IOException, IllegalArgumentException { // tiene que devolver una excepcion de
-																					// no conexion
+	public void iniciarConversacion(String ipDestino, int puertoDestino) throws UnknownHostException, IOException, IllegalArgumentException { // tiene que devolver una excepcion de
 		this.ipPersonal = "localhost";
-
-		PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
-		out.println(ipDestino + ":" + Integer.toString(puertoDestino) + ":" + "%Iniciar_Conversacion%" + ":" + "pepe");
-		System.out.println("22: "+ipDestino + ":" + Integer.toString(puertoDestino) + ":" + "%Iniciar_Conversacion%" + ":" + "pepe");
-
+		
+		MensajeExterno mensajeExterno = new MensajeExterno(
+				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+				INICIAR_CONVERSACION, " ", " ");														// no conexion
+		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+		
+		System.out.println(mensajeExterno.toString());
 		System.out.println("Esperando confirmacion de conexion del otro lado...");
 		
-		this.ipReceptor = ipDestino;
-		this.puertoReceptor = puertoDestino;
-
 	}
 
 	public Socket iniciarConexionServidor(String ip, int puerto) throws IOException {
@@ -81,15 +82,26 @@ public class Conectividad extends Observable implements IConectividad {
 	
 	public void iniciarConexionServidorPrincipal() throws UnknownHostException, IOException ,IllegalArgumentException {
 		
+		MensajeExterno mensajeExterno;
 		int banderaso=0;
 		this.ipPersonal = "localhost";
 		System.out.println("9: "+"intento conexion Servidor Principal");
 			
 		try {
 			this.servidorPrincipal.socket = iniciarConexionServidor("localhost", PUERTO_1);
-			PrintWriter out = new PrintWriter(this.servidorPrincipal.socket.getOutputStream(), true);
-			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%preguntar_principal%" + ":" + this.username);
-			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username); // comunico al servidor mi nombre de usuario
+
+			PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
+			this.servidorPrincipal.setOut(out);
+			
+			mensajeExterno = new MensajeExterno(
+					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+					ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+					PREGUNTAR_PRINCIPAL, " ", " ");														// no conexion
+			enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+
+			mensajeExterno.setComando(NOMBRE_USUARIO);			
+			enviarMensajeExterno(mensajeExterno, servidorPrincipal); // comunico al servidor mi nombre de usuario
+			
 			this.recibirMensaje();
 		} catch (IOException e) {
 			System.out.println("No se pudo conectar con el primer servidor");
@@ -97,36 +109,54 @@ public class Conectividad extends Observable implements IConectividad {
 		}
 		try {
 			this.servidorSecundario.socket = iniciarConexionServidor("localhost", PUERTO_2);
-			PrintWriter out = new PrintWriter(this.servidorSecundario.socket.getOutputStream(), true);
-			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%preguntar_principal%" + ":" + this.username);
-			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username); // comunico al servidor mi nombre de usuario
+			
+			PrintWriter out = new PrintWriter(servidorSecundario.socket.getOutputStream(), true);
+			this.servidorSecundario.setOut(out);
+			
+			mensajeExterno = new MensajeExterno(
+					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+					ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+					PREGUNTAR_PRINCIPAL, " ", " ");														// no conexion
+			enviarMensajeExterno(mensajeExterno, servidorSecundario);
+			
+			enviarMensajeExterno(mensajeExterno, servidorSecundario);
+			mensajeExterno.setComando(NOMBRE_USUARIO);			
+			
 			this.servidorSwap();
 		} catch (IOException e) {
 			System.out.println("No se pudo conectar con el segundo servidor");
+			banderaso = 2;
 		}
-		
-		PingEchoHilo pingechohilo= new PingEchoHilo(this.servidorPrincipal,this);
-		pingechohilo.start();
-		System.out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.username);
+		if (banderaso == 2) {
+			this.notificarAccion(new Mensaje("no se pudo conectar con ninguno de los servidores", "error ningun servidor conectado"));
+		} else {
+			PingEchoHilo pingechohilo= new PingEchoHilo(this.servidorPrincipal,this);
+			pingechohilo.start();
+			System.out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%nombre_usuario%" + ":" + this.usernamePersonal);		
+		}
 	}
 
 public void reintentarConexionServidorPrincipal() throws UnknownHostException, IOException ,IllegalArgumentException {
 		
 		Socket socket1, socket2;
+		MensajeExterno mensajeExterno; 
 		this.ipPersonal = "localhost";
 		System.out.println("9: "+"intento conexion Servidor Principal");
-			
+		
 		try {
 			this.servidorPrincipal.socket = iniciarConexionServidor("localhost", PUERTO_1);
-			PrintWriter out = new PrintWriter(this.servidorPrincipal.socket.getOutputStream(), true);
-			out.println(this.ipPersonal + ":" + this.puertoPersonal + ":" + "%preguntar_principal%" + ":" + this.username);
+			
+			mensajeExterno = new MensajeExterno(
+					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+					ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+					PREGUNTAR_PRINCIPAL, " ", " ");
+			
+			enviarMensajeExterno(mensajeExterno, servidorPrincipal);
 			this.recibirMensaje();
 			
 		} catch (IOException e) {
 			System.out.println("No se pudo conectar con el primer servidor");
 		}
-		
-
 	}
 
 	public int getPuertoReceptor() {
@@ -155,24 +185,37 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 		this.notifyObservers(mensaje);
 	}
 
-	public void enviarMensaje(String mensajeaenviar) throws IOException {
-		PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
-		String mensajeencriptado = Codificacion.encriptar(getClave(), mensajeaenviar, getAlgoritmo());
-		out.println(
-				this.ipReceptor + ":" + Integer.toString(this.puertoReceptor) + ":" + mensajeencriptado + ":" + "pepe");
-		System.out.println("20: "+
-				this.ipReceptor + ":" + Integer.toString(this.puertoReceptor) + ":" + mensajeencriptado + ":" + "pepe");
+		
+	public void enviarMensajeExterno(MensajeExterno mensajeExterno, serverData servidorData) {
+		servidorData.out.println(mensajeExterno.toString());
 	}
 
 	public void cerrarConexion() throws IOException {
-		PrintWriter out = new PrintWriter(servidorPrincipal.socket.getOutputStream(), true);
-		out.println(this.ipReceptor + ":" + Integer.toString(this.puertoReceptor) + ":" + "%cerrar_conexion%" + ":"
-				+ "pepe");
-		System.out.println("21: "+this.ipReceptor + ":" + Integer.toString(this.puertoReceptor) + ":" + "%cerrar_conexion%" + ":"
-				+ "pepe");
+		
+		MensajeExterno mensajeExterno = new MensajeExterno(
+				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+				CERRAR_CONVERSACION, " ", " ");														// no conexion
+		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+
+		System.out.println("21: "+ mensajeExterno.toString());
 		this.setIpReceptor(null);
+		this.setUsernameReceptor(null);
+		this.setPuertoReceptor(0);
 	}
 
+	
+	public void enviarMensajeCliente(String mensaje) throws IOException {
+		String mensajeEncriptado = Codificacion.encriptar(getClave(), mensaje, getAlgoritmo());
+		
+		MensajeExterno mensajeExterno = new MensajeExterno(
+				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+				ENVIAR_MENSAJE, mensajeEncriptado, " ");														//
+		
+		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+	}
+	
 	public int getPuertopersonal() {
 		return puertoPersonal;
 	}
@@ -224,13 +267,30 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 		this.algoritmo = algoritmo;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUsernamePersonal() {
+		return usernamePersonal;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUsernamePersonal(String username) {
+		this.usernamePersonal = username;
 	}
+	
+	public int getPuertoPersonal() {
+		return puertoPersonal;
+	}
+
+	public void setPuertoPersonal(int puertoPersonal) {
+		this.puertoPersonal = puertoPersonal;
+	}
+	
+	public String getUsernameReceptor() {
+		return usernameReceptor;
+	}
+
+	public void setUsernameReceptor(String usernameReceptor) {
+		this.usernameReceptor = usernameReceptor;
+	}
+
 
 	public void actualizar(String cliente) {
  

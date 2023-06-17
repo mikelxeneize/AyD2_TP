@@ -21,6 +21,7 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 	private Nucleo modelo;
 
 	public ControladorMenuPrincipal(IVista vista2) throws UnknownHostException, IllegalArgumentException, IOException {
+		
 		this.vista = new VentanaMenuPrincipal(vista2);
 		this.modelo = Nucleo.getInstance();
 		this.vista.addActionListener(this);
@@ -34,6 +35,8 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 		MostrarPingEchoHilo pingechohilo= new MostrarPingEchoHilo(this,this.vista);
 		pingechohilo.start();
 		this.modelo.addObserver(this);
+		
+		this.vista.setTitle(this.vista.getTitle() + " - " +this.modelo.getUsername());
 	} 
 
 	// valida que el puerto sea un numero y se encarga de castearlo

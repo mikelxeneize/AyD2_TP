@@ -46,7 +46,6 @@ public class ControladorConfiguracionInicial implements ActionListener{
 				this.modelo.conectarServidorPrincipal();
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
-					
 				} catch (IllegalArgumentException | IOException e1) {
 					e1.printStackTrace();
 				}

@@ -52,7 +52,7 @@ public class Servidor implements IComandos, IEstados {
 		Socket socket;
 		Cliente cliente;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
-		int puerto = 5000;
+		int puerto = 5001;
 		int i = 0;
 		boolean encontrado = false;
 		while (i < 100 && encontrado == false) { // conexion al puerto

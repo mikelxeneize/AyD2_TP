@@ -10,5 +10,7 @@ public interface IComandos {
 	static final String CONEXION_RECHAZADA = "Conexion_rechazada";
 	static final String ACTUALIZAR_LISTA = "Actualizar_lista";
 	static final String HEART_BEAT = "Heart_Beat";
-	static final String RESPONDER_PRINCIPAL= "Responder_Principal";
+	static final String RESPONDER_PRINCIPAL = "Responder_Principal";
+	static final String PREGUNTAR_PRINCIPAL = "Responder_Principal";
+	static final String ENVIAR_MENSAJE = "Enviar_Mensaje";
 }

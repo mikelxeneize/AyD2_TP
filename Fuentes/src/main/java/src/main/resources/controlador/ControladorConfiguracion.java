@@ -21,6 +21,8 @@ public class ControladorConfiguracion implements ActionListener{
 		this.modelo = Nucleo.getInstance();
 		this.vista.cargarConfiguracion(this.modelo.getIp(), Integer.toString(this.modelo.getPort()));
 		this.vista.addActionListener(this);
+		
+		this.vista.setTitle(this.vista.getTitle() + " - " +this.modelo.getUsername());
 	}
 	
 	public void actionPerformed(ActionEvent e) {

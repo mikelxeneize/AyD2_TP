@@ -25,6 +25,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 		this.modelo.addObserver(this);
 		this.vista.setTextConectadoCon("Ip: "+this.modelo.getInstance().getConectividad().getIpReceptor() + "  Puerto: "+this.modelo.getInstance().getConectividad().getPuertoReceptor());
 		
+		this.vista.setTitle(this.vista.getTitle() + " - " +this.modelo.getUsername());
 	}
 	
 	public void actionPerformed(ActionEvent e) {

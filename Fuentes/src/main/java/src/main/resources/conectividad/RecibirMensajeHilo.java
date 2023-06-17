@@ -75,15 +75,11 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 
 				}
 
-				else if (mensajeExterno.getComando().equals(CONEXION_RECHAZADA)) { // Recibe comando de
-																							// confirmacion de chat
-																							// falsa
+				else if (mensajeExterno.getComando().equals(CONEXION_RECHAZADA)) { // El cliente solicito iniciar una conexion y se le fue rechazada
 					this.conectividad
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
-				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Recibe mensaje de
-																							// conexion solicitada de
-																							// otro cliente
+				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Se le solicita al este cliente iniciar una conexion
 					this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
 					this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));
 					this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));

@@ -93,7 +93,7 @@ public class Nucleo extends Observable implements  Observer {
 		this.setUsername(username);
 		this.conexion.setIppersonal(ip);
 		this.conexion.setPuertopersonal(port);
-		this.conexion.setUsername(username);
+		this.conexion.setUsernamePersonal(username);
 	}
 
 //	public void persistirConfiguracion() throws IOException {
@@ -124,7 +124,7 @@ public class Nucleo extends Observable implements  Observer {
 	}
 
 	public void enviarMensaje(String mensaje) throws IOException {
-		this.conexion.enviarMensaje(mensaje);
+		this.conexion.enviarMensajeCliente(mensaje);
 	}
 
 	public void recibirMensaje(String mensaje){
