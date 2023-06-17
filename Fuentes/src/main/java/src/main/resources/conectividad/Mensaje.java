@@ -1,7 +1,5 @@
 package src.main.resources.conectividad;
 
-import java.net.InetAddress;
-
 public class Mensaje {
 	private String mensaje;
 	private String estado;

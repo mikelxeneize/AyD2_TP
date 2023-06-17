@@ -1,6 +1,8 @@
 package src.main.resources.conectividad;
 
 import src.main.resources.backEnd.Nucleo;
+import utils.IComandos;
+import utils.IAcciones;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +10,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class RecibirMensajeHilo extends Thread {
+public class RecibirMensajeHilo extends Thread implements IComandos {
 	private Socket socket;
 	private Conectividad conectividad;
 	private String clave;
@@ -41,18 +43,18 @@ public class RecibirMensajeHilo extends Thread {
 			this.clave = this.conectividad.getClave();
 			this.algoritmo = this.conectividad.getAlgoritmo();
 			if (msg != null) {
-				MensajeEncriptado mensajeEncriptado = new MensajeEncriptado(this.clave, msg, this.algoritmo);
+				MensajeExterno mensajeExterno = new MensajeExterno(msg);
 				// System.out.println("30 :"+msg);
-				if (!mensajeEncriptado.getMensaje().equals("%Respuesta_Ping_Echo%")) {
+				if (!mensajeExterno.getComando().equals(RESPUESTA_PING_ECHO)) {
 					System.out.println("30 :" + msg);
 				}
 
-				if (mensajeEncriptado.getMensaje().equals("%Actualizar%")) { // Recibe comando de actualizacion de
+				if (mensajeExterno.getComando().equals(ACTUALIZAR_LISTA)){ // Recibe comando de actualizacion de
 																				// directorio
-					this.conectividad.actualizar(mensajeEncriptado.getClientecompleto());
+					this.conectividad.actualizar(mensajeExterno.getCuerpo());
 				}
 
-				else if (mensajeEncriptado.getMensaje().equals("%cerrar_conexion%")) { // Recibe comando de cerrar el
+				else if (mensajeExterno.getComando().equals(CERRAR_CONVERSACION)) { // Recibe comando de cerrar el
 																						// chat
 					mensaje = new Mensaje(msg, "te cerraron la conexion papirrin");
 					this.conectividad.notificarAccion(mensaje);
@@ -61,55 +63,41 @@ public class RecibirMensajeHilo extends Thread {
 					this.conectividad.notificarAccion(mensaje);
 				}
 
-				else if (mensajeEncriptado.getMensaje().equals("%Respuesta_Ping_Echo%")) { // Recibe comando de
-																							// respuesta de Ping Echo
+				else if (mensajeExterno.getComando().equals(RESPUESTA_PING_ECHO)) { // Recibe comando de
+																	// respuesta de Ping Echo
 					// CalculoTiempo
 					Long time = System.currentTimeMillis() - this.conectividad.getPingEchoAbs();
 					this.conectividad.setPingEchoTime(time);
 				}
-
-				else if (mensajeEncriptado.getMensaje().equals("%HearBeat%")) { // Recibe comando de HeartBeat
+				
+				else if (mensajeExterno.getComando().equals(HEART_BEAT)) { // Recibe comando de HeartBeat
 					this.conectividad.setHeartBeatTime(System.currentTimeMillis());
 
 				}
 
-				else if (mensajeEncriptado.getMensaje().equals("%HearBeat%")) { // Recibe comando de confirmacion de
-																				// chat verdadero
-					this.conectividad.setHeartBeatTime(System.currentTimeMillis());
-
-				}
-
-				else if (mensajeEncriptado.getMensaje().equals("%Conexion_rechazada%")) { // Recibe comando de
+				else if (mensajeExterno.getComando().equals(CONEXION_RECHAZADA)) { // Recibe comando de
 																							// confirmacion de chat
 																							// falsa
 					this.conectividad
-							.notificarAccion(new Mensaje(mensajeEncriptado.getMensaje(), "Conexion_rechazada"));
+							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
-
-				else if (mensajeEncriptado.getMensaje().equals("%Conexion_establecida%")) { // Recibe mensaje de
+				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Recibe mensaje de
 																							// conexion solicitada de
 																							// otro cliente
-					this.conectividad.setIpReceptor(mensajeEncriptado.getIp());
-					this.conectividad.setPuertoReceptor(mensajeEncriptado.getPuerto());
+					this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
+					this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));
 					this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));
 				}
-
-				else if (mensajeEncriptado.getMensaje().equals("%nuevoServidorPasivo%")) { // Servidor informa de nuesvo
-																							// serverPasiovo, hay q
-																							// conectarse
-					this.conectividad.registrarServidorSecundario(mensajeEncriptado.getIp(),
-							mensajeEncriptado.getPuerto());
-				}
-
-				else if (mensajeEncriptado.getMensaje().equals("%responder_principal%")) { // Sos informado que el
+				
+				else if (mensajeExterno.getComando().equals(RESPONDER_PRINCIPAL)){ // Sos informado que el
 																							// server q te envio esto es
 																							// el principal
-					this.conectividad.actualizarServidorPrincipal(mensajeEncriptado.getIp(),
-							mensajeEncriptado.getPuerto());
+					this.conectividad.actualizarServidorPrincipal(mensajeExterno.getPuertoorigen(),
+							Integer.valueOf(mensajeExterno.getIporigen()));
 				}
 
 				else {
-					mensaje = new Mensaje(mensajeEncriptado.getMensaje(), "mensaje recibido"); // Recibe mensaje normal
+					mensaje = new Mensaje(mensajeExterno.getCuerpo(), "mensaje recibido"); // Recibe mensaje normal
 																								// CREO
 					mensaje.setIp(this.socket.getInetAddress().getHostAddress());
 					mensaje.setPuerto(this.conectividad.getPuertopersonal());
