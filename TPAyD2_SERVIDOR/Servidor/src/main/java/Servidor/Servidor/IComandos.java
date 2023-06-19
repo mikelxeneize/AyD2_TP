@@ -9,4 +9,9 @@ public interface IComandos {
 	static final String CONEXION_ESTABLECIDA = "Conexion_establecida";
 	static final String CONEXION_RECHAZADA = "Conexion_rechazada";
 	static final String ACTUALIZAR_LISTA = "Actualizar_lista";
+	public static final String INICIAR_CONEXION_SERVIDOR = "INICIAR_CONEXION_SERVIDOR";
+	public static final String INICIAR_CONEXION_SERVIDOR_CONFIRMACION = "INICIAR_CONEXION_SERVIDOR_CONFIRMACION";
+	public static final String ACTUALIZACION_DIRECTORIO = "ACTUALIZACION_DIRECTORIO";
+	public static final String INDEFINIDO = " ";
+	
 }

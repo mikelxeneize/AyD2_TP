@@ -1,8 +1,8 @@
-package Servidor.Servidor;
+package bean;
 
 import java.net.InetAddress;
 
-// el vacio es representado por 
+//el vacio es representado por 
 
 public class MensajeExterno {
 	private String iporigen;
@@ -29,58 +29,58 @@ public class MensajeExterno {
 		this.comando = comando;
 		this.cuerpo = cuerpo;
 		this.auxiliar = auxiliar;
-		if (iporigen==null ||iporigen.equals("")){
+		if (iporigen.equals("")){
 			this.iporigen = " ";
 		}
-		if (puertoorigen==null ||puertoorigen.equals("")){
+		if (puertoorigen.equals("")){
 			this.puertoorigen = " ";
 		}
-		if (usernameorigen==null ||usernameorigen.equals("")){
+		if (usernameorigen.equals("")){
 			this.usernameorigen = " ";
 		}
-		if (ipdestino==null ||ipdestino.equals("")){
+		if (ipdestino.equals("")){
 			this.ipdestino = " ";
 		}
-		if (puertodestino==null ||puertodestino.equals("")){
+		if (puertodestino.equals("")){
 			this.puertodestino = " ";
 		}
-		if (usernamedestino==null || usernamedestino.equals("")){
+		if (usernamedestino.equals("")){
 			this.usernamedestino = " ";
 		}
-		if (comando==null ||comando.equals("")){
+		if (comando.equals("")){
 			this.comando = " ";
 		}
-		if (cuerpo==null ||cuerpo.equals("")){
+		if (cuerpo.equals("")){
 			this.cuerpo = " ";
 		}
-		if (auxiliar==null ||auxiliar.equals("")){
+		if (auxiliar.equals("")){
 			this.auxiliar = " ";
 		}
 	}
 
 	// cosntructor que se usa cuando llega un mensaje, para parsearlo
-	public MensajeExterno(String mensaje) {
-		String[] partes = mensaje.split(":");
-		if (partes[0].equals("localhost"))
-			this.setIporigen("/127.0.0.1");
-		else {
-			this.setIporigen("/127.0.0.1");
-		}
-		this.setPuertoorigen(partes[1]);
-		this.setUsernameorigen(partes[2]);
+		public MensajeExterno(String mensaje) {
+			String[] partes = mensaje.split(":");
+			if (partes[0].equals("localhost"))
+				this.setIporigen("/127.0.0.1");
+			else {
+				this.setIporigen("/127.0.0.1");
+			}
+			this.setPuertoorigen(partes[1]);
+			this.setUsernameorigen(partes[2]);
 
-		if (partes[3].equals("localhost"))
-			this.setIpdestino("/127.0.0.1");
-		else {
-			this.setIpdestino("/127.0.0.1");
+			if (partes[3].equals("localhost"))
+				this.setIpdestino("/127.0.0.1");
+			else {
+				this.setIpdestino("/127.0.0.1");
+			}
+			this.setPuertodestino(partes[4]);
+			this.setUsernamedestino(partes[5]);
+			this.setComando(partes[6]);
+			this.setCuerpo(partes[7]);
+			this.setAuxiliar(partes[8]);
 		}
-		this.setPuertodestino(partes[4]);
-		this.setUsernamedestino(partes[5]);
-		this.setComando(partes[6]);
-		this.setCuerpo(partes[7]);
-		this.setAuxiliar(partes[8]);
-	}
-
+		
 	public String getIporigen() {
 		return iporigen;
 	}

@@ -66,6 +66,14 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 						this.servidor.iniciarConexionAReceptor(mensajerecibido);
 					}
 					
+					else if (mensajerecibido.getComando().equals(INICIAR_CONEXION_SERVIDOR)) { // Recibe comando de Monitor y le devuelve la confirmacion
+						
+						MensajeExterno mensajeConfirmacion = new MensajeExterno(this.servidor.getIpServidor(),
+								Integer.toString(this.servidor.getPuertoServidor()),this.servidor.getUsernameServidor(),this.cliente.getIp(),Integer.toString(this.cliente.getPuerto()) ,INDEFINIDO,INICIAR_CONEXION_SERVIDOR_CONFIRMACION,INDEFINIDO,
+								INDEFINIDO);
+						this.servidor.enviarMensajeACliente(mensajeConfirmacion);
+						
+					} 
 					else {// Recibe un mensaje a transmitir en un chat ya activo
 						this.servidor.enviarMensajeACliente(mensajerecibido);
 					}

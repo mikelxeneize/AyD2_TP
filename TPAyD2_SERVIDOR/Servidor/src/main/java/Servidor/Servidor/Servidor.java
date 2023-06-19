@@ -19,9 +19,23 @@ public class Servidor implements IComandos, IEstados {
 
 	private int puertoServidor;
 	private String ipServidor = "localhost";
+	private String UsernameServidor = "";
+
+
+	public String getUsernameServidor() {
+		return UsernameServidor;
+	}
+
+	public void setUsernameServidor(String usernameServidor) {
+		UsernameServidor = usernameServidor;
+	}
 
 	public int getPuertoServidor() {
 		return puertoServidor;
+	}
+
+	public void setPuertoServidor(int puertoServidor) {
+		this.puertoServidor = puertoServidor;
 	}
 
 	public String getIpServidor() {
@@ -65,6 +79,10 @@ public class Servidor implements IComandos, IEstados {
 			}
 		}
 		System.out.println(puerto);
+		if(encontrado) {
+			this.setPuertoServidor(puerto);
+			this.setUsernameServidor("SERVIDOR "+ puerto );
+		}
 		while (true) { //recepcion de nuevos usuarios a escuchar
 			socket = serverSocket.accept();
 			cliente = new Cliente(socket.getPort(), socket.getInetAddress().toString(), socket);
