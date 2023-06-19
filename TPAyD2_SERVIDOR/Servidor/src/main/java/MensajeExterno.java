@@ -1,4 +1,4 @@
-package src.main.resources.conectividad;
+
 
 import java.net.InetAddress;
 

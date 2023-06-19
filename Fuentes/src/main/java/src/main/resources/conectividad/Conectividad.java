@@ -36,7 +36,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	private String estado = "";
 
 	// parametros de notificacion de configuracion
-	private int PUERTO_1 = 5001; 
+	private int PUERTO_1 = 5000; 
 	private int PUERTO_2 = 5002;
 	
 	private String clave;
@@ -63,7 +63,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		
 		MensajeExterno mensajeExterno = new MensajeExterno(
 				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
-				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
+				ipDestino, Integer.toString(puertoDestino), usernameReceptor,
 				INICIAR_CONVERSACION, " ", " ");														// no conexion
 		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
 		

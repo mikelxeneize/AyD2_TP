@@ -66,12 +66,6 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 						this.servidor.iniciarConexionAReceptor(mensajerecibido);
 					}
 					
-					else if (mensajerecibido.getComando().equals(INICIAR_CONVERSACION)
-							&& this.cliente.getEstado().equals(DISPONIBLE)) {// Recibe comando de iniciar conversacion
-																				// con otro cliente
-						this.servidor.iniciarConexionAReceptor(mensajerecibido);
-					}
-					
 					else {// Recibe un mensaje a transmitir en un chat ya activo
 						this.servidor.enviarMensajeACliente(mensajerecibido);
 					}

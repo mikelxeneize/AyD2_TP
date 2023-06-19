@@ -63,15 +63,17 @@ public class MensajeExterno {
 		String[] partes = mensaje.split(":");
 		if (partes[0].equals("localhost"))
 			this.setIporigen("/127.0.0.1");
-		else
-			this.setIporigen("/" + partes[0]);
+		else {
+			this.setIporigen("/127.0.0.1");
+		}
 		this.setPuertoorigen(partes[1]);
 		this.setUsernameorigen(partes[2]);
 
 		if (partes[3].equals("localhost"))
 			this.setIpdestino("/127.0.0.1");
-		else
-			this.setIpdestino("/" + partes[3]);
+		else {
+			this.setIpdestino("/127.0.0.1");
+		}
 		this.setPuertodestino(partes[4]);
 		this.setUsernamedestino(partes[5]);
 		this.setComando(partes[6]);

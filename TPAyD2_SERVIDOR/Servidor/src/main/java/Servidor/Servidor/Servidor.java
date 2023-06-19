@@ -52,7 +52,7 @@ public class Servidor implements IComandos, IEstados {
 		Socket socket;
 		Cliente cliente;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
-		int puerto = 5001;
+		int puerto = 5000;
 		int i = 0;
 		boolean encontrado = false;
 		while (i < 100 && encontrado == false) { // conexion al puerto
@@ -61,12 +61,14 @@ public class Servidor implements IComandos, IEstados {
 				encontrado = true;
 			} catch (IOException e) {
 				i++;
+				puerto+=i;
 			}
 		}
+		System.out.println(puerto);
 		while (true) { //recepcion de nuevos usuarios a escuchar
 			socket = serverSocket.accept();
 			cliente = new Cliente(socket.getPort(), socket.getInetAddress().toString(), socket);
-			if (socket.getPort() < 5000 && socket.getPort() > 5999) {
+			if (socket.getPort() < 5000 || socket.getPort() > 5999) {
 				this.listaConectados.add(cliente);
 			}
 			recibirMensajeHilo = new ServidorRecibirMensajeHilo(cliente, this);
@@ -148,12 +150,18 @@ public class Servidor implements IComandos, IEstados {
 			
 			MensajeExterno mensajeAReceptor = new MensajeExterno(clienteEmisor.getIp(),
 					Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
-					clienteReceptor.getIpReceptor(), Integer.toString(clienteReceptor.getPuertoReceptor()), clienteReceptor.getUsername(),
+					clienteReceptor.getIpReceptor(), Integer.toString(clienteReceptor.getPuerto()), clienteReceptor.getUsername(),
 					CONEXION_ESTABLECIDA, " ", " ");
 			this.enviarMensajeACliente(mensajeAReceptor);
 			
-			ServidorRecibirMensajeHilo recibirMensajeHiloConversacion = new ServidorRecibirMensajeHilo(clienteReceptor, this);
-			recibirMensajeHiloConversacion.start();
+			MensajeExterno mensajeConfirmacion = new MensajeExterno(clienteReceptor.getIp(),
+					Integer.toString(clienteReceptor.getPuerto()),clienteReceptor.getUsername(),
+					clienteEmisor.getIp(), Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
+					CONEXION_ESTABLECIDA," "," ");
+			this.enviarMensajeACliente(mensajeConfirmacion);
+			
+			//ServidorRecibirMensajeHilo recibirMensajeHiloConversacion = new ServidorRecibirMensajeHilo(clienteReceptor, this);
+			//recibirMensajeHiloConversacion.start();
 			// cliente aun no registrado, devolver excepcion
 		} else {// rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
 			//mensajeConfirmacion.setComando(CONEXION_RECHAZADA);

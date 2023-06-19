@@ -34,6 +34,7 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 		do {
 			try {
 				msg = in.readLine();
+				System.out.println(msg);
 			} catch (SocketException e) {
 				System.out.println("pepe"); // ESTO ES CLAVE
 			} catch (IOException e) {
