@@ -61,8 +61,10 @@ public class Servidor implements IComandos, IEstados {
 				encontrado = true;
 			} catch (IOException e) {
 				i++;
+				puerto+=i;
 			}
 		}
+		System.out.println(puerto);
 		while (true) { //recepcion de nuevos usuarios a escuchar
 			socket = serverSocket.accept();
 			cliente = new Cliente(socket.getPort(), socket.getInetAddress().toString(), socket);
@@ -193,8 +195,6 @@ public class Servidor implements IComandos, IEstados {
 	}
 	// 
 	public void MandarLista1() {
-		PrintWriter out = null;
-		Cliente cliente;
 		System.out.println("");
 		String lista = "";
 		// Armo la lista en string primero
@@ -205,7 +205,6 @@ public class Servidor implements IComandos, IEstados {
 			}
 		}
 		for (int j = 0; j < this.getListaConectados().size(); j++) {
-			cliente = this.getListaConectados().get(j);
 			lista += this.getListaConectados().get(j).actualizacion();
 		}
 		mensaje.setCuerpo(lista);

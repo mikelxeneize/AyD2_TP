@@ -44,19 +44,22 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 					}
 
 					else if (mensajerecibido.getComando().equals(CERRAR_CONVERSACION)) { // Recibe comando de cerrar la
-																						// conexion
-																						// con el otro cliente cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
+																							// conexion
+																							// con el otro cliente
+																							// cambiarEstado("Disponible")
+																							// y avisarle al otro que no
+																							// hay mas charla;
 						this.servidor.cortarConversacion(mensajerecibido);
-						
+
 					}
 
 					else if (mensajerecibido.getComando().equals(PING_ECHO)) {// Recibe comando de Ping, y emite una
 																				// señal al
 																				// cliente
 						MensajeExterno mensajePingEcho = new MensajeExterno(this.servidor.getIpServidor(),
-								Integer.toString(this.servidor.getPuertoServidor()), " ", this.cliente.ip,
-								Integer.toString(this.cliente.puerto), this.cliente.username,RESPUESTA_PING_ECHO,
-								" ", " ");
+								Integer.toString(this.servidor.getPuertoServidor())," ", this.cliente.ip,
+								Integer.toString(this.cliente.puerto),this.cliente.username, RESPUESTA_PING_ECHO, " ",
+								" ");
 						this.servidor.enviarMensajeACliente(mensajePingEcho);
 					}
 
@@ -64,13 +67,15 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 							&& this.cliente.getEstado().equals(DISPONIBLE)) {// Recibe comando de iniciar conversacion
 																				// con otro cliente
 						this.servidor.iniciarConexionAReceptor(mensajerecibido);
-					}
-					else {// Recibe un mensaje a transmitir en un chat ya activo
+					} else {// Recibe un mensaje a transmitir en un chat ya activo
 						this.servidor.enviarMensajeACliente(mensajerecibido);
 					}
 				}
 			} catch (IOException e) {
-				MensajeExterno mensajeCerrado = new MensajeExterno(this.cliente.getIp(),Integer.toString(this.cliente.getPuerto()),this.cliente.getUsername(),this.cliente.getIpReceptor(),Integer.toString(this.cliente.getPuertoReceptor())," ",CERRAR_CONVERSACION," "," ");
+				MensajeExterno mensajeCerrado = new MensajeExterno(this.cliente.getIp(),
+						Integer.toString(this.cliente.getPuerto()), this.cliente.getUsername(),
+						this.cliente.getIpReceptor(), Integer.toString(this.cliente.getPuertoReceptor()), " ",
+						CERRAR_CONVERSACION, " ", " ");
 				try {
 					this.servidor.cortarConversacion(mensajeCerrado);
 				} catch (IOException e1) {
