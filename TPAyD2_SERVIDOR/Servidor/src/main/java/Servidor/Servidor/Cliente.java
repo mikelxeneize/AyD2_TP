@@ -28,6 +28,14 @@ public class Cliente {
 		this.ip = ip;
 		this.socket=socket;
 	}
+	
+	public Cliente( String username, int puerto, String ip, String estado) {
+		this.puerto = puerto;
+		this.ip = ip;
+		this.estado=estado;
+		this.username=username;
+	}
+	
 	public String getIp() {
 		return ip;
 	}

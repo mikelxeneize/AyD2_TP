@@ -12,6 +12,7 @@ public interface IComandos {
 	public static final String INICIAR_CONEXION_SERVIDOR = "INICIAR_CONEXION_SERVIDOR";
 	public static final String INICIAR_CONEXION_SERVIDOR_CONFIRMACION = "INICIAR_CONEXION_SERVIDOR_CONFIRMACION";
 	public static final String ACTUALIZACION_DIRECTORIO = "ACTUALIZACION_DIRECTORIO";
-	public static final String INDEFINIDO = " ";
-	
+	static final String PEDIR_LISTA = "Pedir_lista";
+	static final String LISTA_COMPLETA = "Lista_completa";
+    public static final String INDEFINIDO = " ";
 }

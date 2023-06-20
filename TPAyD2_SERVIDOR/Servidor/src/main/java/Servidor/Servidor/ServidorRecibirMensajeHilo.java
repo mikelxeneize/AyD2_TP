@@ -74,6 +74,7 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 						this.servidor.enviarMensajeACliente(mensajeConfirmacion);
 						
 					} 
+                    
 					else {// Recibe un mensaje a transmitir en un chat ya activo
 						this.servidor.enviarMensajeACliente(mensajerecibido);
 					}
