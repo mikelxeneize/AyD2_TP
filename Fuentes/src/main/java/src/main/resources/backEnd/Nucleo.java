@@ -95,19 +95,8 @@ public class Nucleo extends Observable implements  Observer {
 		this.conexion.setPuertopersonal(port);
 		this.conexion.setUsernamePersonal(username);
 	}
-
-//	public void persistirConfiguracion() throws IOException {
-//		JSONObject configuracion = new JSONObject();
-//		configuracion.put("port",this.port);
-//		configuracion.put("ip",this.ip);
-//
-//		FileWriter file = new FileWriter(filePath);
-//		file.write(configuracion.toJSONString());
-//		file.flush();
-//
-//	}
 	
-	public void iniciarConexion(String ipDestino, int puertoDestino) throws UnknownHostException, RuntimeException, IOException, 
+	public void iniciarConvesacion(String ipDestino, int puertoDestino) throws UnknownHostException, RuntimeException, IOException, 
 	IllegalArgumentException{
 		this.conexion.iniciarConversacion(ipDestino,puertoDestino);
 	}
@@ -147,8 +136,8 @@ public class Nucleo extends Observable implements  Observer {
 			this.notifyObservers(arg);
 	}
 
-	public void conectarServidorPrincipal() throws UnknownHostException, IllegalArgumentException, IOException {
-		this.conexion.iniciarConexionServidorPrincipal();
+	public void conectarServidores() throws UnknownHostException, IllegalArgumentException, IOException {
+		this.conexion.conectarServidores();
 	}
 
 	public String getUsername() {
@@ -174,5 +163,9 @@ public class Nucleo extends Observable implements  Observer {
 
 	public long getPingEcho() {
 		return this.getConectividad().getPingEchoTime();
+	}
+
+	public void inicilizarConectividad() {
+		this.conexion.inicilizarServidores();
 	}
 }

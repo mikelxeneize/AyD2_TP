@@ -42,7 +42,7 @@ public class ControladorConfiguracion implements ActionListener{
 				this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()));
 				this.vista.ocultarLabelError();
 				try {
-					this.modelo.conectarServidorPrincipal();
+					this.modelo.conectarServidores();
 					try {
 						ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
 					} catch (IllegalArgumentException | IOException e1) {

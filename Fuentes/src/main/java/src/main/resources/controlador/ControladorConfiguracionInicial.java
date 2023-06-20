@@ -40,10 +40,14 @@ public class ControladorConfiguracionInicial implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		if(actionCommand.equals(IVista.ACEPTAR)) {	
-			this.modelo.setConfiguracion(this.vista.getIp(), Integer.parseInt(this.vista.getPort()), this.vista.getUsername());
+			this.modelo.setConfiguracion(
+				this.vista.getIp(), 
+				Integer.parseInt(this.vista.getPort()), 
+				this.vista.getUsername()
+			);
 			this.vista.ocultarLabelError();
 			try {
-				this.modelo.conectarServidorPrincipal();
+				this.modelo.inicilizarConectividad();
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);
 				} catch (IllegalArgumentException | IOException e1) {
