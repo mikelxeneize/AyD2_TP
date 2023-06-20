@@ -9,4 +9,6 @@ public interface IComandos {
 	static final String CONEXION_ESTABLECIDA = "Conexion_establecida";
 	static final String CONEXION_RECHAZADA = "Conexion_rechazada";
 	static final String ACTUALIZAR_LISTA = "Actualizar_lista";
+	static final String PEDIR_LISTA = "Pedir_lista";
+	static final String LISTA_COMPLETA = "Lista_completa";
 }
