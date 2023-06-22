@@ -29,7 +29,7 @@ public class RecibirMensajeHilo extends Thread {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			isRun=false;
-		}
+		} 
 		do {
 			try {
 				mensaje = in.readLine();

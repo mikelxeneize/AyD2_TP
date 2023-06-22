@@ -1,4 +1,4 @@
-package Servidor.Servidor;
+package Servidor.Bean;
 
 import java.net.InetAddress;
 

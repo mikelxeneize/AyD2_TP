@@ -1,26 +1,19 @@
-package Servidor.Servidor;
+package Servidor.Bean;
 
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class Cliente {
+public class Cliente extends SocketBean{
 	
-	int puerto;
-	String ip;
+	
 	String username;
 	
-	Socket socket;
 	String estado = "Disponible";
 
 	int puertoReceptor;
 	String ipReceptor;
 	
-	public int getPuerto() {
-		return puerto;
-	}
-	public void setPuerto(int puerto) {
-		this.puerto = puerto;
-	}
+	
 	
 	public Cliente(int puerto, String ip, Socket socket) {
 		super();
@@ -36,18 +29,6 @@ public class Cliente {
 		this.username=username;
 	}
 	
-	public String getIp() {
-		return ip;
-	}
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	public Socket getSocket() {
-		return socket;
-	}
-	public void setSocket(Socket socket) {
-		this.socket = socket;
-	}
 	public String getEstado() {
 		return estado;
 	}

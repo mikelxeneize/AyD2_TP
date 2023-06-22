@@ -29,7 +29,7 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 	private ArrayList<ServerData> listaPendientes = new ArrayList<ServerData>();
 	private ArrayList<ServerData> listaServidores = new ArrayList<ServerData>();
 	private ArrayList<Cliente> listaClientes = new ArrayList<Cliente>();
-	
+	 
 	private static Monitor instance;
 	private String IP = "localhost";
 	private String PUERTO = "6000";
@@ -79,8 +79,8 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 				recibirMensaje.start();
 				
 				
-				enviarMensajeAServidor(crearMensajeExterno(socket.getInetAddress().toString(),
-						Integer.toString(socket.getPort()), INDEFINIDO , INICIAR_CONEXION_SERVIDOR,INDEFINIDO,INDEFINIDO),socket);
+				enviarMensajeAServidor(new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
+						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_MONITOR,INDEFINIDO,INDEFINIDO),socket);
 				
 			} catch (UnknownHostException e) {
 				System.out.println(WARN + SERVIDOR_NO_DETECTADO + puertoAux);
@@ -137,7 +137,7 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 		
 		String comando=mensajeExterno.getComando();
 		
-		if(comando.equals(INICIAR_CONEXION_SERVIDOR_CONFIRMACION))
+		if(comando.equals(CONFIRMACION_MONITOR_RESPUESTA))
 			agregarServidor(mensajeExterno);
 		else  if(comando.equals(ACTUALIZAR_LISTA))
 			actualizarListaClientes(mensajeExterno);

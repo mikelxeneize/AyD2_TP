@@ -8,6 +8,8 @@ public interface IComandos {
 	public static final String PING_ECHO = "Ping_Echo";
 	public static final String RESPUESTA_PING_ECHO = "Respuesta_Ping_Echo";
 	public static final String ACTUALIZAR_LISTA = "Actualizar_lista";
+    public static final String CONFIRMACION_MONITOR = "CONFIRMACION_MONITOR";
+    public static final String CONFIRMACION_MONITOR_RESPUESTA = "CONFIRMACION_MONITOR_RESPUESTA";
 	
 	public static final String INDEFINIDO = " ";
 }

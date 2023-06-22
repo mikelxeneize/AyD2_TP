@@ -1,4 +1,4 @@
-package Servidor.Servidor;
+package Servidor.Util;
 
 public interface IEstados {
 	static final String DISPONIBLE = "Disponible";

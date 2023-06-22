@@ -1,62 +1,36 @@
 package Servidor.Servidor;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class Servidor implements IComandos, IEstados {
 
-	private ArrayList<Cliente> listaConectados = new ArrayList<Cliente>();
+import Servidor.Bean.Cliente;
+import Servidor.Bean.MensajeExterno;
+import Servidor.Bean.Monitor;
+import Servidor.Bean.ServerData;
+import Servidor.Bean.SocketBean;
+import Servidor.Util.IComandos;
+import Servidor.Util.IEstados;
+
+
+public class Servidor implements IComandos, IEstados {
+	private ArrayList<SocketBean> listaPendientes = new ArrayList<SocketBean>();
+	private ArrayList<Cliente> listaClientes = new ArrayList<Cliente>();
+	private ArrayList<ServerData> listaServidores = new ArrayList<ServerData>();
+	private ArrayList<Monitor> listaMonitores = new ArrayList<Monitor>();
+	
+	
 	private ServerSocket serverSocket;
 	private static Servidor instance;
 
 	private int puertoServidor;
-	private String ipServidor = "localhost";
+	private String ipServidor = "/127.0.0.1";
 	private String UsernameServidor = "";
 
 
-	public String getUsernameServidor() {
-		return UsernameServidor;
-	}
-
-	public void setUsernameServidor(String usernameServidor) {
-		UsernameServidor = usernameServidor;
-	}
-
-	private serverData serverdedatos;
-
-	public int getPuertoServidor() {
-		return puertoServidor;
-	}
-
-	public void setPuertoServidor(int puertoServidor) {
-		this.puertoServidor = puertoServidor;
-	}
-
-	public String getIpServidor() {
-		return ipServidor;
-	}
-
-	public serverData getServerDeDatos() {
-		return serverdedatos;
-	}
-
-	public void setServerDeDatos(serverData serverdedatos) {
-		this.serverdedatos = serverdedatos;
-	}
-
-	public int setPuertoServidor(int puerto) {
-		return this.puertoServidor = puerto;
-	}
 
 	public static Servidor getInstance() throws IOException {
 		if (Servidor.instance == null) {
@@ -64,83 +38,73 @@ public class Servidor implements IComandos, IEstados {
 		}
 		return instance;
 	}
-
 	public Servidor() throws IOException {
-		// iniciarHeartBeat();
+		conseguirClientes();
 		iniciarEscucha();
-
 	}
-
-	/*
-	 * private void iniciarHeartBeat() { HeartBeatHilo hilo = new
-	 * HeartBeatHilo(this, false); hilo.start();
-	 * 
-	 * }
-	 */
-
-	public void iniciarEscucha() throws IOException {
+	
+	private void conseguirClientes() {
 		Socket socket;
-		Cliente cliente;
-		ServidorRecibirMensajeHilo recibirMensajeHilo;
 		int puerto = 5000;
 		int i = 0;
-		boolean primero = true;
 		boolean encontrado = false;
 		while (i < 100 && encontrado == false) { // conexion al puerto
 			try {
-				serverSocket = new ServerSocket(puerto);
-				encontrado = true;
-				this.setPuertoServidor(puerto);
+				//me conecto
+				
+				socket = new Socket("localhost", puerto);
+				encontrado=true;
+				//entro en escucha antes de enviar nada
+				ServerData server= new ServerData(socket.getPort(),this.getIpServidor(),socket);
+				ServidorRecibirMensajeHiloServidor recibirMensaje = new ServidorRecibirMensajeHiloServidor(server, this,false);
+				recibirMensaje.start();
+				listaServidores.add(server);
+				
+				//envio confirmacion para registro
+				MensajeExterno mensajeConseguirClientes = new MensajeExterno("/127.0.0.1",
+						Integer.toString(socket.getLocalPort()), " ", this.getIpServidor(),
+						Integer.toString(socket.getPort()), " ", CONFIRMACION_SERVIDOR, " ", " ");
+				this.enviarMensajeAServidor(mensajeConseguirClientes);
+				
+				
 			} catch (IOException e) {
 				i++;
 				puerto += i;
 			}
 		}
-		conseguirClientes();
 		System.out.println(puerto);
-        if(encontrado) {
+	}
+
+	
+	public void iniciarEscucha() throws IOException {
+		Socket socket;
+		SocketBean socketBean;
+		ServidorRecibirMensajeHilo recibirMensajeHilo;
+		int puerto = 5000;
+		int i = 0;
+		boolean encontrado = false;
+		while (i < 100 && encontrado == false) { // conexion al puerto
+			try {
+				serverSocket = new ServerSocket(puerto);
+				encontrado = true;
+			} catch (IOException e) {
+				i++;
+				puerto+=i;
+			}
+		}
+		System.out.println(puerto);
+		if(encontrado) {
 			this.setPuertoServidor(puerto);
 			this.setUsernameServidor("SERVIDOR "+ puerto );
 		}
-		while (true) { // recepcion de nuevos usuarios a escuchar
-			socket = serverSocket.accept();// no esta recibiendo el puerto del que se conecta
-			if (this.getRegistradoByIp(socket.getInetAddress().toString(), socket.getPort()) == null)
-				cliente = new Cliente(socket.getPort(), socket.getInetAddress().toString(), socket);
-			else {
-				cliente = this.getRegistradoByIp(socket.getInetAddress().toString(), socket.getPort());
-				cliente.setSocket(socket);
-			}
-			if (socket.getPort() < 5000 || socket.getPort() > 5999) {
-				this.listaConectados.add(cliente);
-				recibirMensajeHilo = new ServidorRecibirMensajeHilo(cliente, this);
-				recibirMensajeHilo.start();
-			} else {
-				serverData servidor = new serverData(socket.getInetAddress().toString(), puerto);
-				this.setServerDeDatos(servidor);
-				reciboMensajeServidor();
-				//avisar a todos que se puede conectar al nuevo servidor
-			}
+		while (true) { //recepcion de nuevos usuarios a escuchar
+			socket = serverSocket.accept();
+			socketBean = new SocketBean(socket.getPort(), socket.getInetAddress().toString(), socket);
+			listaPendientes.add(socketBean);
+			recibirMensajeHilo = new ServidorRecibirMensajeHilo(socketBean, this);
+			recibirMensajeHilo.start();
 		}
 	}
-
-	private void reciboMensajeServidor() throws IOException {
-		BufferedReader in = new BufferedReader(
-				new InputStreamReader(this.getServerDeDatos().getSocket().getInputStream()));
-		String msg;
-		try {
-			msg = in.readLine();
-			MensajeExterno mensajerecibido = new MensajeExterno(msg);
-			if (mensajerecibido.getComando().equals(PEDIR_LISTA)){
-				this.MandarLista2(mensajerecibido);
-			} else if (mensajerecibido.getComando().equals(LISTA_COMPLETA)) {
-				this.crearLista(mensajerecibido.getCuerpo());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	/*
 	 * private void enlazarSocket(Socket socket) { int puerto; String ip;
 	 * for(Cliente socketaux: listaConectados) { puerto=socketaux.getPuerto();
@@ -148,38 +112,10 @@ public class Servidor implements IComandos, IEstados {
 	 * puerto== socket.getPort()) { socketaux.setSocket(socket);
 	 * socketaux.setEstado("Ocupado"); } } }
 	 */
-
-	private void conseguirClientes() throws IOException {
-		Socket socket;
-		int puerto = 5000;
-		int i = 0;
-		boolean encontrado = false;
-		while (i < 100 && encontrado == false) { // buscar server a conectarse
-			if (this.getPuertoServidor() != puerto) {
-				try {
-					socket = new Socket(this.getIpServidor(), puerto);
-					encontrado = true;
-					this.setServerDeDatos(new serverData(socket.getInetAddress().toString(),puerto));
-					this.getServerDeDatos().setSocket(socket);
-					MensajeExterno mensajeConseguirClientes = new MensajeExterno(this.getIpServidor(),
-							Integer.toString(this.getPuertoServidor()), " ", this.getIpServidor(),
-							Integer.toString(this.getServerDeDatos().getPuerto()), " ", PEDIR_LISTA, " ", " ");
-					this.enviarMensajeAServidor(mensajeConseguirClientes);
-					this.reciboMensajeServidor();
-					socket.close();
-				} catch (IOException e) {
-					i++;
-					puerto += i;
-				}
-			} else
-				i++;
-		}
-	}
-
-	private Cliente getRegistradoByIp(String ipObj, int puertoObj) {
+	private Cliente getRegistradoByIp(String ipObj,int puertoObj) {
 		int puerto;
 		String ip;
-		for (Cliente cliente : listaConectados) {
+		for (Cliente cliente : listaClientes) {
 			puerto = cliente.getPuerto();
 			ip = cliente.getIp();
 			if (ip.equals(ipObj) && puerto == puertoObj) {
@@ -188,7 +124,6 @@ public class Servidor implements IComandos, IEstados {
 		}
 		return null;
 	}
-
 	/*
 	 * public void enviarMensajeACliente(MensajeEncriptado mensaje, Socket socket)
 	 * throws IOException { PrintWriter out = new
@@ -198,139 +133,7 @@ public class Servidor implements IComandos, IEstados {
 	 * 
 	 * }
 	 */
-
-	public void enviarMensajeAServidor(MensajeExterno mensaje) throws IOException {
-		PrintWriter out = new PrintWriter(this.getServerDeDatos().getSocket().getOutputStream(), true);
-		out.println(mensaje.toString());
-		// System.out.println("17: "+mensaje.toString());
-	}
-
-	public void enviarMensajeACliente(MensajeExterno mensaje) throws IOException {
-		String ip = mensaje.getIpdestino();
-		int puerto = Integer.parseInt(mensaje.getPuertodestino());
-		for (Cliente cliente : listaConectados) {
-			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
-				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
-				out.println(mensaje.toString());
-				// System.out.println("17: "+mensaje.toString());
-			}
-		}
-	}
-
-	// no solo envia el mensaje a todos, sino que setea en el mensaje la ip y puerto
-	// del receptor
-	public void enviarMensajeAClienteTodos(MensajeExterno mensaje) throws IOException {
-		for (Cliente cliente : listaConectados) {
-			mensaje.setIpdestino(cliente.getIp());
-			mensaje.setPuertodestino(Integer.toString(cliente.getPuerto()));
-			PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
-			out.println(mensaje.toString());
-			// System.out.println("17: "+mensaje.toString());
-		}
-	}
-
-	public void iniciarConexionAReceptor(MensajeExterno mensaje)
-			throws UnknownHostException, IOException, InterruptedException {
-
-		Cliente clienteEmisor = getRegistradoByIp(mensaje.getIporigen(), Integer.parseInt(mensaje.getPuertoorigen()));
-		Cliente clienteReceptor = getRegistradoByIp(mensaje.getIpdestino(),
-				Integer.parseInt(mensaje.getPuertodestino()));
-
-		// este lo recibe el emisor
-		if (clienteReceptor != null && clienteReceptor.getEstado().equals(DISPONIBLE)) {// cliente registrado y
-																						// disponible para // conectarse
-
-			clienteEmisor.setIpReceptor(clienteReceptor.getIp());
-			clienteEmisor.setPuertoReceptor(clienteReceptor.getPuerto());
-			clienteEmisor.setEstado(OCUPADO);
-
-			clienteReceptor.setIpReceptor(clienteEmisor.getIp());
-			clienteReceptor.setPuertoReceptor(clienteEmisor.getPuerto());
-			clienteReceptor.setEstado(OCUPADO);
-
-			this.MandarLista1();
-
-			MensajeExterno mensajeAReceptor = new MensajeExterno(clienteEmisor.getIp(),
-                Integer.toString(clienteEmisor.getPuerto()), clienteEmisor.getUsername(),
-                clienteReceptor.getIpReceptor(), Integer.toString(clienteReceptor.getPuerto()),
-                clienteReceptor.getUsername(), CONEXION_ESTABLECIDA, " ", " ");
-			this.enviarMensajeACliente(mensajeAReceptor);
-
-			MensajeExterno mensajeConfirmacion = new MensajeExterno(
-                clienteReceptor.getIp(), Integer.toString(clienteReceptor.getPuerto()), clienteReceptor.getUsername(), 
-                clienteEmisor.getIp(), Integer.toString(clienteEmisor.getPuerto()), clienteEmisor.getUsername(),
-                CONEXION_ESTABLECIDA, " ", " ");
-			this.enviarMensajeACliente(mensajeConfirmacion);
-
-			// ServidorRecibirMensajeHilo recibirMensajeHiloConversacion = new
-			// ServidorRecibirMensajeHilo(clienteReceptor, this);
-			// recibirMensajeHiloConversacion.start();
-			// cliente aun no registrado, devolver excepcion
-		} else {// rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
-			// mensajeConfirmacion.setComando(CONEXION_RECHAZADA);
-			MensajeExterno mensajeConfirmacion = new MensajeExterno(clienteReceptor.getIp(),
-					Integer.toString(clienteReceptor.getPuerto()), clienteReceptor.getUsername(), clienteEmisor.getIp(),
-					Integer.toString(clienteEmisor.getPuerto()), clienteEmisor.getUsername(), CONEXION_RECHAZADA, " ",
-					" ");
-			this.enviarMensajeACliente(mensajeConfirmacion);
-		}
-	}
-
-	public void cortarConversacion(MensajeExterno mensaje) throws IOException {
-		Cliente clienteEmisor = this.getRegistradoByIp(mensaje.getIporigen(),
-				Integer.parseInt(mensaje.getPuertoorigen()));
-		Cliente clienteReceptor = this.getRegistradoByIp(mensaje.getIpdestino(),
-				Integer.parseInt(mensaje.getPuertodestino()));
-		if (clienteReceptor != null) {// cliente registrado y disponible para conectarse
-
-			clienteEmisor.setIpReceptor(null);
-			clienteEmisor.setPuertoReceptor(NULL);
-			clienteEmisor.setEstado(DISPONIBLE);
-
-			clienteReceptor.setIpReceptor(null);
-			clienteReceptor.setPuertoReceptor(NULL);
-			clienteReceptor.setEstado(DISPONIBLE);
-
-			this.enviarMensajeACliente(mensaje);
-			System.out.println(mensaje.toString());
-
-			this.MandarLista1();
-
-		}
-
-	}
-
-	public ArrayList<Cliente> getListaConectados() {
-		return listaConectados;
-	}
-
-	//
-	public void MandarLista1() {
-		PrintWriter out = null;
-		Cliente cliente;
-		System.out.println("");
-		String lista = "";
-		// Armo la lista en string primero
-		MensajeExterno mensaje = new MensajeExterno(this.getIpServidor(), Integer.toString(this.getPuertoServidor()),
-				" ", " ", " ", " ", ACTUALIZAR_LISTA, " ", " ");
-		for (Cliente cliente1 : this.getListaConectados()) { // limpieza de los desconectados
-			if (cliente1.getUsername() == null) {
-				this.getListaConectados().remove(cliente1);
-			}
-		}
-		for (int j = 0; j < this.getListaConectados().size(); j++) {
-			cliente = this.getListaConectados().get(j);
-			lista += this.getListaConectados().get(j).actualizacion();
-		}
-		mensaje.setCuerpo(lista);
-		try { // este try and catch me lo pide el java
-			this.enviarMensajeAClienteTodos(mensaje);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	
 	public void crearLista(String clientesCrudos) {
 		int largo = clientesCrudos.split(";").length;
 		String[] clientecrudo = clientesCrudos.split(";");
@@ -338,33 +141,141 @@ public class Servidor implements IComandos, IEstados {
 		while (i<largo) {
 			String[] clientelimpio = clientecrudo[i].split("=");
 			Cliente cliente = new Cliente(clientelimpio[0],Integer.parseInt(clientelimpio[1]),clientelimpio[2],clientelimpio[3]);
-			this.getListaConectados().add(cliente);
+			this.getListaClientes().add(cliente);
 		}
 	}
 
-	public void MandarLista2(MensajeExterno mensajerecibido) {
+	
+	public void enviarMensajeACliente(MensajeExterno mensaje) throws IOException {
+		String ip=mensaje.getIpdestino();
+		int puerto=Integer.parseInt(mensaje.getPuertodestino());
+		for (Cliente cliente : listaClientes) {
+			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+				out.println(mensaje.toString());
+				// System.out.println("17: "+mensaje.toString());
+			}
+		}
+	}
+	public void enviarMensajeAServidor(MensajeExterno mensaje) throws IOException {
+		String ip=mensaje.getIpdestino();
+		int puerto=Integer.parseInt(mensaje.getPuertodestino());
+		for (ServerData cliente : listaServidores) {
+			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+				out.println(mensaje.toString());
+				// System.out.println("17: "+mensaje.toString());
+			}
+		}
+	}
+	public void enviarMensajeAMonitor(MensajeExterno mensaje) throws IOException {
+		String ip=mensaje.getIpdestino();
+		int puerto=Integer.parseInt(mensaje.getPuertodestino());
+		for (Monitor cliente : listaMonitores) {
+			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+				out.println(mensaje.toString());
+				// System.out.println("17: "+mensaje.toString());
+			}
+		}
+	}
+	// no solo envia el mensaje a todos, sino que setea en el mensaje la ip y puerto del receptor
+	public void enviarMensajeAClienteTodos(MensajeExterno mensaje) throws IOException {
+		for (Cliente cliente : listaClientes) {
+			mensaje.setIpdestino(cliente.getIp());
+			mensaje.setPuertodestino(Integer.toString(cliente.getPuerto()));
+			PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+			out.println(mensaje.toString());
+			// System.out.println("17: "+mensaje.toString());
+		}
+	}
+	public void iniciarConexionAReceptor(MensajeExterno mensaje) throws UnknownHostException, IOException, InterruptedException {
+		
+		Cliente clienteEmisor = getRegistradoByIp(mensaje.getIporigen(),Integer.parseInt(mensaje.getPuertoorigen()));
+		Cliente clienteReceptor = getRegistradoByIp(mensaje.getIpdestino(),Integer.parseInt(mensaje.getPuertodestino()));
+		
+		// este lo recibe el emisor
+		if (clienteReceptor != null && clienteReceptor.getEstado().equals(DISPONIBLE)) {// cliente registrado y disponible para																// conectarse
+			
+			clienteEmisor.setIpReceptor(clienteReceptor.getIp());
+			clienteEmisor.setPuertoReceptor(clienteReceptor.getPuerto());
+			clienteEmisor.setEstado(OCUPADO);
+			
+			clienteReceptor.setIpReceptor(clienteEmisor.getIp());
+			clienteReceptor.setPuertoReceptor(clienteEmisor.getPuerto());
+			clienteReceptor.setEstado(OCUPADO);
+			
+			this.MandarLista1();
+			
+			MensajeExterno mensajeAReceptor = new MensajeExterno(clienteEmisor.getIp(),
+					Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
+					clienteReceptor.getIpReceptor(), Integer.toString(clienteReceptor.getPuerto()), clienteReceptor.getUsername(),
+					CONEXION_ESTABLECIDA, " ", " ");
+			this.enviarMensajeACliente(mensajeAReceptor);
+			
+			MensajeExterno mensajeConfirmacion = new MensajeExterno(clienteReceptor.getIp(),
+					Integer.toString(clienteReceptor.getPuerto()),clienteReceptor.getUsername(),
+					clienteEmisor.getIp(), Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
+					CONEXION_ESTABLECIDA," "," ");
+			this.enviarMensajeACliente(mensajeConfirmacion);
+			
+			//ServidorRecibirMensajeHilo recibirMensajeHiloConversacion = new ServidorRecibirMensajeHilo(clienteReceptor, this);
+			//recibirMensajeHiloConversacion.start();
+			// cliente aun no registrado, devolver excepcion
+		} else {// rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
+			//mensajeConfirmacion.setComando(CONEXION_RECHAZADA);
+			MensajeExterno mensajeConfirmacion = new MensajeExterno(clienteReceptor.getIp(),
+					Integer.toString(clienteReceptor.getPuerto()),clienteReceptor.getUsername(),
+					clienteEmisor.getIp(), Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
+					CONEXION_RECHAZADA, " ", " ");
+			this.enviarMensajeACliente(mensajeConfirmacion);
+		}
+	}
+	public void cortarConversacion(MensajeExterno mensaje) throws IOException {
+		Cliente clienteEmisor= this.getRegistradoByIp(mensaje.getIporigen(),Integer.parseInt(mensaje.getPuertoorigen()));
+		Cliente clienteReceptor=this.getRegistradoByIp(mensaje.getIpdestino(),Integer.parseInt(mensaje.getPuertodestino()));
+		if (clienteReceptor != null) {// cliente registrado y disponible para conectarse
+			
+			clienteEmisor.setIpReceptor(null);
+			clienteEmisor.setPuertoReceptor(NULL);
+			clienteEmisor.setEstado(DISPONIBLE);
+			
+			clienteReceptor.setIpReceptor(null);
+			clienteReceptor.setPuertoReceptor(NULL);
+			clienteReceptor.setEstado(DISPONIBLE);
+			
+			
+			this.enviarMensajeACliente(mensaje);
+			System.out.println(mensaje.toString());
+			this.MandarLista1();
+			
+		}
+	}
+	// 
+	public void MandarLista1() {
+		PrintWriter out = null;
+		Cliente cliente;
 		System.out.println("");
 		String lista = "";
 		// Armo la lista en string primero
-		MensajeExterno mensaje = new MensajeExterno(this.getIpServidor(), Integer.toString(this.getPuertoServidor()),
-				" ", mensajerecibido.getIporigen(), mensajerecibido.getPuertoorigen(), " ", LISTA_COMPLETA, " ", " ");
-		for (Cliente cliente1 : this.getListaConectados()) { // limpieza de los desconectados
+		MensajeExterno mensaje= new MensajeExterno(this.getIpServidor(),Integer.toString(this.getPuertoServidor())," "," ", " "," ",ACTUALIZAR_LISTA," "," "); 
+		for (Cliente cliente1 : this.getListaClientes()) {  //limpieza de los desconectados
 			if (cliente1.getUsername() == null) {
-				this.getListaConectados().remove(cliente1);
+				this.getListaClientes().remove(cliente1);
 			}
 		}
-		for (int j = 0; j < this.getListaConectados().size(); j++) {
-			lista += this.getListaConectados().get(j).actualizacion();
+		for (int j = 0; j < this.getListaClientes().size(); j++) {
+			cliente = this.getListaClientes().get(j);
+			lista += this.getListaClientes().get(j).actualizacion();
 		}
 		mensaje.setCuerpo(lista);
-		try { // este try and catch me lo pide el java
-			this.enviarMensajeAServidor(mensaje);
+		try { //este try and catch me lo pide el java
+			this.enviarMensajeAClienteTodos(mensaje);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 	// determina si hay servidor principal y decide en que puerto va a escuchar
 	/*
 	 * private void redundanciaPasiva() { this.isPrincipal = false;
@@ -400,5 +311,99 @@ public class Servidor implements IComandos, IEstados {
 	 * 
 	 * public boolean isPrincipal() { return isPrincipal; }
 	 */
+
+	public void MandarLista2(MensajeExterno mensajerecibido) {
+		System.out.println("");
+		String lista = "";
+		// Armo la lista en string primero
+		MensajeExterno mensaje = new MensajeExterno(this.getIpServidor(), Integer.toString(this.getPuertoServidor()),
+				" ", mensajerecibido.getIporigen(), mensajerecibido.getPuertoorigen(), " ", LISTA_COMPLETA, " ", " ");
+		for (Cliente cliente1 : this.getListaClientes()) { // limpieza de los desconectados
+			if (cliente1.getUsername() == null) {
+				this.getListaClientes().remove(cliente1);
+			}
+		}
+		for (int j = 0; j < this.getListaClientes().size(); j++) {
+			lista += this.getListaClientes().get(j).actualizacion();
+		}
+		mensaje.setCuerpo(lista);
+		try { // este try and catch me lo pide el java
+			this.enviarMensajeAServidor(mensaje);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public String getUsernameServidor() {
+		return UsernameServidor;
+	}
+
+	public void setUsernameServidor(String usernameServidor) {
+		UsernameServidor = usernameServidor;
+	}
+
+	public int getPuertoServidor() {
+		return puertoServidor;
+	}
+
+	public void setPuertoServidor(int puertoServidor) {
+		this.puertoServidor = puertoServidor;
+	}
+
+	public String getIpServidor() {
+		return ipServidor;
+	}
+	public ArrayList<SocketBean> getListaPendientes() {
+		return listaPendientes;
+	}
+	public ArrayList<ServerData> getListaServidores() {
+		return listaServidores;
+	}
+	public ArrayList<Monitor> getListaMonitores() {
+		return listaMonitores;
+	}
+
+	public ArrayList<Cliente> getListaClientes() {
+		return listaClientes;
+	}
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+	
+	
+	public void agregarALista(MensajeExterno mensaje, String tipo) throws IOException {
+		String ip=mensaje.getIporigen();
+		int puerto=Integer.parseInt(mensaje.getPuertoorigen());
+		for (SocketBean socketBean : listaPendientes) {
+			if (socketBean.getIp().equals(ip) && socketBean.getPuerto() == puerto) {
+				if(tipo.equals("CLIENTE")) {
+					Cliente cliente=new Cliente(socketBean.getPuerto(),socketBean.getIp(),socketBean.getSocket());
+					this.listaClientes.add(cliente);
+
+					ServidorRecibirMensajeHiloCliente recibirMensajeHiloCliente = new ServidorRecibirMensajeHiloCliente(cliente, this);
+					recibirMensajeHiloCliente.start();
+				}
+				else if(tipo.equals("SERVIDOR")){
+					ServerData servidor=new ServerData(socketBean.getPuerto(),socketBean.getIp(),socketBean.getSocket());
+					listaServidores.add(servidor);
+
+					ServidorRecibirMensajeHiloServidor recibirMensajeHiloServidor = new ServidorRecibirMensajeHiloServidor(servidor, this,true);
+					recibirMensajeHiloServidor.start();
+				}
+				
+				else if(tipo.equals("MONITOR")) {
+					Monitor monitor=new Monitor(socketBean.getPuerto(),socketBean.getIp(),socketBean.getSocket());
+					listaMonitores.add(monitor);
+
+					ServidorRecibirMensajeHiloMonitor recibirMensajeHiloMonitor = new ServidorRecibirMensajeHiloMonitor(monitor, this);
+					recibirMensajeHiloMonitor.start();
+				}
+					
+			}
+		}
+	}
+	
+	
 
 }
