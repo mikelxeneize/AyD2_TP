@@ -16,5 +16,6 @@ public interface IComandos {
     public static final String INDEFINIDO = " ";
     public static final String CONFIRMACION_CLIENTE = "CONFIRMACION_CLIENTE";
     public static final String AVISAR_CLIENTES_DE_NUEVO_SERVIDOR = "AVISAR_CLIENTES_DE_NUEVO_SERVIDOR";
+    public static final String CONFIRMACION_CLIENTE_RESPUESTA = "CONFIRMACION_CLIENTE_RESPUESTA";
 
 }

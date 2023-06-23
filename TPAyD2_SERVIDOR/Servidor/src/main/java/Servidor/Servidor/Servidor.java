@@ -61,7 +61,7 @@ public class Servidor implements IComandos, IEstados {
 				recibirMensaje.start();
 				listaServidores.add(server);
 				
-				//envio confirmacion para registro
+				//envio confirmacion para registro 
 				MensajeExterno mensajeConseguirClientes = new MensajeExterno("/127.0.0.1",
 						Integer.toString(socket.getLocalPort()), " ", this.getIpServidor(),
 						Integer.toString(socket.getPort()), " ", CONFIRMACION_SERVIDOR, " ", " ");
@@ -70,7 +70,7 @@ public class Servidor implements IComandos, IEstados {
 				
 			} catch (IOException e) {
 				i++;
-				puerto += i;
+				puerto += 1;
 			}
 		}
 		System.out.println(puerto);
@@ -167,7 +167,7 @@ public class Servidor implements IComandos, IEstados {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
 		for (Cliente cliente : listaClientes) {
-			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+			if ((cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) || cliente.getSocket().getPort()== puerto) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
 				// System.out.println("17: "+mensaje.toString());
@@ -386,14 +386,19 @@ public class Servidor implements IComandos, IEstados {
 	
 	
 	public void agregarALista(MensajeExterno mensaje, String tipo) throws IOException {
-		String ip=mensaje.getIporigen();
+		String ip=mensaje.getIporigen(); 
 		int puerto=Integer.parseInt(mensaje.getPuertoorigen());
 		for (SocketBean socketBean : listaPendientes) {
 			if (socketBean.getIp().equals(ip) && socketBean.getPuerto() == puerto) {
 				if(tipo.equals("CLIENTE")) {
-					Cliente cliente=new Cliente(Integer.parseInt(mensaje.getPuertoorigen()),mensaje.getIporigen(),socketBean.getSocket());
-					this.listaClientes.add(cliente);
-
+					Cliente cliente=this.getRegistradoByIp(ip, puerto);
+					if(cliente==null){//es una conexion de las nuevas
+						cliente=new Cliente(Integer.parseInt(mensaje.getPuertoorigen()),mensaje.getIporigen(),socketBean.getSocket());
+						this.listaClientes.add(cliente);
+					}
+					else {
+						cliente.setSocket(socketBean.getSocket());
+					}
 					ServidorRecibirMensajeHiloCliente recibirMensajeHiloCliente = new ServidorRecibirMensajeHiloCliente(cliente, this);
 					recibirMensajeHiloCliente.start();
 				}
@@ -422,7 +427,8 @@ public class Servidor implements IComandos, IEstados {
 		this.enviarMensajeAClienteTodos(mensajeAviso);
 	}
 	
-	public String miInformacionEnString() {
+	public String miInformacionEnString() throws InterruptedException {
+		Thread.sleep(200);
 		return this.ipServidor+"="+this.puertoServidor;
 	}
 	

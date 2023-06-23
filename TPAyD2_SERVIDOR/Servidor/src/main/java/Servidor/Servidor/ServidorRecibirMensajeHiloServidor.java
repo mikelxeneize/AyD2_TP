@@ -25,7 +25,7 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 		String msg = null;
 		MensajeExterno mensajerecibido;
 		BufferedReader in = null;
-		try {
+		try { 
 			in = new BufferedReader(new InputStreamReader(serverData.getSocket().getInputStream()));
 			
 			if(modo) {
@@ -51,10 +51,14 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 						servidor.avisarClientesNuevoServidor(mensajerecibido);
 					}
 					else if (mensajerecibido.getComando().equals(CONFIRMACION_SERVIDOR_RESPUESTA)) {
-						MensajeExterno mensaje = new MensajeExterno("localhost",
-								Integer.toString(serverData.getSocket().getLocalPort()), " ", serverData.getIp(),
-								Integer.toString(serverData.getSocket().getPort()), " ", PEDIR_LISTA, servidor.miInformacionEnString(), " ");
-						servidor.enviarMensajeAServidor(mensaje);
+						MensajeExterno mensaje;
+						try {
+							mensaje = new MensajeExterno("localhost",
+									Integer.toString(serverData.getSocket().getLocalPort()), " ", serverData.getIp(),
+									Integer.toString(serverData.getSocket().getPort()), " ", PEDIR_LISTA, servidor.miInformacionEnString(), " ");
+							servidor.enviarMensajeAServidor(mensaje);
+						} catch (InterruptedException e) {
+						}
 					}
 					else if (mensajerecibido.getComando().equals(LISTA_COMPLETA)) {
 						servidor.crearLista(mensajerecibido.getCuerpo());

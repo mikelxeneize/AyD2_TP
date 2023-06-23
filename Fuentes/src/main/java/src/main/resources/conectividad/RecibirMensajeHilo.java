@@ -45,7 +45,6 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 			this.algoritmo = this.conectividad.getAlgoritmo();
 			if (msg != null) {
 				MensajeExterno mensajeExterno = new MensajeExterno(msg);
-				// System.out.println("30 :"+msg);
 				if (!mensajeExterno.getComando().equals(RESPUESTA_PING_ECHO)) {
 					System.out.println("30 :" + msg);
 				}
@@ -80,6 +79,10 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 					this.conectividad
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
+				else if (mensajeExterno.getComando().equals(CONFIRMACION_CLIENTE_RESPUESTA)) { // El cliente solicito iniciar una conexion y se le fue rechazada
+					this.conectividad.notificarNombreServidores(this.socket);	
+					
+				}
 				else if (mensajeExterno.getComando().equals(AVISAR_CLIENTES_DE_NUEVO_SERVIDOR)) { // Se recibe la informacion del nuevo servidor al cual conectarse
 					try {
 						this.conectividad.iniciarConexionServidorNuevo(mensajeExterno);
@@ -95,11 +98,13 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				}
 				
 				else {
-					mensaje = new Mensaje(mensajeExterno.getCuerpo(), "mensaje recibido"); // Recibe mensaje normal
-																								// CREO
-					mensaje.setIp(this.socket.getInetAddress().getHostAddress());
-					mensaje.setPuerto(this.conectividad.getPuertopersonal());
-					this.conectividad.notificarAccion(mensaje);
+					if(this.socket== this.conectividad.getServidorPrincipal().getSocket()) {
+						String mensajeDesencriptado=Codificacion.desencriptar(this.conectividad.getClave(),mensajeExterno.getCuerpo(),this.conectividad.getAlgoritmo());
+	                    mensaje = new Mensaje(mensajeDesencriptado, "mensaje recibido");																			// CREO
+						mensaje.setIp(this.socket.getInetAddress().getHostAddress());
+						mensaje.setPuerto(this.conectividad.getPuertopersonal());
+						this.conectividad.notificarAccion(mensaje);
+					}
 				}
 			}
 		} while (msg != null); // implica que se cerro la conexion con el servidor

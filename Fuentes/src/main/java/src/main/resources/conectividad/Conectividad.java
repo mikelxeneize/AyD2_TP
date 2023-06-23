@@ -134,6 +134,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				this.servidores.add(servidor);
 				if (this.servidorPrincipal == null) {
 					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
+					this.pingEchoServidores();	
 				}
 				MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
 						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
@@ -193,13 +194,15 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 */
 	public void enviarMensajeCliente(String mensaje) throws IOException {
 		String mensajeEncriptado = Codificacion.encriptar(getClave(), mensaje, getAlgoritmo());
-		
 		MensajeExterno mensajeExterno = new MensajeExterno(
 				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
 				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
-				ENVIAR_MENSAJE, mensajeEncriptado, " ");														//
+				ENVIAR_MENSAJE, mensajeEncriptado, " ");
 		
-		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+		for (ServidorData servidor : servidores) {
+			enviarMensajeExterno(mensajeExterno, servidor);
+		}
+		
 	}
 
 	/**
@@ -237,42 +240,48 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 */
 	public void inicilizarServidores() {
 		this.conectarServidores();	
-		this.notificarNombreServidores(this.servidores);
-		this.pingEchoServidores(this.servidores);		
+		
 	}
 	
+	
+	private ServidorData getRegistradoByIp(String ipObj,int puertoObj) {
+		int puerto;
+		String ip;
+		for (ServidorData servidor : servidores) {
+			puerto = servidor.getPuerto();
+			ip = servidor.getIp();
+			if (puerto == puertoObj) {
+				return servidor;
+			}
+		}
+		return null;
+	}
 	/**
 	 * Notifica el nombre de usuario en todos los servidores
-	 * @param servidores Conjunto donde se va a notificar
+	 * @param socket Conjunto donde se va a notificar
 	 */
-	private void notificarNombreServidores(ArrayList<ServidorData> servidores) {
-		String puerto;
+	public void notificarNombreServidores(Socket socket) {
 		
 		MensajeExterno mensajeExterno = new MensajeExterno(
 				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
 				"localhost", " ", " ", 
 				NOMBRE_USUARIO, " ", " ");														
 		
-		for (ServidorData servidor:this.servidores) {
-			puerto = Integer.toString(servidor.getPuerto());
-			//se cambian partes del mensajeExterno en realacion a cada destinatario
-			mensajeExterno.setPuertodestino(puerto); 
-			mensajeExterno.setUsernamedestino("Servidor" + puerto);
+			ServidorData servidor=getRegistradoByIp(socket.getInetAddress().toString(),socket.getPort());
 			
 			enviarMensajeExterno(mensajeExterno, servidor);
-		}
 	}
 
 	/**
 	 * inicia el ping echo hilo en todos los servidores
-	 * @param servidores Conjunto donde se va a iniciar el echo hilo
+	 * @param socket Conjunto donde se va a iniciar el echo hilo
 	 */
-	private void pingEchoServidores(ArrayList<ServidorData> servidores) {
+	public void pingEchoServidores() {
 		PingEchoHilo pingechohilo;
-		for (ServidorData servidor:servidores) {
-			pingechohilo= new PingEchoHilo(servidor, this);
-			pingechohilo.start();
-		}
+		
+		//pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
+		//pingechohilo.start();
+		
 	}
 	
 	/**
@@ -289,6 +298,38 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		}
 		return resultado;
 	}
+	
+	
+	public void iniciarConexionServidorNuevo(MensajeExterno mensajeExterno) throws IOException {
+		
+		String [] partes= mensajeExterno.getCuerpo().split("=");
+		String ip=partes[0];
+		int puerto=Integer.parseInt(partes[1]);
+		Socket socket;
+		
+			ServidorData servidor = new ServidorData("localhost", puerto);
+			socket = this.conectarServidor("localhost", puerto);
+			servidor.setSocket(socket);
+			
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			servidor.setOut(out);
+			
+			this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
+			this.servidores.add(servidor);
+			
+			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
+					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
+			enviarMensajeExterno(confirmacion,servidor);
+			
+
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	public int getPuertopersonal() {
 		return puertoPersonal;
@@ -393,37 +434,4 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		this.servidorPrincipal = servidorPrincipal;
 	}
 
-	public void iniciarConexionServidorNuevo(MensajeExterno mensajeExterno) throws IOException {
-		
-		String [] partes= mensajeExterno.getCuerpo().split("=");
-		String ip=partes[0];
-		int puerto=Integer.parseInt(partes[1]);
-		Socket socket;
-		
-			ServidorData servidor = new ServidorData("localhost", puerto);
-			socket = this.conectarServidor("localhost", puerto);
-			servidor.setSocket(socket);
-			
-			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			servidor.setOut(out);
-			
-			this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
-			this.servidores.add(servidor);
-			
-			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
-					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
-			enviarMensajeExterno(confirmacion,servidor);
-			
-
-			MensajeExterno mensajeNombreDeUsuario = new MensajeExterno(
-					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
-					"localhost", partes[1], " ", 
-					NOMBRE_USUARIO, " ", " ");	
-
-			enviarMensajeExterno(mensajeNombreDeUsuario, servidor);
-			
-			PingEchoHilo pingechohilo;
-			pingechohilo= new PingEchoHilo(servidor, this);
-			pingechohilo.start();
-	}
 }

@@ -1,5 +1,6 @@
 package src.main.resources.conectividad;
 
+
 import java.net.InetAddress;
 
 // el vacio es representado por 
@@ -29,31 +30,31 @@ public class MensajeExterno {
 		this.comando = comando;
 		this.cuerpo = cuerpo;
 		this.auxiliar = auxiliar;
-		if (iporigen.equals("")){
+		if (iporigen==null ||iporigen.equals("")){
 			this.iporigen = " ";
 		}
-		if (puertoorigen.equals("")){
+		if (puertoorigen==null ||puertoorigen.equals("")){
 			this.puertoorigen = " ";
 		}
-		if (usernameorigen.equals("")){
+		if (usernameorigen==null ||usernameorigen.equals("")){
 			this.usernameorigen = " ";
 		}
-		if (ipdestino.equals("")){
+		if (ipdestino==null ||ipdestino.equals("")){
 			this.ipdestino = " ";
 		}
-		if (puertodestino.equals("")){
+		if (puertodestino==null ||puertodestino.equals("")){
 			this.puertodestino = " ";
 		}
-		if (usernamedestino.equals("")){
+		if (usernamedestino==null || usernamedestino.equals("")){
 			this.usernamedestino = " ";
 		}
-		if (comando.equals("")){
+		if (comando==null ||comando.equals("")){
 			this.comando = " ";
 		}
-		if (cuerpo.equals("")){
+		if (cuerpo==null ||cuerpo.equals("")){
 			this.cuerpo = " ";
 		}
-		if (auxiliar.equals("")){
+		if (auxiliar==null ||auxiliar.equals("")){
 			this.auxiliar = " ";
 		}
 	}

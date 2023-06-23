@@ -25,20 +25,20 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 		String msg = null;
 		MensajeExterno mensajerecibido;
 		BufferedReader in = null;
-		try {
+		try { 
 			in = new BufferedReader(new InputStreamReader(cliente.getSocket().getInputStream()));
 			MensajeExterno mensajeConfirmacion = new MensajeExterno(servidor.getIpServidor(),
 					Integer.toString(cliente.getSocket().getLocalPort()), " ", servidor.getIpServidor(),
 					Integer.toString(cliente.getSocket().getPort()), " ", CONFIRMACION_CLIENTE_RESPUESTA, " ", " ");
-			servidor.enviarMensajeAMonitor(mensajeConfirmacion); 
+			servidor.enviarMensajeACliente(mensajeConfirmacion); 
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			e1.printStackTrace(); 
 		}
 
 		do {
 			try {
 				msg = in.readLine();
-				// System.out.println("1: "+msg);
+				System.out.println("1: "+msg);
 				if (msg == null) {
 					// this.cliente.setEstado("Desconectado");
 					this.servidor.getListaClientes().remove(this.cliente);
