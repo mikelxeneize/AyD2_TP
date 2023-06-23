@@ -13,6 +13,7 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 	private ServerData serverData;
 	private Servidor servidor;
 	private boolean modo;
+	
 	public ServidorRecibirMensajeHiloServidor(ServerData serverData, Servidor servidor, boolean i) {
 		this.serverData = serverData;
 		this.servidor = servidor;
@@ -45,16 +46,19 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 					
 				} else {
 					mensajerecibido = new MensajeExterno(msg);
-					if(mensajerecibido.getComando().equals(PEDIR_LISTA))
+					if(mensajerecibido.getComando().equals(PEDIR_LISTA)) {
 						servidor.MandarLista2(mensajerecibido);
+						servidor.avisarClientesNuevoServidor(mensajerecibido);
+					}
 					else if (mensajerecibido.getComando().equals(CONFIRMACION_SERVIDOR_RESPUESTA)) {
 						MensajeExterno mensaje = new MensajeExterno("localhost",
 								Integer.toString(serverData.getSocket().getLocalPort()), " ", serverData.getIp(),
-								Integer.toString(serverData.getSocket().getPort()), " ", PEDIR_LISTA, " ", " ");
+								Integer.toString(serverData.getSocket().getPort()), " ", PEDIR_LISTA, servidor.miInformacionEnString(), " ");
 						servidor.enviarMensajeAServidor(mensaje);
 					}
 					else if (mensajerecibido.getComando().equals(LISTA_COMPLETA)) {
 						servidor.crearLista(mensajerecibido.getCuerpo());
+						msg=null;
 					}
 					
 				}

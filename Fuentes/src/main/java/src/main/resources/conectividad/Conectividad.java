@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+
 public class Conectividad extends Observable implements IConectividad, IComandos{
 	
 	private ArrayList<ServidorData> servidores = new ArrayList<ServidorData>();
@@ -101,7 +102,6 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public Socket conectarServidor(String ip, int puerto) throws IOException {
 		Socket socket = new Socket();
 		socket.setReuseAddress(true);
-		socket.bind(new InetSocketAddress(this.puertoPersonal));
 		socket.connect(new InetSocketAddress(ip,puerto));
 		return socket;
 	}
@@ -128,10 +128,17 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				servidor.setOut(out);
 				
 				this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
+				
+				
+				
 				this.servidores.add(servidor);
 				if (this.servidorPrincipal == null) {
 					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
 				}
+				MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
+						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
+				enviarMensajeExterno(confirmacion,servidor);
+				
 			} catch (IOException e) {
 				//e.printStackTrace(); no printea nada aproposito, se supone que debe tirar exception siempre que no pueda conectar a un server
 			}
@@ -385,5 +392,38 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public void setServidorPrincipal(ServidorData servidorPrincipal) {
 		this.servidorPrincipal = servidorPrincipal;
 	}
-	
+
+	public void iniciarConexionServidorNuevo(MensajeExterno mensajeExterno) throws IOException {
+		
+		String [] partes= mensajeExterno.getCuerpo().split("=");
+		String ip=partes[0];
+		int puerto=Integer.parseInt(partes[1]);
+		Socket socket;
+		
+			ServidorData servidor = new ServidorData("localhost", puerto);
+			socket = this.conectarServidor("localhost", puerto);
+			servidor.setSocket(socket);
+			
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			servidor.setOut(out);
+			
+			this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
+			this.servidores.add(servidor);
+			
+			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
+					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
+			enviarMensajeExterno(confirmacion,servidor);
+			
+
+			MensajeExterno mensajeNombreDeUsuario = new MensajeExterno(
+					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+					"localhost", partes[1], " ", 
+					NOMBRE_USUARIO, " ", " ");	
+
+			enviarMensajeExterno(mensajeNombreDeUsuario, servidor);
+			
+			PingEchoHilo pingechohilo;
+			pingechohilo= new PingEchoHilo(servidor, this);
+			pingechohilo.start();
+	}
 }

@@ -80,7 +80,14 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 					this.conectividad
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
-				
+				else if (mensajeExterno.getComando().equals(AVISAR_CLIENTES_DE_NUEVO_SERVIDOR)) { // Se recibe la informacion del nuevo servidor al cual conectarse
+					try {
+						this.conectividad.iniciarConexionServidorNuevo(mensajeExterno);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+							
+				}
 				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Se le solicita al este cliente iniciar una conexion
 					this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
 					this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));

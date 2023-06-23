@@ -21,5 +21,10 @@ public class ServerData extends SocketBean{
 	public void setOut(PrintWriter out) {
 		this.out = out;
 	}
+
+	@Override
+	public String toString() {
+		return this.ip+"="+this.puerto;
+	}
 	
 }

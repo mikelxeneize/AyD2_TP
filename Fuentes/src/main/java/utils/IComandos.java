@@ -13,4 +13,8 @@ public interface IComandos {
 	static final String RESPONDER_PRINCIPAL = "Responder_Principal";
 	static final String PREGUNTAR_PRINCIPAL = "Responder_Principal";
 	static final String ENVIAR_MENSAJE = "Enviar_Mensaje";
+    public static final String INDEFINIDO = " ";
+    public static final String CONFIRMACION_CLIENTE = "CONFIRMACION_CLIENTE";
+    public static final String AVISAR_CLIENTES_DE_NUEVO_SERVIDOR = "AVISAR_CLIENTES_DE_NUEVO_SERVIDOR";
+
 }

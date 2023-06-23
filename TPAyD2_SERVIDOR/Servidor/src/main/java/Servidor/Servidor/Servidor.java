@@ -17,6 +17,7 @@ import Servidor.Util.IEstados;
 
 
 public class Servidor implements IComandos, IEstados {
+	
 	private ArrayList<SocketBean> listaPendientes = new ArrayList<SocketBean>();
 	private ArrayList<Cliente> listaClientes = new ArrayList<Cliente>();
 	private ArrayList<ServerData> listaServidores = new ArrayList<ServerData>();
@@ -124,6 +125,19 @@ public class Servidor implements IComandos, IEstados {
 		}
 		return null;
 	}
+	
+	private ServerData getRegistradoByIpServidor(String ipObj,int puertoObj) {
+		int puerto;
+		String ip;
+		for (ServerData serverData : listaServidores) {
+			puerto = serverData.getPuerto();
+			ip = serverData.getIp();
+			if (ip.equals(ipObj) && puerto == puertoObj) {
+				return serverData;
+			}
+		}
+		return null;
+	}
 	/*
 	 * public void enviarMensajeACliente(MensajeEncriptado mensaje, Socket socket)
 	 * throws IOException { PrintWriter out = new
@@ -135,13 +149,16 @@ public class Servidor implements IComandos, IEstados {
 	 */
 	
 	public void crearLista(String clientesCrudos) {
-		int largo = clientesCrudos.split(";").length;
-		String[] clientecrudo = clientesCrudos.split(";");
-		int i=0;
-		while (i<largo) {
-			String[] clientelimpio = clientecrudo[i].split("=");
-			Cliente cliente = new Cliente(clientelimpio[0],Integer.parseInt(clientelimpio[1]),clientelimpio[2],clientelimpio[3]);
-			this.getListaClientes().add(cliente);
+		if(clientesCrudos!=null && !clientesCrudos.equals("")) {
+			int largo = clientesCrudos.split(";").length;
+			String[] clientecrudo = clientesCrudos.split(";");
+			int i=0;
+			while (i<largo) {
+				String[] clientelimpio = clientecrudo[i].split("=");
+				Cliente cliente = new Cliente(clientelimpio[0],Integer.parseInt(clientelimpio[1]),clientelimpio[2],clientelimpio[3]);
+				this.getListaClientes().add(cliente);
+				i++;
+			}
 		}
 	}
 
@@ -318,11 +335,7 @@ public class Servidor implements IComandos, IEstados {
 		// Armo la lista en string primero
 		MensajeExterno mensaje = new MensajeExterno(this.getIpServidor(), Integer.toString(this.getPuertoServidor()),
 				" ", mensajerecibido.getIporigen(), mensajerecibido.getPuertoorigen(), " ", LISTA_COMPLETA, " ", " ");
-		for (Cliente cliente1 : this.getListaClientes()) { // limpieza de los desconectados
-			if (cliente1.getUsername() == null) {
-				this.getListaClientes().remove(cliente1);
-			}
-		}
+		
 		for (int j = 0; j < this.getListaClientes().size(); j++) {
 			lista += this.getListaClientes().get(j).actualizacion();
 		}
@@ -402,6 +415,15 @@ public class Servidor implements IComandos, IEstados {
 					
 			}
 		}
+	}
+	public void avisarClientesNuevoServidor(MensajeExterno mensajerecibido) throws IOException {
+		String infoServidorNuevo=mensajerecibido.getCuerpo();
+		MensajeExterno mensajeAviso= new MensajeExterno(this.ipServidor,Integer.toString(this.puertoServidor),this.UsernameServidor,INDEFINIDO,INDEFINIDO,INDEFINIDO,AVISAR_CLIENTES_DE_NUEVO_SERVIDOR,infoServidorNuevo,INDEFINIDO);
+		this.enviarMensajeAClienteTodos(mensajeAviso);
+	}
+	
+	public String miInformacionEnString() {
+		return this.ipServidor+"="+this.puertoServidor;
 	}
 	
 	

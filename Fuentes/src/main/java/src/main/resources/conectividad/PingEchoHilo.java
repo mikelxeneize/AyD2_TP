@@ -36,7 +36,7 @@ public class PingEchoHilo extends Thread {
 					e1.printStackTrace();
 				}
 				
-				out.println(this.conectividad.getIppersonal()+":"+this.conectividad.getPuertopersonal()+ ":%PingEcho%" + ": ");
+				//out.println(this.conectividad.getIppersonal()+":"+this.conectividad.getPuertopersonal()+ ":%PingEcho%" + ": ");
 				//System.out.println("PingEcho"+ this.conectividad.getIppersonal()+":"+this.conectividad.getPuertopersonal()+ "%PingEcho%" + ": ");
 				
 			try {
