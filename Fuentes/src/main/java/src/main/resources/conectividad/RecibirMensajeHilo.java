@@ -83,6 +83,7 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
 				else if (mensajeExterno.getComando().equals(CONFIRMACION_CLIENTE_RESPUESTA)) { // El cliente solicito iniciar una conexion y se le fue rechazada
+					this.conectividad.eliminarPendientes(this.socket);
 					this.conectividad.notificarNombreServidores(this.socket);	
 					
 				}

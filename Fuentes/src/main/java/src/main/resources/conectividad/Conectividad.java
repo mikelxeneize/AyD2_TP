@@ -14,7 +14,8 @@ import java.util.Observer;
 
 
 public class Conectividad extends Observable implements IConectividad, IComandos{
-	
+
+	private ArrayList<ServidorData> pendientes = new ArrayList<ServidorData>();
 	private ArrayList<ServidorData> servidores = new ArrayList<ServidorData>();
 	
 	// Informacion personal
@@ -131,7 +132,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				
 				
 				
-				this.servidores.add(servidor);
+				this.pendientes.add(servidor);
 				if (this.servidorPrincipal == null) {
 					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
 					this.pingEchoServidores();	
@@ -279,8 +280,8 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public void pingEchoServidores() {
 		PingEchoHilo pingechohilo;
 		
-		//pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
-		//pingechohilo.start();
+		pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
+		pingechohilo.start();
 		
 	}
 	
@@ -314,7 +315,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 			servidor.setOut(out);
 			
 			this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
-			this.servidores.add(servidor);
+			this.pendientes.add(servidor);
 			
 			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
 					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
@@ -324,7 +325,17 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	}
 	
 	
-	
+	public void eliminarPendientes(Socket socket) {
+		ServidorData aux=null;
+		for (ServidorData servidor : pendientes) {
+			if(servidor.getSocket()==socket) {
+				aux=servidor;
+			}
+				
+		}
+		this.servidores.add(aux);
+		this.pendientes.remove(aux);
+	}
 	
 	
 	
@@ -432,5 +443,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public void setServidorPrincipal(ServidorData servidorPrincipal) {
 		this.servidorPrincipal = servidorPrincipal;
 	}
+
+	
 
 }
