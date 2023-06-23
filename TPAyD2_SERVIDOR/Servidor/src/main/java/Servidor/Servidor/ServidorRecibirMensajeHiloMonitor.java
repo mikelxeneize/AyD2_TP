@@ -26,7 +26,7 @@ public class ServidorRecibirMensajeHiloMonitor extends Thread implements IComand
 		try {
 			in = new BufferedReader(new InputStreamReader(monitor.getSocket().getInputStream()));
 			MensajeExterno mensajeConfirmacion = new MensajeExterno(servidor.getIpServidor(),
-					Integer.toString(monitor.getSocket().getLocalPort()), " ", servidor.getIpServidor(),
+					Integer.toString(monitor.getSocket().getLocalPort()), this.servidor.getUsernameServidor(), servidor.getIpServidor(),
 					Integer.toString(monitor.getSocket().getPort()), " ", CONFIRMACION_MONITOR_RESPUESTA, " ", " ");
 			servidor.enviarMensajeAMonitor(mensajeConfirmacion);
 		} catch (IOException e1) {
@@ -41,7 +41,14 @@ public class ServidorRecibirMensajeHiloMonitor extends Thread implements IComand
 					
 				} else {
 					mensajerecibido = new MensajeExterno(msg);
-					
+					if (mensajerecibido.getComando().equals(PING_ECHO)) {// Recibe comando de Ping, y emite una
+						
+						MensajeExterno mensajePingEcho = new MensajeExterno(this.servidor.getIpServidor(),
+						Integer.toString(this.servidor.getPuertoServidor()), " ", this.monitor.getIp(),
+						Integer.toString(this.monitor.getPuerto()), this.monitor.getUsername(),RESPUESTA_PING_ECHO,
+						" ", " ");
+						this.servidor.enviarMensajeAMonitor(mensajePingEcho);
+						}
 					
 					
 					

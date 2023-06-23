@@ -280,8 +280,8 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public void pingEchoServidores() {
 		PingEchoHilo pingechohilo;
 		
-		pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
-		pingechohilo.start();
+		//pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
+		//pingechohilo.start();
 		
 	}
 	
