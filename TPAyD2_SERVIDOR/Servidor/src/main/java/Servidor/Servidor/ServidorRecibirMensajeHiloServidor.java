@@ -34,7 +34,7 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 					Integer.toString(serverData.getSocket().getPort()), " ", CONFIRMACION_SERVIDOR_RESPUESTA, " ", " ");
 			servidor.enviarMensajeAServidor(mensajeConfirmacion);
 			}
-		} catch (IOException e1) {
+		} catch (IOException e1) { 
 			e1.printStackTrace();
 		}
 

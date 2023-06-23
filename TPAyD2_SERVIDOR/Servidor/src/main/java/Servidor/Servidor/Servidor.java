@@ -391,7 +391,7 @@ public class Servidor implements IComandos, IEstados {
 		for (SocketBean socketBean : listaPendientes) {
 			if (socketBean.getIp().equals(ip) && socketBean.getPuerto() == puerto) {
 				if(tipo.equals("CLIENTE")) {
-					Cliente cliente=new Cliente(socketBean.getPuerto(),socketBean.getIp(),socketBean.getSocket());
+					Cliente cliente=new Cliente(Integer.parseInt(mensaje.getPuertoorigen()),mensaje.getIporigen(),socketBean.getSocket());
 					this.listaClientes.add(cliente);
 
 					ServidorRecibirMensajeHiloCliente recibirMensajeHiloCliente = new ServidorRecibirMensajeHiloCliente(cliente, this);

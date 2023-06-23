@@ -30,7 +30,7 @@ public class ServidorRecibirMensajeHiloMonitor extends Thread implements IComand
 					Integer.toString(monitor.getSocket().getPort()), " ", CONFIRMACION_MONITOR_RESPUESTA, " ", " ");
 			servidor.enviarMensajeAMonitor(mensajeConfirmacion);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			e1.printStackTrace(); 
 		}
 
 		do {

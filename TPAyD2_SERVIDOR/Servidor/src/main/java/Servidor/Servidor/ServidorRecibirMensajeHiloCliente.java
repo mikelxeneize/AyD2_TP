@@ -30,7 +30,7 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 			MensajeExterno mensajeConfirmacion = new MensajeExterno(servidor.getIpServidor(),
 					Integer.toString(cliente.getSocket().getLocalPort()), " ", servidor.getIpServidor(),
 					Integer.toString(cliente.getSocket().getPort()), " ", CONFIRMACION_CLIENTE_RESPUESTA, " ", " ");
-			servidor.enviarMensajeAMonitor(mensajeConfirmacion);
+			servidor.enviarMensajeAMonitor(mensajeConfirmacion); 
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

@@ -135,7 +135,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				if (this.servidorPrincipal == null) {
 					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
 				}
-				MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
+				MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
 						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
 				enviarMensajeExterno(confirmacion,servidor);
 				
