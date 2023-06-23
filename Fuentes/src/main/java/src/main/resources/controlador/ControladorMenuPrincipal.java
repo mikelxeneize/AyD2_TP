@@ -91,12 +91,6 @@ public class ControladorMenuPrincipal implements ActionListener, Observer {
 				this.vista.setTextlabelError("No estas en modo escucha, tu puerto esta ocupado \nIr a configuracion");
 				this.vista.mostrarLabelErrorAlConectar(true);
 			} 
-			
-			else if (datos.getEstado().equals("informacion servidor secundario")) {
-			//pepe	
-				
-			}
-			
 		} 
 	}
 	public long getPingEcho() {

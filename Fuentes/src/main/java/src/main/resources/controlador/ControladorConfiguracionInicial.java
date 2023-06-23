@@ -20,9 +20,9 @@ public class ControladorConfiguracionInicial implements ActionListener{
 	private VentanaConfiguracionInicial vista = null;
 	private Nucleo modelo;
 	
-	public ControladorConfiguracionInicial(IVista vista2) {
+	public ControladorConfiguracionInicial(IVista vista) {
 		String ip;
-		this.vista = new VentanaConfiguracionInicial(vista2);
+		this.vista = new VentanaConfiguracionInicial(vista);
 		try {
 			InetAddress localHost; 
 			localHost = InetAddress.getLocalHost();
@@ -54,7 +54,7 @@ public class ControladorConfiguracionInicial implements ActionListener{
 					e1.printStackTrace();
 				}
 				this.vista.cerrar();
-			} catch (IllegalArgumentException | IOException e1) {
+			} catch (IllegalArgumentException e1) {
 				this.vista.setTextlabelError(IVista.SERVER_ERROR);
 				this.vista.mostrarLabelError();
 				e1.printStackTrace();

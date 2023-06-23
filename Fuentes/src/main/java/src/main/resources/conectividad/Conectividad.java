@@ -14,7 +14,7 @@ import java.util.Observer;
 
 public class Conectividad extends Observable implements IConectividad, IComandos{
 	
-	private ArrayList<serverData> servidores = new ArrayList<serverData>();
+	private ArrayList<ServidorData> servidores = new ArrayList<ServidorData>();
 	
 	// Informacion personal
 	private int puertoPersonal;
@@ -29,8 +29,8 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	private List<Observer> observers = new ArrayList<>();
 
 	// Flag de si se encuentra en una conversacion
-	private boolean conectado;
 	private String estado = "";
+	private ServidorData servidorPrincipal = null;
 
 	// rango de puertos donde ser busca servidor  
 	private int puertoDesde = 5000; 
@@ -45,11 +45,36 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	private long  HeartBeatTime=0;
 	
 	public Conectividad() {
-		this.conectado = false;
 	}
 
 	public List<Observer> getObservers() {
 		return observers;
+	}
+	
+	public void actualizar(String cliente) {
+		 
+		Nucleo.getInstance().getConectados().clear();
+
+		String[] partes = cliente.split(";");
+		
+		for(int i=0; i<partes.length; i++) {
+			String[] subpartes = partes[i].split("=");
+			Cliente clienteNuevo = new Cliente(subpartes[0], subpartes[1], subpartes[2], subpartes[3]);
+			Nucleo.getInstance().getConectados().add(clienteNuevo);
+		}
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Mensaje mensaje = new Mensaje("", "Actualizar");
+		this.notificarAccion(mensaje);
+	}
+	
+	public void notificarAccion(Mensaje mensaje) {
+		this.setChanged();
+		this.notifyObservers(mensaje);
 	}
 
 	public void iniciarConversacion(String ipDestino, int puertoDestino) throws UnknownHostException, IOException, IllegalArgumentException { // tiene que devolver una excepcion de
@@ -66,7 +91,14 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		
 	}
 
-	public Socket iniciarConexionServidor(String ip, int puerto) throws IOException {
+	/**
+	 * Para conectarse a un puerto e ip, retorna el socket con la conexion correspondiente
+	 * @param ip
+	 * @param puerto
+	 * @return
+	 * @throws IOException
+	 */
+	public Socket conectarServidor(String ip, int puerto) throws IOException {
 		Socket socket = new Socket();
 		socket.setReuseAddress(true);
 		socket.bind(new InetSocketAddress(this.puertoPersonal));
@@ -76,19 +108,20 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	
 	/**
 	 * Intenta conectar a todos los servidor en el rango dado por conectividad.puertoDesde, conectividad.puertoHasta, en saltos de a puertoPaso
-	 * Si logra conectar almenos un servidor, conectividad.conectado = true, caso contrario notificara a la interfaz
+	 * El primer servidor al que conecte sera el servidor principal
+	 * Si logra conectar almenos un servidor, conectividad.servidorPrincipal != null, caso contrario notificara a la interfaz
 	 * @throws UnknownHostException
 	 * @throws IllegalArgumentException
 	 */
 	public void conectarServidores() {
 		Socket socket;
-		serverData servidor;
+		ServidorData servidor;
 		
 		for (int puerto = this.puertoDesde; puerto <= this.puertoHasta; puerto = puerto + this.puertoPaso) {
-			servidor = new serverData("localhost", puerto);
+			servidor = new ServidorData("localhost", puerto);
 			
 			try {
-				socket = this.iniciarConexionServidor("localhost", puerto);
+				socket = this.conectarServidor("localhost", puerto);
 				servidor.setSocket(socket);
 				
 				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -96,59 +129,18 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				
 				this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
 				this.servidores.add(servidor);
-				this.conectado = true; //se conecto al menos a 1 servidor
-				
+				if (this.servidorPrincipal == null) {
+					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
+				}
 			} catch (IOException e) {
-				//e.printStackTrace();
-				//no printea nada aproposito
+				//e.printStackTrace(); no printea nada aproposito, se supone que debe tirar exception siempre que no pueda conectar a un server
 			}
 		}
-		if (!this.conectado) {
+		if (this.servidorPrincipal == null) {
 			this.notificarAccion(new Mensaje("no se pudo conectar con ninguno de los servidores", "error ningun servidor conectado"));
 		}
 	}
-	
-	
-public void reintentarConexionServidorPrincipal() throws UnknownHostException, IOException ,IllegalArgumentException {
-		
-		Socket socket1, socket2;
-		MensajeExterno mensajeExterno; 
-		this.ipPersonal = "localhost";
-		System.out.println("9: "+"intento conexion Servidor Principal");
-		
-		try {
-			this.servidorPrincipal.socket = iniciarConexionServidor("localhost", PUERTO_1);
-			
-			mensajeExterno = new MensajeExterno(
-					ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
-					ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
-					PREGUNTAR_PRINCIPAL, " ", " ");
-			
-			enviarMensajeExterno(mensajeExterno, servidorPrincipal);
-			this.recibirMensaje();
-			
-		} catch (IOException e) {
-			System.out.println("No se pudo conectar con el primer servidor");
-		}
-	}
 
-	public int getPuertoReceptor() {
-		return puertoReceptor;
-	}
-
-	public void setPuertoReceptor(int puertoReceptor) {
-		this.puertoReceptor = puertoReceptor;
-	}
-
-	public String getIpReceptor() {
-		return ipReceptor;
-	}
-
-	public void setIpReceptor(String ipReceptor) {
-		this.ipReceptor = ipReceptor;
-	}
-
-	//
 	/**
 	 * Inicia un hilo para la escucha de mensajes de un determinado socket
 	 * @param socket
@@ -157,23 +149,27 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 		RecibirMensajeHilo recibirMensaje = new RecibirMensajeHilo(socket, this);
 		recibirMensaje.start();
 	}
-
-	public void notificarAccion(Mensaje mensaje) {
-		this.setChanged();
-		this.notifyObservers(mensaje);
-	}
-
-		
-	public void enviarMensajeExterno(MensajeExterno mensajeExterno, serverData servidorData) {
+			
+	/**
+	 * Envia un mensajeExterno por medio un un out asociado a un ServidorData
+	 * @param mensajeExterno
+	 * @param servidorData
+	 */
+	public void enviarMensajeExterno(MensajeExterno mensajeExterno, ServidorData servidorData) {
 		servidorData.out.println(mensajeExterno.toString());
 	}
 
-	public void cerrarConexion() throws IOException {
+	/**
+	 * Cierra la conversacion
+	 * Se envia a todos los servidores, mas que nada para que lo puedan eliminar de su lista
+	 */
+	public void cerrarConversacion() throws IOException {
 		
 		MensajeExterno mensajeExterno = new MensajeExterno(
 				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
 				ipReceptor, Integer.toString(puertoReceptor), usernameReceptor,
-				CERRAR_CONVERSACION, " ", " ");														// no conexion
+				CERRAR_CONVERSACION, " ", " ");
+		
 		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
 
 		System.out.println("21: "+ mensajeExterno.toString());
@@ -183,6 +179,11 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 	}
 
 	
+	/**
+	 * Envia un mensaje por servidorPrincipal
+	 * Dicho mensaje el receptor deberia recibir en la pantalla de su chat
+	 * @param mensaje ,string que se envia al cliente
+	 */
 	public void enviarMensajeCliente(String mensaje) throws IOException {
 		String mensajeEncriptado = Codificacion.encriptar(getClave(), mensaje, getAlgoritmo());
 		
@@ -192,6 +193,94 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 				ENVIAR_MENSAJE, mensajeEncriptado, " ");														//
 		
 		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
+	}
+
+	/**
+	 * Reintenta la conexion con un ServidorData especifico, exito retorna true, de lo contrario retorna false
+	 * @param ServidorData
+	 */
+	public boolean reintento(ServidorData ServidorData) {
+		boolean resultado = false;
+		int cantIntentos=2;
+		int tiempo=3000;
+		int i = 0;
+		while(i<cantIntentos) {
+			System.out.println("Intento de reconexion "+ i+ "...");
+			try {
+				conectarServidor(ServidorData.getIp(), ServidorData.getPuerto());
+				i = cantIntentos + 2;
+				resultado = true;
+			} catch (IllegalArgumentException | IOException e) {
+				System.out.println("reintento de reconexion "+ i + "fallido");
+				i++; //incrementa en 1 el numero de reintentos
+				try {
+					Thread.sleep(tiempo);
+				} catch (InterruptedException e2) {
+					e2.printStackTrace(); //error en el sleep, no deberia suceder
+				}
+			}
+		}
+		return resultado;
+	}
+	
+	/**
+	 * intenta conectarse a todos los servidores que puede dentro de el rango especificado
+	 * luego a todos los servidores que pudo conectar, que estan en un array, les comunica el nombre de usuario
+	 * envia la solicitud de iniciar el ping-echo hilo en dichos servidores
+	 */
+	public void inicilizarServidores() {
+		this.conectarServidores();	
+		this.notificarNombreServidores(this.servidores);
+		this.pingEchoServidores(this.servidores);		
+	}
+	
+	/**
+	 * Notifica el nombre de usuario en todos los servidores
+	 * @param servidores Conjunto donde se va a notificar
+	 */
+	private void notificarNombreServidores(ArrayList<ServidorData> servidores) {
+		String puerto;
+		
+		MensajeExterno mensajeExterno = new MensajeExterno(
+				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
+				"localhost", " ", " ", 
+				NOMBRE_USUARIO, " ", " ");														
+		
+		for (ServidorData servidor:this.servidores) {
+			puerto = Integer.toString(servidor.getPuerto());
+			//se cambian partes del mensajeExterno en realacion a cada destinatario
+			mensajeExterno.setPuertodestino(puerto); 
+			mensajeExterno.setUsernamedestino("Servidor" + puerto);
+			
+			enviarMensajeExterno(mensajeExterno, servidor);
+		}
+	}
+
+	/**
+	 * inicia el ping echo hilo en todos los servidores
+	 * @param servidores Conjunto donde se va a iniciar el echo hilo
+	 */
+	private void pingEchoServidores(ArrayList<ServidorData> servidores) {
+		PingEchoHilo pingechohilo;
+		for (ServidorData servidor:servidores) {
+			pingechohilo= new PingEchoHilo(servidor, this);
+			pingechohilo.start();
+		}
+	}
+	
+	/**
+	 * borra el servidorPrincipal de conectividad.Servidores y si queda algun servidor conectado, elije el primero de conectividad.servidores como principal
+	 * @return
+	 * true si tuvo exito, de lo contrario false
+	 */
+	public boolean servidorPrincipalSwap() {
+		boolean resultado = false;
+		this.servidores.remove(this.servidorPrincipal);
+		if (this.servidores.isEmpty()) {
+			this.servidorPrincipal = this.servidores.get(0);
+			resultado = true;
+		}
+		return resultado;
 	}
 	
 	public int getPuertopersonal() {
@@ -208,25 +297,6 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 
 	public void setIppersonal(String ippersonal) {
 		this.ipPersonal = ippersonal;
-	}
-
-	public void setConectado(boolean conectado) {
-		this.conectado = conectado;
-	}
-
-	public boolean isConectado() {
-		return conectado;
-	}
-
-	public void setSocketPrincipal(Socket socket) {
-		this.servidorPrincipal.socket = socket;
-	}
-	
-	public void setSocketSecundario(Socket socket) {
-		this.servidorSecundario.socket = socket;
-	}
-	public Socket getSocket() {
-		return this.servidorPrincipal.socket;
 	}
 
 	public String getClave() {
@@ -269,30 +339,6 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 		this.usernameReceptor = usernameReceptor;
 	}
 
-
-	public void actualizar(String cliente) {
- 
-		Nucleo.getInstance().getConectados().clear();
-
-		String[] partes = cliente.split(";");
-		
-		for(int i=0; i<partes.length; i++) {
-			
-			String[] subpartes = partes[i].split("=");
-			Cliente clienteNuevo = new Cliente(subpartes[0], subpartes[1], subpartes[2], subpartes[3]);
-			Nucleo.getInstance().getConectados().add(clienteNuevo);
-			
-		}
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Mensaje mensaje = new Mensaje("", "Actualizar");
-		this.notificarAccion(mensaje);
-	}
-
 	public long getPingEchoTime() {
 		return pingEchoTime;
 	}
@@ -316,94 +362,28 @@ public void reintentarConexionServidorPrincipal() throws UnknownHostException, I
 		HeartBeatTime = heartBeatTime;
 	}
 
-	public void reintento() {
-		int cantIntentos=2;
-		int tiempo=3000;
-		int i = 0;
-		while(i<cantIntentos) {
-			System.out.println("Intento de reconexion "+ i+ "...");
-			try {
-				reintentarConexionServidorPrincipal();
-			} catch (IllegalArgumentException | IOException e) {
-				System.out.println("reintento de reconexion "+ i+ "fallido");
-			}
-			try {
-				Thread.sleep(tiempo);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			i++;
-		}
-		if(i==cantIntentos) {
-			servidorSwap();
-		}
+	public int getPuertoReceptor() {
+		return puertoReceptor;
 	}
 
-	public void registrarServidorSecundario(String ip, int puerto) {
-		this.servidorSecundario = new serverData(ip, puerto);
-		try {
-			this.servidorSecundario.setSocket(new Socket("localhost", puerto));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void setPuertoReceptor(int puertoReceptor) {
+		this.puertoReceptor = puertoReceptor;
 	}
 
-	public void actualizarServidorPrincipal(String ip, int puerto) {
-		if (servidorSecundario != null && servidorSecundario.getPuerto() == puerto && servidorSecundario.getIp() == ip) {
-			this.servidorSwap();
-		}
+	public String getIpReceptor() {
+		return ipReceptor;
 	}
 
-	private void servidorSwap() {
-		serverData servidorAux; 
-		servidorAux = this.servidorPrincipal; 
-		servidorPrincipal = this.servidorSecundario;
-		servidorSecundario = servidorAux;
-		this.recibirMensaje();
+	public void setIpReceptor(String ipReceptor) {
+		this.ipReceptor = ipReceptor;
 	}
-
-	public void inicilizarServidores() {
-		
-		this.conectarServidores();	
-		this.notificarNombreServidores(this.servidores);
-		this.pingEchoServidores(this.servidores);		
-	}
-
 	
-	
-	/**
-	 * Notifica el nombre de usuario en todos los servidores
-	 * @param servidores Conjunto donde se va a notificar
-	 */
-	private void notificarNombreServidores(ArrayList<serverData> servidores) {
-		String puerto;
-		
-		MensajeExterno mensajeExterno = new MensajeExterno(
-				ipPersonal, Integer.toString(puertoPersonal), usernamePersonal,
-				"localhost", " ", " ", 
-				NOMBRE_USUARIO, " ", " ");														
-		
-		for (serverData servidor:this.servidores) {
-			puerto = Integer.toString(servidor.getPuerto());
-			//se cambian partes del mensajeExterno en realcion a cada destinatario
-			mensajeExterno.setPuertodestino(puerto); 
-			mensajeExterno.setUsernamedestino("Servidor" + puerto);
-			
-			enviarMensajeExterno(mensajeExterno, servidor);
-		}
+	public ServidorData getServidorPrincipal() {
+		return servidorPrincipal;
 	}
 
-	/**
-	 * inicia el ping echo hilo en todos los servidores
-	 * @param servidores Conjunto donde se va a iniciar el echo hilo
-	 */
-	private void pingEchoServidores(ArrayList<serverData> servidores) {
-		PingEchoHilo pingechohilo;
-		for (serverData servidor:servidores) {
-			pingechohilo= new PingEchoHilo(servidor, this);
-			pingechohilo.start();
-		}
+	public void setServidorPrincipal(ServidorData servidorPrincipal) {
+		this.servidorPrincipal = servidorPrincipal;
 	}
 	
 }

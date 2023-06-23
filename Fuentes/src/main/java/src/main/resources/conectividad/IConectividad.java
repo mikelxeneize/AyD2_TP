@@ -8,9 +8,9 @@ public interface IConectividad {
 
 	
 	public void iniciarConversacion(String ipserver, int puertoserver) throws UnknownHostException, IOException, IllegalArgumentException;
-	public void recibirMensaje();
+	public void recibirMensaje(Socket socket); 
 	public void notificarAccion(Mensaje mensaje);
-	public void enviarMensajeExterno(MensajeExterno mensajeExterno, serverData servidorData) throws IOException;
+	public void enviarMensajeExterno(MensajeExterno mensajeExterno, ServidorData servidorData) throws IOException;
 	public void enviarMensajeCliente(String mensaje) throws IOException;
-	public void cerrarConexion() throws IOException;
+	public void cerrarConversacion() throws IOException;
 }

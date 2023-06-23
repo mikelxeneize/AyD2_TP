@@ -109,7 +109,7 @@ public class Nucleo extends Observable implements  Observer {
  
 	public void cerrarConexion() throws IOException {
 		
-		this.conexion.cerrarConexion();
+		this.conexion.cerrarConversacion();
 	}
 
 	public void enviarMensaje(String mensaje) throws IOException {

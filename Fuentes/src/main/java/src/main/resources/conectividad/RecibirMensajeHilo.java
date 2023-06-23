@@ -80,19 +80,13 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 					this.conectividad
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
 				}
+				
 				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Se le solicita al este cliente iniciar una conexion
 					this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
 					this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));
 					this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));
 				}
 				
-				else if (mensajeExterno.getComando().equals(RESPONDER_PRINCIPAL)){ // Sos informado que el
-																							// server q te envio esto es
-																							// el principal
-					this.conectividad.actualizarServidorPrincipal(mensajeExterno.getPuertoorigen(),
-							Integer.valueOf(mensajeExterno.getIporigen()));
-				}
-
 				else {
 					mensaje = new Mensaje(mensajeExterno.getCuerpo(), "mensaje recibido"); // Recibe mensaje normal
 																								// CREO
@@ -105,7 +99,12 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 		System.out.println("13: " + "cerraron la ventana, sali por despues del while");
 		mensaje = new Mensaje("", "servidor desconectado");
 		this.conectividad.notificarAccion(mensaje);
-		this.conectividad.reintento();
+		if (! this.conectividad.reintento(this.conectividad.getServidorPrincipal())) {
+			this.conectividad.servidorPrincipalSwap();
+		}
+		else {
+			
+		}
 	}
 
 }

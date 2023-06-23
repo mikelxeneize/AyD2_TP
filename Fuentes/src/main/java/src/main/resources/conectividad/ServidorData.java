@@ -3,13 +3,13 @@ package src.main.resources.conectividad;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class serverData {
+public class ServidorData {
 	Socket socket;
 	String ip;
 	int puerto;
 	PrintWriter out;
 	
-	public serverData(String ip, int puerto) {
+	public ServidorData(String ip, int puerto) {
 		this.ip = ip;
 		this.puerto = puerto;
 	}

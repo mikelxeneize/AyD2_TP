@@ -5,9 +5,9 @@ import java.io.PrintWriter;
 import java.util.Random;
 
 public class PingEchoHilo extends Thread {
-	private serverData servidor;
+	private ServidorData servidor;
 	private Conectividad conectividad;
-	public PingEchoHilo(serverData servidor,Conectividad conectividad) {
+	public PingEchoHilo(ServidorData servidor,Conectividad conectividad) {
 
 		this.servidor = servidor;
 		this.conectividad= conectividad;
