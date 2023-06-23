@@ -385,7 +385,7 @@ public class Servidor implements IComandos, IEstados {
 	}
 	
 	
-	public void agregarALista(MensajeExterno mensaje, String tipo) throws IOException {
+	public synchronized void  agregarALista(MensajeExterno mensaje, String tipo) throws IOException {
 		String ip=mensaje.getIporigen(); 
 		int puerto=Integer.parseInt(mensaje.getPuertoorigen());
 		for (SocketBean socketBean : listaPendientes) {

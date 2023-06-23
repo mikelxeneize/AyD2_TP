@@ -36,8 +36,11 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				msg = in.readLine();
 				System.out.println(msg);
 			} catch (SocketException e) {
-				System.out.println("pepe"); // ESTO ES CLAVE
-			} catch (IOException e) {
+				System.out.println("Servidor Caido! Cambio de servidor"); // ESTO ES CLAVE
+				this.conectividad.servidorPrincipalSwap();
+				//ACA HAY QUE COLOCAR EL REINTENTO Y ELIMINAR EL MSG=NULL
+				msg=null;
+			} catch (IOException e) { 
 				e.printStackTrace();
 				System.out.println("12: " + "Error mientras se esperaba un mensaje");
 			}

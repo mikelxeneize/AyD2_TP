@@ -289,14 +289,13 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 * @return
 	 * true si tuvo exito, de lo contrario false
 	 */
-	public boolean servidorPrincipalSwap() {
-		boolean resultado = false;
-		this.servidores.remove(this.servidorPrincipal);
-		if (this.servidores.isEmpty()) {
-			this.servidorPrincipal = this.servidores.get(0);
-			resultado = true;
+	public void servidorPrincipalSwap() {
+		
+		for (ServidorData servidor : servidores) {
+			if(!servidor.getSocket().isClosed()) {
+				this.servidorPrincipal=servidor;
+			}
 		}
-		return resultado;
 	}
 	
 	
