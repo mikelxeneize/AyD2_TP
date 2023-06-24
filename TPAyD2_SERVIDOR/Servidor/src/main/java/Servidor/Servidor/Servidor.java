@@ -59,7 +59,7 @@ public class Servidor implements IComandos, IEstados {
 				ServerData server= new ServerData(socket.getPort(),this.getIpServidor(),socket);
 				ServidorRecibirMensajeHiloServidor recibirMensaje = new ServidorRecibirMensajeHiloServidor(server, this,false);
 				recibirMensaje.start();
-				listaServidores.add(server);
+				listaPendientes.add(server);
 				
 				//envio confirmacion para registro 
 				MensajeExterno mensajeConseguirClientes = new MensajeExterno("/127.0.0.1",
@@ -206,6 +206,16 @@ public class Servidor implements IComandos, IEstados {
 			// System.out.println("17: "+mensaje.toString());
 		}
 	}
+	
+	private void enviarMensajeAMonitores(MensajeExterno mensaje) throws IOException {
+		// TODO Auto-generated method stub
+		for (Monitor monitor : listaMonitores) {
+			mensaje.setIpdestino(monitor.getIp());
+			mensaje.setPuertodestino(Integer.toString(monitor.getPuerto()));
+			PrintWriter out = new PrintWriter(monitor.getSocket().getOutputStream(), true);
+			out.println(mensaje.toString());
+		}
+	}
 	public void iniciarConexionAReceptor(MensajeExterno mensaje) throws UnknownHostException, IOException, InterruptedException {
 		
 		Cliente clienteEmisor = getRegistradoByIp(mensaje.getIporigen(),Integer.parseInt(mensaje.getPuertoorigen()));
@@ -288,11 +298,13 @@ public class Servidor implements IComandos, IEstados {
 		mensaje.setCuerpo(lista);
 		try { //este try and catch me lo pide el java
 			this.enviarMensajeAClienteTodos(mensaje);
+			this.enviarMensajeAMonitores(mensaje);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
 	// determina si hay servidor principal y decide en que puerto va a escuchar
 	/*
 	 * private void redundanciaPasiva() { this.isPrincipal = false;

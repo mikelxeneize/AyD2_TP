@@ -229,7 +229,7 @@ public class VentanaMonitor extends JFrame implements IVista, IEstados{
 
 	public void setListaClientes(ArrayList<Cliente> listaClientes) {
 		Object[][] data = {};
-		String[] columnNames = {"Username", "Estado", "Ping (ms)"};
+		String[] columnNames = {"Nombre de usuario", "IP", "Puerto", "Estado"};
 		DefaultTableModel modeloReemplazo = new DefaultTableModel(data, columnNames);
 		
 		for (Cliente cliente : listaClientes){
