@@ -2,7 +2,7 @@ package bean;
 
 import java.net.InetAddress;
 
-//el vacio es representado por 
+// el vacio es representado por 
 
 public class MensajeExterno {
 	private String iporigen;
@@ -29,58 +29,58 @@ public class MensajeExterno {
 		this.comando = comando;
 		this.cuerpo = cuerpo;
 		this.auxiliar = auxiliar;
-		if (iporigen.equals("")){
+		if (iporigen==null ||iporigen.equals("")){
 			this.iporigen = " ";
 		}
-		if (puertoorigen.equals("")){
+		if (puertoorigen==null ||puertoorigen.equals("")){
 			this.puertoorigen = " ";
 		}
-		if (usernameorigen.equals("")){
+		if (usernameorigen==null ||usernameorigen.equals("")){
 			this.usernameorigen = " ";
 		}
-		if (ipdestino.equals("")){
+		if (ipdestino==null ||ipdestino.equals("")){
 			this.ipdestino = " ";
 		}
-		if (puertodestino.equals("")){
+		if (puertodestino==null ||puertodestino.equals("")){
 			this.puertodestino = " ";
 		}
-		if (usernamedestino.equals("")){
+		if (usernamedestino==null || usernamedestino.equals("")){
 			this.usernamedestino = " ";
 		}
-		if (comando.equals("")){
+		if (comando==null ||comando.equals("")){
 			this.comando = " ";
 		}
-		if (cuerpo.equals("")){
+		if (cuerpo==null ||cuerpo.equals("")){
 			this.cuerpo = " ";
 		}
-		if (auxiliar.equals("")){
+		if (auxiliar==null ||auxiliar.equals("")){
 			this.auxiliar = " ";
 		}
 	}
 
 	// cosntructor que se usa cuando llega un mensaje, para parsearlo
-		public MensajeExterno(String mensaje) {
-			String[] partes = mensaje.split(":");
-			if (partes[0].equals("localhost"))
-				this.setIporigen("/127.0.0.1");
-			else {
-				this.setIporigen("/127.0.0.1");
-			}
-			this.setPuertoorigen(partes[1]);
-			this.setUsernameorigen(partes[2]);
-
-			if (partes[3].equals("localhost"))
-				this.setIpdestino("/127.0.0.1");
-			else {
-				this.setIpdestino("/127.0.0.1");
-			}
-			this.setPuertodestino(partes[4]);
-			this.setUsernamedestino(partes[5]);
-			this.setComando(partes[6]);
-			this.setCuerpo(partes[7]);
-			this.setAuxiliar(partes[8]);
+	public MensajeExterno(String mensaje) {
+		String[] partes = mensaje.split(":");
+		if (partes[0].equals("localhost") || partes[0].equals("127.0.0.1") || partes[0].equals("localhost/127.0.0.1"))
+			this.setIporigen("/127.0.0.1");
+		else {
+			this.setIporigen(partes[0]);
 		}
-		
+		this.setPuertoorigen(partes[1]);
+		this.setUsernameorigen(partes[2]);
+
+		if (partes[3].equals("localhost") || partes[3].equals("127.0.0.1") || partes[3].equals("localhost/127.0.0.1"))
+			this.setIpdestino("/127.0.0.1");
+		else {
+			this.setIpdestino(partes[3]);
+		}
+		this.setPuertodestino(partes[4]);
+		this.setUsernamedestino(partes[5]);
+		this.setComando(partes[6]);
+		this.setCuerpo(partes[7]);
+		this.setAuxiliar(partes[8]);
+	}
+
 	public String getIporigen() {
 		return iporigen;
 	}

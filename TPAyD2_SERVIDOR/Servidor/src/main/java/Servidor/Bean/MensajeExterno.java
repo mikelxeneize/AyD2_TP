@@ -61,18 +61,18 @@ public class MensajeExterno {
 	// cosntructor que se usa cuando llega un mensaje, para parsearlo
 	public MensajeExterno(String mensaje) {
 		String[] partes = mensaje.split(":");
-		if (partes[0].equals("localhost"))
+		if (partes[0].equals("localhost") || partes[0].equals("127.0.0.1") || partes[0].equals("localhost/127.0.0.1"))
 			this.setIporigen("/127.0.0.1");
 		else {
-			this.setIporigen("/127.0.0.1");
+			this.setIporigen(partes[0]);
 		}
 		this.setPuertoorigen(partes[1]);
 		this.setUsernameorigen(partes[2]);
 
-		if (partes[3].equals("localhost"))
+		if (partes[3].equals("localhost") || partes[3].equals("127.0.0.1") || partes[3].equals("localhost/127.0.0.1"))
 			this.setIpdestino("/127.0.0.1");
 		else {
-			this.setIpdestino("/127.0.0.1");
+			this.setIpdestino(partes[3]);
 		}
 		this.setPuertodestino(partes[4]);
 		this.setUsernamedestino(partes[5]);

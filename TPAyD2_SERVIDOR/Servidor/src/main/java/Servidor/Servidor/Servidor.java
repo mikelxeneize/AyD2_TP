@@ -96,7 +96,7 @@ public class Servidor implements IComandos, IEstados {
 		System.out.println(puerto);
 		if(encontrado) {
 			this.setPuertoServidor(puerto);
-			this.setUsernameServidor("SERVIDOR "+ puerto );
+			this.setUsernameServidor("SERVIDOR"+ puerto );
 		}
 		while (true) { //recepcion de nuevos usuarios a escuchar
 			socket = serverSocket.accept();
@@ -251,8 +251,8 @@ public class Servidor implements IComandos, IEstados {
 			// cliente aun no registrado, devolver excepcion
 		} else {// rechaza la conexion y le avisa al cliente 1 que no se pudo conectar
 			//mensajeConfirmacion.setComando(CONEXION_RECHAZADA);
-			MensajeExterno mensajeConfirmacion = new MensajeExterno(clienteReceptor.getIp(),
-					Integer.toString(clienteReceptor.getPuerto()),clienteReceptor.getUsername(),
+			MensajeExterno mensajeConfirmacion = new MensajeExterno(this.ipServidor,
+					Integer.toString(this.puertoServidor),this.UsernameServidor,
 					clienteEmisor.getIp(), Integer.toString(clienteEmisor.getPuerto()),clienteEmisor.getUsername(),
 					CONEXION_RECHAZADA, " ", " ");
 			this.enviarMensajeACliente(mensajeConfirmacion);
@@ -270,7 +270,6 @@ public class Servidor implements IComandos, IEstados {
 			clienteReceptor.setIpReceptor(null);
 			clienteReceptor.setPuertoReceptor(NULL);
 			clienteReceptor.setEstado(DISPONIBLE);
-			
 			
 			this.enviarMensajeACliente(mensaje);
 			System.out.println(mensaje.toString());
