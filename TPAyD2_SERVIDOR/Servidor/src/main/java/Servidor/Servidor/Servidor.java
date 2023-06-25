@@ -15,7 +15,6 @@ import Servidor.Bean.SocketBean;
 import Servidor.Util.IComandos;
 import Servidor.Util.IEstados;
 
-
 public class Servidor implements IComandos, IEstados {
 	
 	private ArrayList<SocketBean> listaPendientes = new ArrayList<SocketBean>();
@@ -30,9 +29,10 @@ public class Servidor implements IComandos, IEstados {
 	private int puertoServidor;
 	private String ipServidor = "/127.0.0.1";
 	private String UsernameServidor = "";
+	private int CANTSERV = 20;
 
-
-
+	private boolean isSincronizado=false;
+	 int clientesConseguidos=0;
 	public static Servidor getInstance() throws IOException {
 		if (Servidor.instance == null) {
 			Servidor.instance = new Servidor();
@@ -40,38 +40,43 @@ public class Servidor implements IComandos, IEstados {
 		return instance;
 	}
 	public Servidor() throws IOException {
+		buscarServerSocket();
 		conseguirClientes();
 		iniciarEscucha();
 	}
 	
+	private void buscarServerSocket() {
+		int puerto = 5000;
+		int i = 0;
+		boolean encontrado = false;
+		while (i < CANTSERV && encontrado == false) { // conexion al puerto
+			try {
+				serverSocket = new ServerSocket(puerto);
+				encontrado = true;
+			} catch (IOException e) {
+				i++;
+				puerto+=1;
+			}
+		}
+		System.out.println(puerto);
+		if(encontrado) {
+			this.setPuertoServidor(puerto);
+			this.setUsernameServidor("SERVIDOR"+ puerto );
+		}
+	}
 	private void conseguirClientes() {
 		Socket socket;
 		int puerto = 5000;
 		int i = 0;
-		boolean encontrado = false;
-		while (i < 100 && encontrado == false) { // conexion al puerto
-			try {
-				//me conecto
-				
-				socket = new Socket("localhost", puerto);
-				encontrado=true;
-				//entro en escucha antes de enviar nada
-				ServerData server= new ServerData(socket.getPort(),this.getIpServidor(),socket);
-				ServidorRecibirMensajeHiloServidor recibirMensaje = new ServidorRecibirMensajeHiloServidor(server, this,false);
-				recibirMensaje.start();
-				listaPendientes.add(server);
-				
-				//envio confirmacion para registro 
-				MensajeExterno mensajeConseguirClientes = new MensajeExterno("/127.0.0.1",
-						Integer.toString(socket.getLocalPort()), " ", this.getIpServidor(),
-						Integer.toString(socket.getPort()), " ", CONFIRMACION_SERVIDOR, " ", " ");
-				this.enviarMensajeAServidor(mensajeConseguirClientes);
-				
-				
-			} catch (IOException e) {
-				i++;
-				puerto += 1;
-			}
+		while (i < CANTSERV ) { // conexion al puerto
+			
+			ServerData server= new ServerData(this.getIpServidor(),puerto);
+			listaPendientes.add(server);
+			ConexionesHilos conexiones=new ConexionesHilos("localhost", puerto,this,server);
+			conexiones.start();
+			
+			i++;
+			puerto += 1;
 		}
 		System.out.println(puerto);
 	}
@@ -82,23 +87,7 @@ public class Servidor implements IComandos, IEstados {
 		SocketBean socketBean;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
 		
-		int puerto = 5000;
-		int i = 0;
-		boolean encontrado = false;
-		while (i < 100 && encontrado == false) { // conexion al puerto
-			try {
-				serverSocket = new ServerSocket(puerto);
-				encontrado = true;
-			} catch (IOException e) {
-				i++;
-				puerto+=i;
-			}
-		}
-		System.out.println(puerto);
-		if(encontrado) {
-			this.setPuertoServidor(puerto);
-			this.setUsernameServidor("SERVIDOR"+ puerto );
-		}
+		
 
 		iniciarConexionMonitor();
 		while (true) { //recepcion de nuevos usuarios a escuchar
@@ -181,13 +170,26 @@ public class Servidor implements IComandos, IEstados {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
 		for (ServerData cliente : listaServidores) {
-			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+			if ( cliente.getPuerto() == puerto) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
 				// System.out.println("17: "+mensaje.toString());
 			}
 		}
 	}
+	
+	public void enviarMensajeAPendientes(MensajeExterno mensaje) throws IOException {
+		String ip=mensaje.getIpdestino();
+		int puerto=Integer.parseInt(mensaje.getPuertodestino());
+		for (SocketBean cliente : listaPendientes) {
+			if ( cliente.getPuerto() == puerto) {
+				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+				out.println(mensaje.toString());
+				// System.out.println("17: "+mensaje.toString());
+			}
+		}
+	}
+	
 	public void enviarMensajeAMonitor(MensajeExterno mensaje) throws IOException {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
@@ -467,6 +469,16 @@ public class Servidor implements IComandos, IEstados {
 		}
 		
 		
+	}
+	public synchronized boolean isSincronizado() {
+		return isSincronizado;
+	}
+	public  synchronized void setSincronizado(boolean isSincronizado) {
+		this.isSincronizado = isSincronizado;
+	}
+	public synchronized void incrementar() {
+		this.clientesConseguidos++;
+		System.out.println(clientesConseguidos);
 	}
 	
 

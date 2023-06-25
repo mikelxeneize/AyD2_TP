@@ -52,6 +52,8 @@ public class ServidorRecibirMensajeHiloServidor extends Thread implements IComan
 					}
 					else if (mensajerecibido.getComando().equals(CONFIRMACION_SERVIDOR_RESPUESTA)) {
 						MensajeExterno mensaje;
+						this.servidor.getListaServidores().add(serverData);
+						this.servidor.getListaPendientes().remove(serverData);
 						try {
 							mensaje = new MensajeExterno("localhost",
 									Integer.toString(serverData.getSocket().getLocalPort()), " ", serverData.getIp(),

@@ -36,7 +36,22 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				msg = in.readLine();
 				System.out.println(msg);
 			} catch (SocketException e) {  //TOBIAS dice: esto me parece que no pasa nunca e 
-				System.out.println("Esto es el catch socketException del try de in.redLine()");
+				System.out.println("13: Servidor Caido!");
+				
+				//guardo los valores desl servidor caido para reintentar la conexion
+				ServidorData servidorPrincipalViejo= this.conectividad.getServidorPrincipal();  
+				
+				if(this.conectividad.getServidores().size() == 0){ //si no hay mas servidores
+
+					if (! this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),true)){ //si el reintento fallo
+						mensaje = new Mensaje("", "volver_configuracion_inicial"); 
+						this.conectividad.notificarAccion(mensaje);	
+					}
+						
+				}else { //si hay mas de un servidor hace el swap e intenta la reconexion sin mostrar nada al usuario
+					this.conectividad.servidorPrincipalSwap();
+					//this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),false);
+				}
 			} catch (IOException e) { 
 				e.printStackTrace();
 				System.out.println("12: " + "Error mientras se esperaba un mensaje");
@@ -117,24 +132,7 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				}
 			}
 		} while (msg != null); // implica que se cerro la conexion con el servidor
-		System.out.println("13: " + "cerraron la ventana, sali por despues del while");
-		System.out.println("13: Servidor Caido!");
 		
-		//guardo los valores desl servidor caido para reintentar la conexion
-		ServidorData servidorPrincipalViejo= this.conectividad.getServidorPrincipal();  
-		this.conectividad.getServidores().remove(servidorPrincipalViejo);		this.conectividad.setServidorPrincipal(null);
-		
-		if(this.conectividad.getServidores().size() == 0){ //si no hay mas servidores
-
-			if (! this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),true)){ //si el reintento fallo
-				mensaje = new Mensaje("", "volver_configuracion_inicial"); 
-				this.conectividad.notificarAccion(mensaje);	
-			}
-				
-		}else { //si hay mas de un servidor hace el swap e intenta la reconexion sin mostrar nada al usuario
-			this.conectividad.servidorPrincipalSwap();
-			this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),false);
-		}
 		
 		
 	}
