@@ -50,17 +50,19 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				}
 
 				if (mensajeExterno.getComando().equals(ACTUALIZAR_LISTA)){ // Recibe comando de actualizacion de
-																				// directorio
-					this.conectividad.actualizar(mensajeExterno.getCuerpo());
+					if(this.socket== this.conectividad.getServidorPrincipal().getSocket()) {												// directorio
+						this.conectividad.actualizar(mensajeExterno.getCuerpo());
+					}
 				}
 
 				else if (mensajeExterno.getComando().equals(CERRAR_CONVERSACION)) { // Recibe comando de cerrar el
-																						// chat
-					mensaje = new Mensaje(msg, "te cerraron la conexion papirrin");
-					this.conectividad.notificarAccion(mensaje);
-					this.conectividad.setIpReceptor(null);
-					mensaje = new Mensaje("", "Actualizar");
-					this.conectividad.notificarAccion(mensaje);
+					if(this.socket== this.conectividad.getServidorPrincipal().getSocket()) {// chat
+						mensaje = new Mensaje(msg, "te cerraron ");
+						this.conectividad.notificarAccion(mensaje);
+						this.conectividad.setIpReceptor(null);
+						mensaje = new Mensaje("", "Actualizar");
+						this.conectividad.notificarAccion(mensaje);
+					}
 				}
 
 				else if (mensajeExterno.getComando().equals(RESPUESTA_PING_ECHO)) { // Recibe comando de
@@ -76,8 +78,10 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 				}
 
 				else if (mensajeExterno.getComando().equals(CONEXION_RECHAZADA)) { // El cliente solicito iniciar una conexion y se le fue rechazada
+					if(this.socket== this.conectividad.getServidorPrincipal().getSocket()) {
 					this.conectividad
 							.notificarAccion(new Mensaje(mensajeExterno.getCuerpo(),"Conexion_rechazada" ));
+					}
 				}
 				else if (mensajeExterno.getComando().equals(CONFIRMACION_CLIENTE_RESPUESTA)) { // El cliente solicito iniciar una conexion y se le fue rechazada
 					this.conectividad.eliminarPendientes(this.socket);
@@ -85,17 +89,21 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 					
 				}
 				else if (mensajeExterno.getComando().equals(AVISAR_CLIENTES_DE_NUEVO_SERVIDOR)) { // Se recibe la informacion del nuevo servidor al cual conectarse
-					try {
-						this.conectividad.iniciarConexionServidorNuevo(mensajeExterno);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					
+						try {
+							this.conectividad.iniciarConexionServidorNuevo(mensajeExterno);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					
 							
 				}
 				else if (mensajeExterno.getComando().equals(CONEXION_ESTABLECIDA)) { // Se le solicita al este cliente iniciar una conexion
-					this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
-					this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));
-					this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));
+					if(this.socket== this.conectividad.getServidorPrincipal().getSocket()) {
+						this.conectividad.setIpReceptor(mensajeExterno.getIporigen());
+						this.conectividad.setPuertoReceptor(Integer.valueOf(mensajeExterno.getPuertoorigen()));
+						this.conectividad.notificarAccion(new Mensaje("", "conexion establecida"));
+					}
 				}
 				
 				else {

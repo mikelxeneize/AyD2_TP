@@ -184,7 +184,7 @@ public class VentanaMenuPrincipal extends JFrame implements IVista{
 	public void mostrarLabelErrorAlConectar(boolean boleano) {
 		this.lblErrorAlConectar.setVisible(boleano);
 	}
-	public void recibirConectado(ArrayList<Cliente> mensajeRecibido){
+	public synchronized void recibirConectado(ArrayList<Cliente> mensajeRecibido){
 		String mensajesPrevios = "";
 		this.textField_clientes.setText("");
 		for (int i = 0; i < mensajeRecibido.size(); i++) {

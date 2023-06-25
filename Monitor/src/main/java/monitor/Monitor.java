@@ -3,6 +3,7 @@ package monitor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -55,10 +56,32 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 	
 	public  void inicializarMonitor() {
 		buscarServidores();
+		iniciarEscucha();
 		//Algo que necesite ejecutar cuando se crea el monitor
 	}
 
 	//------Busca servidores en un rango de 100 puertos -----//
+
+	private void iniciarEscucha() {
+		Socket socket;
+		ServerSocket serverSocket;
+		
+		try {
+			serverSocket = new ServerSocket(Integer.parseInt(PUERTO) );
+			while (true) { //recepcion de nuevos usuarios a escuchar
+				socket = serverSocket.accept();
+				ServerData servidor= new ServerData(socket, socket.getInetAddress().toString(),Integer.toString(socket.getPort()));
+				this.listaPendientes.add(servidor);
+				RecibirMensajeHilo recibirMensaje = new RecibirMensajeHilo(socket, this);
+				recibirMensaje.start();
+				enviarMensajeAServidor(new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(socket.getLocalPort()),INDEFINIDO,socket.getInetAddress().toString(),
+						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_MONITOR,INDEFINIDO,INDEFINIDO),socket);
+				
+			}
+		}
+		 catch (IOException e) {
+		}
+	}
 
 	private void buscarServidores() {
 		Socket socket;
@@ -182,6 +205,7 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 		ServerData servidorPendiente= BuscarServidorEnPendientes(mensajeExterno.getIporigen(),mensajeExterno.getPuertoorigen());
 		servidorPendiente.setEstado(ACTIVO);
 		servidorPendiente.setUsername(mensajeExterno.getUsernameorigen());
+		servidorPendiente.setPuerto(mensajeExterno.getPuertoorigen());
 		listaServidores.add(servidorPendiente);
 		listaPendientes.remove(servidorPendiente);
 		

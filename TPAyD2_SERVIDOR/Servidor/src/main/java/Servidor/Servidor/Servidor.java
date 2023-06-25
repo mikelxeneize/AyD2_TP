@@ -81,6 +81,7 @@ public class Servidor implements IComandos, IEstados {
 		Socket socket;
 		SocketBean socketBean;
 		ServidorRecibirMensajeHilo recibirMensajeHilo;
+		
 		int puerto = 5000;
 		int i = 0;
 		boolean encontrado = false;
@@ -98,6 +99,8 @@ public class Servidor implements IComandos, IEstados {
 			this.setPuertoServidor(puerto);
 			this.setUsernameServidor("SERVIDOR"+ puerto );
 		}
+
+		iniciarConexionMonitor();
 		while (true) { //recepcion de nuevos usuarios a escuchar
 			socket = serverSocket.accept();
 			socketBean = new SocketBean(socket.getPort(), socket.getInetAddress().toString(), socket);
@@ -189,7 +192,7 @@ public class Servidor implements IComandos, IEstados {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
 		for (Monitor cliente : listaMonitores) {
-			if (cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) {
+			if ( cliente.getPuerto() == puerto) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
 				// System.out.println("17: "+mensaje.toString());
@@ -400,7 +403,7 @@ public class Servidor implements IComandos, IEstados {
 		String ip=mensaje.getIporigen(); 
 		int puerto=Integer.parseInt(mensaje.getPuertoorigen());
 		for (SocketBean socketBean : listaPendientes) {
-			if (socketBean.getIp().equals(ip) && socketBean.getPuerto() == puerto) {
+			if ( socketBean.getPuerto() == puerto) {
 				if(tipo.equals("CLIENTE")) {
 					Cliente cliente=this.getRegistradoByIp(ip, puerto);
 					if(cliente==null){//es una conexion de las nuevas
@@ -442,7 +445,29 @@ public class Servidor implements IComandos, IEstados {
 		Thread.sleep(200);
 		return this.ipServidor+"="+this.puertoServidor;
 	}
-	
+	public void iniciarConexionMonitor()  {
+		Socket socket;
+		ServerData monitor = new ServerData("localhost", 6000);
+		
+		try {
+			socket = new Socket("localhost",6000);listaPendientes.add(monitor);
+			monitor.setSocket(socket);
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			monitor.setOut(out);
+
+			ServidorRecibirMensajeHilo recibirMensaje = new ServidorRecibirMensajeHilo(monitor, this);
+			recibirMensaje.start();
+			
+			
+			
+		} catch (UnknownHostException e) {
+			
+		} catch (IOException e) {
+			
+		}
+		
+		
+	}
 	
 
 }

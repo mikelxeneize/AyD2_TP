@@ -25,11 +25,12 @@ public class ControladorMonitor implements ActionListener,Observer,INotificacion
 		try {
 			this.modelo = Monitor.getInstance();
 			this.modelo.addObserver(this);
-			this.modelo.inicializarMonitor();
-
 			//inicia el ping
 			MostrarPingEchoHilo pingechohilo= new MostrarPingEchoHilo(this,this.vista);
 			pingechohilo.start();
+			
+			this.modelo.inicializarMonitor();
+
 			
 			
 		} catch (IOException e) {
