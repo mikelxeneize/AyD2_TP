@@ -53,12 +53,12 @@ public class Servidor implements IComandos, IEstados {
 			try {
 				serverSocket = new ServerSocket(puerto);
 				encontrado = true;
+				System.out.println(puerto);
 			} catch (IOException e) {
 				i++;
 				puerto+=1;
 			}
 		}
-		System.out.println(puerto);
 		if(encontrado) {
 			this.setPuertoServidor(puerto);
 			this.setUsernameServidor("SERVIDOR"+ puerto );
@@ -78,7 +78,6 @@ public class Servidor implements IComandos, IEstados {
 			i++;
 			puerto += 1;
 		}
-		System.out.println(puerto);
 	}
 
 	
@@ -159,7 +158,7 @@ public class Servidor implements IComandos, IEstados {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
 		for (Cliente cliente : listaClientes) {
-			if ((cliente.getIp().equals(ip) && cliente.getPuerto() == puerto) || cliente.getSocket().getPort()== puerto) {
+			if ( cliente.getPuerto() == puerto || (cliente.getSocket()!=null&&cliente.getSocket().getPort()== puerto)) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
 				// System.out.println("17: "+mensaje.toString());
@@ -266,6 +265,7 @@ public class Servidor implements IComandos, IEstados {
 	public void cortarConversacion(MensajeExterno mensaje) throws IOException {
 		Cliente clienteEmisor= this.getRegistradoByIp(mensaje.getIporigen(),Integer.parseInt(mensaje.getPuertoorigen()));
 		Cliente clienteReceptor=this.getRegistradoByIp(mensaje.getIpdestino(),Integer.parseInt(mensaje.getPuertodestino()));
+		System.out.println("El cliente :" + clienteEmisor + "solicita cerrar la conexion a "+clienteReceptor);
 		if (clienteReceptor != null) {// cliente registrado y disponible para conectarse
 			
 			clienteEmisor.setIpReceptor(null);
@@ -478,7 +478,6 @@ public class Servidor implements IComandos, IEstados {
 	}
 	public synchronized void incrementar() {
 		this.clientesConseguidos++;
-		System.out.println(clientesConseguidos);
 	}
 	
 

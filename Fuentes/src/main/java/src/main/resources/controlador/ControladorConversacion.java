@@ -84,7 +84,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 					e.printStackTrace();
 				}
 				this.vista.cerrar();
-			} else if(datos.getEstado().equals("te cerraron la conexion papirrin")) {
+			} else if(datos.getEstado().equals("te cerraron")) {
 				this.modelo.deleteObserver(this);
 				try {
 					ControladorMenuPrincipal controladorMenuPrincipal = new ControladorMenuPrincipal(this.vista);

@@ -41,7 +41,7 @@ public class ControladorConfiguracionInicial implements ActionListener{
 		String actionCommand = e.getActionCommand();
 		if(actionCommand.equals(IVista.ACEPTAR)) {	
 			this.modelo.setConfiguracion(
-				this.vista.getIp(), 
+				"/127.0.0.1", 
 				Integer.parseInt(this.vista.getPort()), 
 				this.vista.getUsername()
 			);

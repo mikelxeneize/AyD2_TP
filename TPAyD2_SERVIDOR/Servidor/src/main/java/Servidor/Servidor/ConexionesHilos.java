@@ -29,6 +29,7 @@ public class ConexionesHilos  extends Thread implements IComandos{
 			//SETEAR EL PUERTO
 			if(this.servidor.getPuertoServidor()!=puerto) {
 				socket = new Socket("localhost", puerto);
+				System.out.println("Servidor encontrado para obtener informacion en el puerto:"+puerto);
 				this.servidor.setSincronizado(true);
 				this.server.setSocket(socket);
 				this.server.setPuerto(socket.getPort());

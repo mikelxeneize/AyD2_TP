@@ -166,7 +166,6 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		
 		enviarMensajeExterno(mensajeExterno, servidorPrincipal);
 
-		System.out.println("21: "+ mensajeExterno.toString());
 		this.setIpReceptor(null);
 		this.setUsernameReceptor(null);
 		this.setPuertoReceptor(0);

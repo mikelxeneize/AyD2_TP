@@ -32,6 +32,7 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
  
 		do {
 			try {
+				
 				msg = in.readLine();
 				if (msg == null) {
 					servidor.getListaPendientes().remove(this.socketBean);

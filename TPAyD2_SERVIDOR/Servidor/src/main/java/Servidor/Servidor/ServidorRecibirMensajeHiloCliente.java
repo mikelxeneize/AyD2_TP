@@ -38,7 +38,6 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 		do {
 			try {
 				msg = in.readLine();
-				System.out.println("1: "+msg);
 				if (msg == null) {
 					// this.cliente.setEstado("Desconectado");
 					this.servidor.getListaClientes().remove(this.cliente);
@@ -49,6 +48,7 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 						this.cliente.setUsername(mensajerecibido.getUsernameorigen()); // el mensaje tiene que llegar en
 																						// vacio en receptor
 						this.servidor.MandarLista1();
+						System.out.println("1: "+msg);
 
 					}
 
@@ -56,6 +56,7 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 																						// conexion
 																						// con el otro cliente cambiarEstado("Disponible") y avisarle al otro que no hay mas charla;
 						this.servidor.cortarConversacion(mensajerecibido);
+						System.out.println("1: "+msg);
 						
 					}
 
@@ -72,7 +73,9 @@ public class ServidorRecibirMensajeHiloCliente extends Thread implements IComand
 					else if (mensajerecibido.getComando().equals(INICIAR_CONVERSACION)
 							&& this.cliente.getEstado().equals(DISPONIBLE)) {// Recibe comando de iniciar conversacion
 																				// con otro cliente
+						System.out.println("1: "+msg);
 						this.servidor.iniciarConexionAReceptor(mensajerecibido);
+						
 					}
 					
 					

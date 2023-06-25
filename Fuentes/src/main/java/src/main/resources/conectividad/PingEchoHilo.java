@@ -29,8 +29,7 @@ public class PingEchoHilo extends Thread implements IComandos {
 
 				MensajeExterno mensajePingEcho = new MensajeExterno (this.conectividad.getIppersonal(),Integer.toString(this.conectividad.getPuertopersonal()),this.conectividad.getUsernamePersonal(),this.servidor.getIp(),Integer.toString(this.servidor.getPuerto())," ",PING_ECHO," "," ");
 				this.conectividad.enviarMensajeExterno(mensajePingEcho,this.servidor);
-				System.out.println(mensajePingEcho.toString());
-
+				
 				try {
 					Thread.sleep(tiempo);
 				} catch (InterruptedException e) {
