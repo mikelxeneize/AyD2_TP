@@ -18,6 +18,10 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	private ArrayList<ServidorData> pendientes = new ArrayList<ServidorData>();
 	private ArrayList<ServidorData> servidores = new ArrayList<ServidorData>();
 	
+	public ArrayList<ServidorData> getServidores() {
+		return servidores;
+	}
+
 	// Informacion personal
 	private int puertoPersonal;
 	private String ipPersonal;
@@ -207,22 +211,27 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	}
 
 	/**
-	 * Reintenta la conexion con un ServidorData especifico, exito retorna true, de lo contrario retorna false
-	 * @param ServidorData
+	 * Reintenta la conexion con un puerto e ip especificos
+	 * Si tiene exito
+	 * @param ip
+	 * @param puerto
+	 * @param mostrarEnInterfaz true--> lo muestra al usuario 
+	 * @return
 	 */
-	public boolean reintento(ServidorData ServidorData) {
+	public boolean reintento(String ip, int puerto, boolean mostrarEnInterfaz) {
 		boolean resultado = false;
 		int cantIntentos=2;
-		int tiempo=3000;
+		int tiempo=4000;
 		int i = 0;
+		Mensaje mensaje;
+		logReintento("Se esta iniciando el reintento de conexion", "iniciar_reintento", mostrarEnInterfaz);
 		while(i<cantIntentos) {
-			System.out.println("Intento de reconexion "+ i+ "...");
+			logReintento("Intento de reconexion "+ i+ " ...", "log_reintento", mostrarEnInterfaz);
 			try {
-				conectarServidor(ServidorData.getIp(), ServidorData.getPuerto());
+				iniciarConexionServidorNuevo(ip, puerto);
 				i = cantIntentos + 2;
 				resultado = true;
 			} catch (IllegalArgumentException | IOException e) {
-				System.out.println("reintento de reconexion "+ i + "fallido");
 				i++; //incrementa en 1 el numero de reintentos
 				try {
 					Thread.sleep(tiempo);
@@ -231,7 +240,33 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				}
 			}
 		}
+		if (resultado) {
+			logReintento("Reconexion exitosa", "finalizar_reintento", mostrarEnInterfaz);
+		}else {
+			logReintento("No se pudo reconectar", "finalizar_reintento", mostrarEnInterfaz);
+			try {
+				Thread.sleep(4000); //es para darle tiempo a leer
+			} catch (InterruptedException e) {
+				e.printStackTrace(); //error en el sleep, no deberia suceder
+			}
+		}
 		return resultado;
+	}
+	
+	/**
+	 * imprime por consola y depende de los parametros si tambien por la interfaz de ususario
+	 * pensada para ser usada solo por reintento
+	 * @param mensaje
+	 * @param estado
+	 * @param mostrarEnInterfaz si esta en true se muestra al usuario en la conversacion
+	 */
+	private void logReintento(String mensaje, String estado, boolean mostrarEnInterfaz) {
+		Mensaje mensajeInterno;
+		System.out.println(mensaje);
+		if (mostrarEnInterfaz) {
+			mensajeInterno = new Mensaje(mensaje, estado);
+			this.notificarAccion(mensajeInterno);	
+		}
 	}
 	
 	/**
@@ -286,17 +321,18 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	}
 	
 	/**
-	 * borra el servidorPrincipal de conectividad.Servidores y si queda algun servidor conectado, elije el primero de conectividad.servidores como principal
+	 * Si queda algun servidor conectado, elije el primero de conectividad.servidores como principal
 	 * @return
 	 * true si tuvo exito, de lo contrario false
 	 */
-	public void servidorPrincipalSwap() {
-		
+	public boolean servidorPrincipalSwap() {
 		for (ServidorData servidor : servidores) {
 			if(!servidor.getSocket().isClosed()) {
 				this.servidorPrincipal=servidor;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	
@@ -320,8 +356,31 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
 					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
 			enviarMensajeExterno(confirmacion,servidor);
+	}
+	
+	/**
+	 * Realiza todos los pasos requeridos del lado del cliente para añadirlo a la lista de pendientes
+	 * Tambien inicia el proceso de CONFIRMACION_CLIENTE para añadirlo al array de servidores 
+	 * @param ip
+	 * @param puerto 
+	 * @throws IOException No se pudo realizar con exito
+	 */
+	public void iniciarConexionServidorNuevo(String ip, int puerto) throws IOException {
+		Socket socket;
+		
+			ServidorData servidor = new ServidorData("localhost", puerto);
+			socket = this.conectarServidor("localhost", puerto);
+			servidor.setSocket(socket);
 			
-
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			servidor.setOut(out);
+			
+			this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
+			this.pendientes.add(servidor);
+			
+			MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
+					Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
+			enviarMensajeExterno(confirmacion,servidor);
 	}
 	
 	
@@ -337,8 +396,9 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		this.pendientes.remove(aux);
 	}
 	
-	
-	
+	public void removerServidor(ServidorData servidorData) {
+		this.servidores.remove(servidorData);
+	}
 	
 	
 	public int getPuertopersonal() {

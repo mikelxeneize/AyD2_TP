@@ -13,6 +13,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import java.awt.Font;
+import javax.swing.JTextPane;
+import java.awt.Color;
+import javax.swing.DropMode;
 
 public class VentanaConversacion extends JFrame implements IVista{
 
@@ -21,6 +24,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 	private JTextArea textField_recibirMensaje;
 	private JButton btnNewButton_1 ;
 	private JButton btnNewButton;
+	private JLabel lblReintentolabel;
 	private JTextField textConectadoCon;
 	/**
 	 * Launch the application.
@@ -50,6 +54,11 @@ public class VentanaConversacion extends JFrame implements IVista{
 		this.setTitle(TITULO_VENTANA);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		lblReintentolabel = new JLabel("reintento");
+		lblReintentolabel.setForeground(new Color(164, 0, 0));
+		lblReintentolabel.setBounds(72, 414, 375, 14);
+		contentPane.add(lblReintentolabel);
 		
 		textField_enviarMensaje = new JTextArea();
 		textField_enviarMensaje.setBounds(78, 338, 431, 35);
@@ -124,9 +133,20 @@ public class VentanaConversacion extends JFrame implements IVista{
 		this.textField_enviarMensaje.setText(text);
 		
 	}
+	
+	public void mostrarReintento() {
+		this.lblReintentolabel.setVisible(true);
+	}
+	
+	public void ocultarReintento() {
+		this.lblReintentolabel.setVisible(false);
+	}
+	
+	public void logReintento(String log) {
+		this.lblReintentolabel.setText(log);;
+	}
 
 	public void setTextConectadoCon(String text) {
 		textConectadoCon.setText(text);;
 	}
-	
 }

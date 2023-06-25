@@ -98,6 +98,21 @@ public class ControladorConversacion implements ActionListener, Observer {
 				this.vista.setTextConectadoCon("Ip: "+this.modelo.getInstance().getConectividad().getIpReceptor() + "  Puerto: "+this.modelo.getInstance().getConectividad().getPuertoReceptor());
 			} else if(datos.getEstado().equals("servidor desconectado")){
 				System.out.println("servidor desconectado");
+			} else if(datos.getEstado().equals("volver_configuracion_inicial")){ //vuelve al menu de configuracion inicial
+				try {
+					ControladorConfiguracionInicial controladorConfiguracionInicial= new ControladorConfiguracionInicial(this.vista);
+					this.modelo.deleteObserver(this);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				}
+				this.vista.cerrar();
+			} else if(datos.getEstado().equals("iniciar_reintento")){ //muestra mensaje reintento y notifica que esta reintentando el unico server
+				this.vista.logReintento(datos.getMensaje());
+				this.vista.mostrarReintento();
+			} else if(datos.getEstado().equals("log_reintento")){ //notifica avances del reintento
+				this.vista.logReintento(datos.getMensaje());
+			} else if(datos.getEstado().equals("finalizar_reintento")){ //muestra resultado final del reintento
+				this.vista.logReintento(datos.getMensaje());
 			}
 				
 		}

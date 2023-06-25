@@ -23,7 +23,7 @@ public class HeartBeatHilo extends Thread {
 		while(true) {
 			if(System.currentTimeMillis()-this.conectividad.getHeartBeatTime()>limite)//No recibio el latido. Cambia a reintento
 				//reintento de ping al server principal
-				this.conectividad.reintento(this.conectividad.getServidorPrincipal());		
+				this.conectividad.reintento(this.conectividad.getServidorPrincipal().getIp(), this.conectividad.getServidorPrincipal().getPuerto(),false);		
 			try {
 				Thread.sleep(tiempo);
 			} catch (InterruptedException e) {

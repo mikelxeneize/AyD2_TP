@@ -35,11 +35,8 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 			try {
 				msg = in.readLine();
 				System.out.println(msg);
-			} catch (SocketException e) {
-				System.out.println("Servidor Caido! Cambio de servidor"); // ESTO ES CLAVE
-				this.conectividad.servidorPrincipalSwap();
-				//ACA HAY QUE COLOCAR EL REINTENTO Y ELIMINAR EL MSG=NULL
-				msg=null;
+			} catch (SocketException e) {  //TOBIAS dice: esto me parece que no pasa nunca e 
+				System.out.println("Esto es el catch socketException del try de in.redLine()");
 			} catch (IOException e) { 
 				e.printStackTrace();
 				System.out.println("12: " + "Error mientras se esperaba un mensaje");
@@ -113,14 +110,25 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 			}
 		} while (msg != null); // implica que se cerro la conexion con el servidor
 		System.out.println("13: " + "cerraron la ventana, sali por despues del while");
-		mensaje = new Mensaje("", "servidor desconectado");
-		this.conectividad.notificarAccion(mensaje);
-		if (! this.conectividad.reintento(this.conectividad.getServidorPrincipal())) {
+		System.out.println("13: Servidor Caido!");
+		
+		//guardo los valores desl servidor caido para reintentar la conexion
+		ServidorData servidorPrincipalViejo= this.conectividad.getServidorPrincipal();  
+		this.conectividad.getServidores().remove(servidorPrincipalViejo);		this.conectividad.setServidorPrincipal(null);
+		
+		if(this.conectividad.getServidores().size() == 0){ //si no hay mas servidores
+
+			if (! this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),true)){ //si el reintento fallo
+				mensaje = new Mensaje("", "volver_configuracion_inicial"); 
+				this.conectividad.notificarAccion(mensaje);	
+			}
+				
+		}else { //si hay mas de un servidor hace el swap e intenta la reconexion sin mostrar nada al usuario
 			this.conectividad.servidorPrincipalSwap();
+			this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),false);
 		}
-		else {
-			
-		}
+		
+		
 	}
 
 }
