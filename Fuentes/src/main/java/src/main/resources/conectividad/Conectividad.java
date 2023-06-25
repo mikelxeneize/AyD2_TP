@@ -40,7 +40,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 
 	// rango de puertos donde ser busca servidor  
 	private int puertoDesde = 5000; 
-	private int puertoHasta = 5100;
+	private int puertoHasta = 5020;
 	private int puertoPaso = 1;
 	
 	private String clave;
@@ -119,35 +119,16 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 * @throws IllegalArgumentException
 	 */
 	public void conectarServidores() {
-		Socket socket;
 		ServidorData servidor;
 		
 		for (int puerto = this.puertoDesde; puerto <= this.puertoHasta; puerto = puerto + this.puertoPaso) {
 			servidor = new ServidorData("localhost", puerto);
-			
-			try {
-				socket = this.conectarServidor("localhost", puerto);
-				servidor.setSocket(socket);
-				
-				PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-				servidor.setOut(out);
-				
-				this.recibirMensaje(socket); //inicia la escuchar del servidor nuevo
+
+			this.pendientes.add(servidor);
+			ConexionesHilos conexiones=new ConexionesHilos("localhost", puerto,this,servidor);
+			conexiones.start();
 				
 				
-				
-				this.pendientes.add(servidor);
-				if (this.servidorPrincipal == null) {
-					this.servidorPrincipal = servidor; //se conecto al menos a 1 servidor
-					this.pingEchoServidores();	
-				}
-				MensajeExterno confirmacion =new MensajeExterno(socket.getInetAddress().toString(),Integer.toString(this.puertoPersonal),INDEFINIDO,socket.getInetAddress().toString(),
-						Integer.toString(socket.getPort()), INDEFINIDO , CONFIRMACION_CLIENTE,INDEFINIDO,INDEFINIDO); 
-				enviarMensajeExterno(confirmacion,servidor);
-				
-			} catch (IOException e) {
-				//e.printStackTrace(); no printea nada aproposito, se supone que debe tirar exception siempre que no pueda conectar a un server
-			}
 		}
 		if (this.servidorPrincipal == null) {
 			this.notificarAccion(new Mensaje("no se pudo conectar con ninguno de los servidores", "error ningun servidor conectado"));
@@ -315,8 +296,8 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	public void pingEchoServidores() {
 		PingEchoHilo pingechohilo;
 		
-		//pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
-		//pingechohilo.start();
+		pingechohilo= new PingEchoHilo(this.servidorPrincipal, this);
+		pingechohilo.start();
 		
 	}
 	
@@ -325,7 +306,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 * @return
 	 * true si tuvo exito, de lo contrario false
 	 */
-	public boolean servidorPrincipalSwap() {
+	public synchronized boolean servidorPrincipalSwap() {
 		for (ServidorData servidor : servidores) {
 			if(!servidor.getSocket().isClosed()) {
 				this.servidorPrincipal=servidor;
@@ -384,7 +365,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	}
 	
 	
-	public void eliminarPendientes(Socket socket) {
+	public synchronized void eliminarPendientes(Socket socket) {
 		ServidorData aux=null;
 		for (ServidorData servidor : pendientes) {
 			if(servidor.getSocket()==socket) {
@@ -396,7 +377,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		this.pendientes.remove(aux);
 	}
 	
-	public void removerServidor(ServidorData servidorData) {
+	public synchronized void removerServidor(ServidorData servidorData) {
 		this.servidores.remove(servidorData);
 	}
 	
