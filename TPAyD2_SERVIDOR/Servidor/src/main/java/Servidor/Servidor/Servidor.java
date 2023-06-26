@@ -107,7 +107,11 @@ public class Servidor implements IComandos, IEstados {
 	private Cliente getRegistradoByIp(String ipObj,int puertoObj) {
 		int puerto;
 		String ip;
-		for (Cliente cliente : listaClientes) {
+		
+		Cliente cliente;
+		for (int j = 0; j < this.getListaClientes().size(); j++) {
+			cliente = this.getListaClientes().get(j);
+		
 			puerto = cliente.getPuerto();
 			ip = cliente.getIp();
 			if (ip.equals(ipObj) && puerto == puertoObj) {
@@ -121,6 +125,8 @@ public class Servidor implements IComandos, IEstados {
 		int puerto;
 		String ip;
 		for (ServerData serverData : listaServidores) {
+			
+			
 			puerto = serverData.getPuerto();
 			ip = serverData.getIp();
 			if (ip.equals(ipObj) && puerto == puertoObj) {
@@ -157,7 +163,12 @@ public class Servidor implements IComandos, IEstados {
 	public void enviarMensajeACliente(MensajeExterno mensaje) throws IOException {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
-		for (Cliente cliente : listaClientes) {
+		
+		Cliente cliente;
+		for (int j = 0; j < this.getListaClientes().size(); j++) {
+			cliente = this.getListaClientes().get(j);
+		
+			
 			if ( cliente.getPuerto() == puerto || (cliente.getSocket()!=null&&cliente.getSocket().getPort()== puerto)) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
@@ -168,7 +179,13 @@ public class Servidor implements IComandos, IEstados {
 	public void enviarMensajeAServidor(MensajeExterno mensaje) throws IOException {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
-		for (ServerData cliente : listaServidores) {
+		
+		ServerData cliente;
+		for (int j = 0; j < this.getListaServidores().size(); j++) {
+			cliente = this.getListaServidores().get(j);
+		
+			
+			
 			if ( cliente.getPuerto() == puerto) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
@@ -180,7 +197,12 @@ public class Servidor implements IComandos, IEstados {
 	public void enviarMensajeAPendientes(MensajeExterno mensaje) throws IOException {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
-		for (SocketBean cliente : listaPendientes) {
+		
+		
+		SocketBean cliente;
+		for (int j = 0; j < this.getListaPendientes().size(); j++) {
+			cliente = this.getListaPendientes().get(j);
+		
 			if ( cliente.getPuerto() == puerto) {
 				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
@@ -192,9 +214,15 @@ public class Servidor implements IComandos, IEstados {
 	public void enviarMensajeAMonitor(MensajeExterno mensaje) throws IOException {
 		String ip=mensaje.getIpdestino();
 		int puerto=Integer.parseInt(mensaje.getPuertodestino());
-		for (Monitor cliente : listaMonitores) {
-			if ( cliente.getPuerto() == puerto) {
-				PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
+		
+		
+		Monitor monitor;
+		for (int j = 0; j < this.getListaMonitores().size(); j++) {
+			monitor = this.getListaMonitores().get(j);
+		
+			
+			if ( monitor.getPuerto() == puerto) {
+				PrintWriter out = new PrintWriter(monitor.getSocket().getOutputStream(), true);
 				out.println(mensaje.toString());
 				// System.out.println("17: "+mensaje.toString());
 			}
@@ -202,7 +230,10 @@ public class Servidor implements IComandos, IEstados {
 	}
 	// no solo envia el mensaje a todos, sino que setea en el mensaje la ip y puerto del receptor
 	public void enviarMensajeAClienteTodos(MensajeExterno mensaje) throws IOException {
-		for (Cliente cliente : listaClientes) {
+		Cliente cliente;
+		for (int j = 0; j < this.getListaClientes().size(); j++) {
+			cliente = this.getListaClientes().get(j);
+		
 			mensaje.setIpdestino(cliente.getIp());
 			mensaje.setPuertodestino(Integer.toString(cliente.getPuerto()));
 			PrintWriter out = new PrintWriter(cliente.getSocket().getOutputStream(), true);
@@ -213,7 +244,10 @@ public class Servidor implements IComandos, IEstados {
 	
 	private void enviarMensajeAMonitores(MensajeExterno mensaje) throws IOException {
 		// TODO Auto-generated method stub
-		for (Monitor monitor : listaMonitores) {
+		Monitor monitor;
+		for (int j = 0; j < this.getListaMonitores().size(); j++) {
+			monitor = this.getListaMonitores().get(j);
+		
 			mensaje.setIpdestino(monitor.getIp());
 			mensaje.setPuertodestino(Integer.toString(monitor.getPuerto()));
 			PrintWriter out = new PrintWriter(monitor.getSocket().getOutputStream(), true);
@@ -290,11 +324,7 @@ public class Servidor implements IComandos, IEstados {
 		String lista = "";
 		// Armo la lista en string primero
 		MensajeExterno mensaje= new MensajeExterno(this.getIpServidor(),Integer.toString(this.getPuertoServidor())," "," ", " "," ",ACTUALIZAR_LISTA," "," "); 
-		for (Cliente cliente1 : this.getListaClientes()) {  //limpieza de los desconectados
-			if (cliente1.getUsername() == null) {
-				this.getListaClientes().remove(cliente1);
-			}
-		}
+		
 		for (int j = 0; j < this.getListaClientes().size(); j++) {
 			cliente = this.getListaClientes().get(j);
 			lista += this.getListaClientes().get(j).actualizacion();
@@ -404,7 +434,11 @@ public class Servidor implements IComandos, IEstados {
 	public synchronized void  agregarALista(MensajeExterno mensaje, String tipo) throws IOException {
 		String ip=mensaje.getIporigen(); 
 		int puerto=Integer.parseInt(mensaje.getPuertoorigen());
-		for (SocketBean socketBean : listaPendientes) {
+		
+		for (int j = 0; j < listaPendientes.size(); j++) {
+			
+			SocketBean socketBean=listaPendientes.get(j);
+			
 			if ( socketBean.getPuerto() == puerto) {
 				if(tipo.equals("CLIENTE")) {
 					Cliente cliente=this.getRegistradoByIp(ip, puerto);

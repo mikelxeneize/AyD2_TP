@@ -35,6 +35,7 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 			try {
 				msg = in.readLine();
 			} catch (SocketException e) {  //TOBIAS dice: esto me parece que no pasa nunca e 
+				ServidorData servidorPrincipalViejo= this.conectividad.getServidorPrincipal(); 
 				if(this.socket==this.conectividad.getServidorPrincipal().getSocket()) {
 					try {
 						this.socket.close();
@@ -43,14 +44,13 @@ public class RecibirMensajeHilo extends Thread implements IComandos {
 					} catch (IOException e1) {
 						
 					}
-					//guardo los valores desl servidor caido para reintentar la conexion
-					ServidorData servidorPrincipalViejo= this.conectividad.getServidorPrincipal();  
+					//guardo los valores desl servidor caido para reintentar la conexion 
 					System.out.println("Servidor caido");
 					
 					if(this.conectividad.getServidores().size() == 0){ //si no hay mas servidores
 						System.out.println("No hay para swap, debe realizarse reintento");
 						msg=null;
-						if (! this.conectividad.reintento(servidorPrincipalViejo.getIp(), servidorPrincipalViejo.getPuerto(),true)){ //si el reintento fallo
+						if (! this.conectividad.reintento(servidorPrincipalViejo.getIp(), 5000,true)){ //si el reintento fallo
 							mensaje = new Mensaje("", "volver_configuracion_inicial"); 
 							this.conectividad.notificarAccion(mensaje);	
 							

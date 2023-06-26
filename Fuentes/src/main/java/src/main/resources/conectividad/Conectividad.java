@@ -208,6 +208,7 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		while(i<cantIntentos && !reconecta) {
 			logReintento("Intento de reconexion "+ i+ " ...", "log_reintento", mostrarEnInterfaz);
 			try {
+				logReintento("reconexion en el puerto "+puerto, "log_reintento", mostrarEnInterfaz);
 				iniciarConexionServidorNuevo(ip, puerto);
 				reconecta = true;
 			} catch (IllegalArgumentException | IOException e) {
