@@ -199,18 +199,17 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 	 * @return
 	 */
 	public boolean reintento(String ip, int puerto, boolean mostrarEnInterfaz) {
-		boolean resultado = false;
-		int cantIntentos=2;
+		boolean reconecta = false;
+		int cantIntentos=4;
 		int tiempo=4000;
 		int i = 0;
 		Mensaje mensaje;
 		logReintento("Se esta iniciando el reintento de conexion", "iniciar_reintento", mostrarEnInterfaz);
-		while(i<cantIntentos) {
+		while(i<cantIntentos && !reconecta) {
 			logReintento("Intento de reconexion "+ i+ " ...", "log_reintento", mostrarEnInterfaz);
 			try {
 				iniciarConexionServidorNuevo(ip, puerto);
-				i = cantIntentos + 2;
-				resultado = true;
+				reconecta = true;
 			} catch (IllegalArgumentException | IOException e) {
 				i++; //incrementa en 1 el numero de reintentos
 				try {
@@ -220,17 +219,12 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 				}
 			}
 		}
-		if (resultado) {
+		if (reconecta) {
 			logReintento("Reconexion exitosa", "finalizar_reintento", mostrarEnInterfaz);
 		}else {
 			logReintento("No se pudo reconectar", "finalizar_reintento", mostrarEnInterfaz);
-			try {
-				Thread.sleep(4000); //es para darle tiempo a leer
-			} catch (InterruptedException e) {
-				e.printStackTrace(); //error en el sleep, no deberia suceder
-			}
 		}
-		return resultado;
+		return reconecta;
 	}
 	
 	/**
@@ -374,7 +368,24 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		}
 		this.servidores.add(aux);
 		this.pendientes.remove(aux);
+		
+		if(this.servidorPrincipal.getSocket().isClosed()) {
+			this.servidorPrincipal=aux;
+		}
+		
 	}
+	
+	public synchronized void eliminarServidores(Socket socket) {
+		ServidorData aux=null;
+		for (ServidorData servidor : servidores) {
+			if(servidor.getSocket()==socket) {
+				aux=servidor;
+			}
+				
+		}
+		this.servidores.remove(aux);
+	}
+	
 	
 	public synchronized void removerServidor(ServidorData servidorData) {
 		this.servidores.remove(servidorData);
