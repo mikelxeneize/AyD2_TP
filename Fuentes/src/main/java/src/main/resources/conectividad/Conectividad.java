@@ -204,11 +204,16 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		int tiempo=4000;
 		int i = 0;
 		Mensaje mensaje;
-		logReintento("Se esta iniciando el reintento de conexion", "iniciar_reintento", mostrarEnInterfaz);
+		logReintento("Conexion perdida. Por favor espere a la reconexion.", "iniciar_reintento", mostrarEnInterfaz);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		while(i<cantIntentos && !reconecta) {
 			logReintento("Intento de reconexion "+ i+ " ...", "log_reintento", mostrarEnInterfaz);
 			try {
-				logReintento("reconexion en el puerto "+puerto, "log_reintento", mostrarEnInterfaz);
 				iniciarConexionServidorNuevo(ip, puerto);
 				reconecta = true;
 			} catch (IllegalArgumentException | IOException e) {
@@ -222,6 +227,12 @@ public class Conectividad extends Observable implements IConectividad, IComandos
 		}
 		if (reconecta) {
 			logReintento("Reconexion exitosa", "finalizar_reintento", mostrarEnInterfaz);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else {
 			logReintento("No se pudo reconectar", "finalizar_reintento", mostrarEnInterfaz);
 		}

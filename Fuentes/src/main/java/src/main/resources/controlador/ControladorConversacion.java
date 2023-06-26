@@ -113,6 +113,7 @@ public class ControladorConversacion implements ActionListener, Observer {
 				this.vista.logReintento(datos.getMensaje());
 			} else if(datos.getEstado().equals("finalizar_reintento")){ //muestra resultado final del reintento
 				this.vista.logReintento(datos.getMensaje());
+				this.vista.ocultarReintento();
 			}
 				
 		}

@@ -47,7 +47,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 	 */
 	public VentanaConversacion(IVista vista) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 681, 486);
+		setBounds(100, 100, 681, 532);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -55,9 +55,10 @@ public class VentanaConversacion extends JFrame implements IVista{
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		lblReintentolabel = new JLabel("reintento");
-		lblReintentolabel.setForeground(new Color(164, 0, 0));
-		lblReintentolabel.setBounds(72, 414, 375, 14);
+		lblReintentolabel = new JLabel("<html>reintento</html>");
+		lblReintentolabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblReintentolabel.setForeground(new Color(255, 0, 0));
+		lblReintentolabel.setBounds(72, 399, 354, 72);
 		contentPane.add(lblReintentolabel);
 		
 		textField_enviarMensaje = new JTextArea();
@@ -86,7 +87,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		contentPane.add(lblNewLabel);
 		
 		 btnNewButton_1 = new JButton("Terminar conversacion");
-		btnNewButton_1.setBounds(465, 414, 192, 35);
+		btnNewButton_1.setBounds(475, 419, 192, 35);
 		contentPane.add(btnNewButton_1);
 		
 		JLabel lblNewLabel_1 = new JLabel("Conectado con:");
@@ -100,6 +101,7 @@ public class VentanaConversacion extends JFrame implements IVista{
 		textConectadoCon.setColumns(10);
 		this.setVisible(true);
 		this.setLocationRelativeTo((Component) vista);
+		this.lblReintentolabel.setVisible(false);
 	}
 
 	public void addActionListener(ActionListener listener) {

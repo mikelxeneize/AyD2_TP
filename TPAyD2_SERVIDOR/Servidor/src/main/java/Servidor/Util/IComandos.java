@@ -22,5 +22,6 @@ public interface IComandos {
     public static final String CLIENTE = "CLIENTE";
     public static final String SERVIDOR = "SERVIDOR";
     public static final String MONITOR = "MONITOR";
+    public static final String LOG = "LOG";
     public static final String AVISAR_CLIENTES_DE_NUEVO_SERVIDOR = "AVISAR_CLIENTES_DE_NUEVO_SERVIDOR";
 }

@@ -260,7 +260,7 @@ public class Servidor implements IComandos, IEstados {
 		Cliente clienteReceptor = getRegistradoByIp(mensaje.getIpdestino(),Integer.parseInt(mensaje.getPuertodestino()));
 		
 		// este lo recibe el emisor
-		if (clienteReceptor != null && clienteReceptor.getEstado().equals(DISPONIBLE)) {// cliente registrado y disponible para																// conectarse
+		if (clienteReceptor != null && clienteReceptor.getEstado().equals(DISPONIBLE) && clienteReceptor.getPuerto()!=clienteEmisor.getPuerto()) {// cliente registrado y disponible para																// conectarse
 			
 			clienteEmisor.setIpReceptor(clienteReceptor.getIp());
 			clienteEmisor.setPuertoReceptor(clienteReceptor.getPuerto());

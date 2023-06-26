@@ -36,7 +36,7 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 	private String PUERTO = "6000";
 	private String USERNAME = "Monitor";
 	private List<Observer> observers = new ArrayList<Observer>();
-	
+	ServerSocket serverSocket;
 	
 	//-------------------Singleton-----------------------//
 	public static Monitor getInstance() throws IOException {
@@ -55,19 +55,28 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 	//------Eventos que deben ejecutarse al iniciar -----//
 	
 	public  void inicializarMonitor() {
+		buscarServerSocket();
 		buscarServidores();
 		iniciarEscucha();
 		//Algo que necesite ejecutar cuando se crea el monitor
+	}
+
+	private void buscarServerSocket() {
+
+		try {
+			serverSocket = new ServerSocket(Integer.parseInt(PUERTO) );
+		} catch (NumberFormatException | IOException e) {
+			
+		}
 	}
 
 	//------Busca servidores en un rango de 100 puertos -----//
 
 	private void iniciarEscucha() {
 		Socket socket;
-		ServerSocket serverSocket;
+		
 		
 		try {
-			serverSocket = new ServerSocket(Integer.parseInt(PUERTO) );
 			while (true) { //recepcion de nuevos usuarios a escuchar
 				socket = serverSocket.accept();
 				ServerData servidor= new ServerData(socket, socket.getInetAddress().toString(),Integer.toString(socket.getPort()));
@@ -121,6 +130,17 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 			
 	}
 	
+	
+	public ServerData buscarBySocketEnPendientes(Socket socket) {
+		ServerData servidor = null;
+		for (int j = 0; j < this.listaPendientes.size(); j++) {
+			servidor = this.listaPendientes.get(j);
+			if(servidor.getSocket()==socket)
+				return servidor;
+		}
+		return servidor;
+	}
+	
 	//------Metodo para poder llegar al front Todos llaman al notificaControlador  -----//
 	
 	public void logger(String mensaje) {
@@ -166,6 +186,8 @@ public class Monitor extends Observable implements ILogger, INotificacion, IComa
 			actualizarListaClientes(mensajeExterno);
 		else  if(comando.equals(RESPUESTA_PING_ECHO))
 			calcularPing(mensajeExterno);
+		else  if(comando.equals(LOG))
+			logger(INFO +   mensajeExterno.getCuerpo());
 		
 			
 	}

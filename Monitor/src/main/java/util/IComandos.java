@@ -12,4 +12,5 @@ public interface IComandos {
     public static final String CONFIRMACION_MONITOR_RESPUESTA = "CONFIRMACION_MONITOR_RESPUESTA";
 	
 	public static final String INDEFINIDO = " ";
+	public static final String LOG = "LOG";
 }

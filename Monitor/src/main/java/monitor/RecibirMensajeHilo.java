@@ -8,8 +8,10 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import bean.MensajeExterno;
+import bean.ServerData;
+import util.IComandos;
 
-public class RecibirMensajeHilo extends Thread {
+public class RecibirMensajeHilo extends Thread implements IComandos{
 	private Socket socket;
 	private Monitor monitor;
 	private MensajeExterno mensajeExterno;
@@ -34,6 +36,10 @@ public class RecibirMensajeHilo extends Thread {
 			try {
 				mensaje = in.readLine();
 				mensajeExterno= new MensajeExterno(mensaje);
+				if(mensajeExterno.getComando().equals(CONFIRMACION_MONITOR_RESPUESTA)) {
+					ServerData servidor= monitor.buscarBySocketEnPendientes(socket);
+					servidor.setPuerto(mensajeExterno.getPuertoorigen());
+				}
 				monitor.receptorDeMensajes(mensajeExterno);
 				
 			} catch (SocketException e) {

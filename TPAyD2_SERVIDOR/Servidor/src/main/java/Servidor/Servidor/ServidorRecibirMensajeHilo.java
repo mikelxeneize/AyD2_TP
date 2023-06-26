@@ -43,6 +43,7 @@ public class ServidorRecibirMensajeHilo extends Thread implements IComandos, IEs
 					if (mensajerecibido.getComando().equals(CONFIRMACION_CLIENTE)) {
 						this.socketBean.setPuerto(Integer.parseInt(mensajerecibido.getPuertoorigen()));
 						servidor.agregarALista(mensajerecibido,CLIENTE);
+						
 					} 
 					else if (mensajerecibido.getComando().equals(CONFIRMACION_SERVIDOR)) { 		
 						servidor.agregarALista(mensajerecibido,SERVIDOR);

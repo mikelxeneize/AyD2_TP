@@ -26,7 +26,7 @@ public class ServidorRecibirMensajeHiloMonitor extends Thread implements IComand
 		try {
 			in = new BufferedReader(new InputStreamReader(monitor.getSocket().getInputStream()));
 			MensajeExterno mensajeConfirmacion = new MensajeExterno(servidor.getIpServidor(),
-					Integer.toString(monitor.getSocket().getLocalPort()), this.servidor.getUsernameServidor(), servidor.getIpServidor(),
+					Integer.toString(this.servidor.getPuertoServidor()), this.servidor.getUsernameServidor(), servidor.getIpServidor(),
 					Integer.toString(monitor.getSocket().getPort()), " ", CONFIRMACION_MONITOR_RESPUESTA, " ", " ");
 			servidor.enviarMensajeAMonitor(mensajeConfirmacion);
 		} catch (IOException e1) {
